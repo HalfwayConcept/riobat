@@ -135,9 +135,9 @@
     if(isset($DATA['situation_ctt']) && $DATA['situation_ctt'] == 1):
     ?>
     <div id="situation_ctt">
-        <div class="mt-6">
+        <div class="mt-10">
             <?php
-            echo "<h3>Contrôleur technique :</h3>";
+            echo "<strong class='ml-6'>Contrôleur technique :</strong>";
             echo "<div class='ml-6'>
                     <div class='flex flex-row'>
                         <h3>Nom entreprise ou raison sociale</h3>
