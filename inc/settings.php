@@ -12,14 +12,20 @@ if($_SESSION['env'] == 'dev'){
     define("USER",      "ruki5964_riobat");
     define("PASSWORD",  "YNJuzTq/(WqE5lVR");
     define("BDD",       "ruki5964_riobat");
+    define('DEBUG', true );
+
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);    
 }else{
     define("SERVER",    "localhost");
     define("USER",      "ruki5964_riobat");
     define("PASSWORD",  "YNJuzTq/(WqE5lVR");
     define("BDD",       "ruki5964_riobat");
 
+    define('DEBUG', false );
 }
-    
+
 
 define("RGPD_TEXT",
     "Accordant une grande importance au respect de la vie privée de ses clients (ci-après « Vous »), La société Cabinet Cotton Alexandre vous informe de la façon la plus transparente possible, des traite-ments mis en œuvre dans le cadre de l'utilisation des données personnelles que vous lui confiez.

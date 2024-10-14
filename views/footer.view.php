@@ -3,10 +3,11 @@
         </p>
 
         <?php
-
+        if(DEBUG == true):
             echo "<pre>";
-            var_dump($_SESSION);
+                var_dump($_SESSION);
             echo "</pre>";
+        endif;
         ?>
     </footer>
 

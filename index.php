@@ -6,17 +6,6 @@
 
     include_once("inc/settings.php");
     require 'controllers/page-erreur.controller.php';
-   
-    if($_SESSION['env'] == 'prod'){
-        define('DEBUG', false );
-    }else{
-        define('DEBUG', true );
-
-        ini_set('display_errors', '1');
-        ini_set('display_startup_errors', '1');
-        error_reporting(E_ALL);
-    }
-
     require 'controllers/user.controller.php';
     if(empty($_SESSION['user_id'])){
         $_SESSION['user_id']=null;
