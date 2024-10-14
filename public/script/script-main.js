@@ -1,15 +1,21 @@
-function alert(message){
-    alert(message);
-}
-
-function showElement(elementhidden){
+function showElement(elementhidden, type = ""){
     var element = document.getElementById(elementhidden);
+    if(type != ""){
+        var required = document.getElementById(type+"_entreprise_raison_sociale");
+        // ✅ Set required attribute
+        required.setAttribute('required', '');
+    }    
     element.classList.remove('hidden');
 }
 
-function hideElement(elementvisible){
+function hideElement(elementvisible, type){
     var element = document.getElementById(elementvisible);
         element.classList.add('hidden');
+    if(type != ""){
+        var required = document.getElementById(type+"_entreprise_raison_sociale");
+        // ✅ Remove required attribute
+        required.removeAttribute('required');
+    }          
 }
 
 function buttonActivate(elementdisabled, checkboxhome){

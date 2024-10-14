@@ -36,6 +36,17 @@
         }
     }    
 
+    function insert_utilisateur_session($DOID, $user_id){
+        $sql = " INSERT INTO `utilisateur_session` (`utilisateur_session_id`, `utilisateur_id`, `DOID`, `session_debut`, `session_maj`, `session_fin`) 
+                VALUES (NULL, '$user_id', '$DOID', current_timestamp(), current_timestamp(), NULL);";
+        if(mysqli_query($GLOBALS["conn"], $sql)){
+            $last_id = mysqli_insert_id($GLOBALS["conn"]);
+            return $last_id;
+        } else{
+            return "Erreur utilisateur_session" . mysqli_error($link);
+        }
+    } 
+
 
 
     function register_user($array_post){
@@ -68,8 +79,8 @@
 
 
     function send_email_new_user($last_id, $first_name, $last_name, $email ){
-            $to = "c.leydier@velay.greta.fr";
-            $subject = "[diagnosticompetences] Nouvel utilisateur";
+            $to = "christophe_leydier@hotmail.com";
+            $subject = "[RIOBAT] Nouvel utilisateur";
 
             $message = "
             <html>
@@ -101,8 +112,8 @@
             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
             // More headers
-            $headers .= 'From: <contact@diagnosticompetences.net>' . "\r\n";
-            $headers .= 'Cc: christophe.leydier@greta-auvergne.fr' . "\r\n";
+            $headers .= 'From: <contact@http://riobat.ruki5964.odns.fr>' . "\r\n";
+            //$headers .= 'Cc: alexandre.cotton@mma.fr' . "\r\n";
 
             mail($to,$subject,$message,$headers);
     }

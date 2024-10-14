@@ -165,39 +165,39 @@
             <span class="text-gray-500 font-medium">Travaux annexes :</span>
             <div class="ml-10 mt-2">
                 <span class="font-normal">S'agit-il d'une construction en bois ? &ensp;&ensp;
-                    <input type="radio" name="situation_construction_bois" value="1" <?= isset($_SESSION['info_situation']['situation_construction_bois']) && ($_SESSION['info_situation']['situation_construction_bois'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_boi" value="1" <?= isset($_SESSION['info_situation']['situation_boi']) && ($_SESSION['info_situation']['situation_boi'])==1 ? "checked=checked" : ""; ?> required/>
                     <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_construction_bois" value="0" <?= isset($_SESSION['info_situation']['situation_construction_bois']) && ($_SESSION['info_situation']['situation_construction_bois'])==0 ? "checked=checked" : ""; ?>/>
+                    <input type="radio" name="situation_boi" value="0" <?= isset($_SESSION['info_situation']['situation_boi']) && ($_SESSION['info_situation']['situation_boi'])==0 ? "checked=checked" : ""; ?>/>
                     <label class="text-gray-500 font-medium"> Non</label>
                 </span>
             </div>
             <div class="ml-10 mt-2">
                 <span class="font-normal">Y a-t-il la présence de panneaux photovoltaïques ? &ensp;&ensp;
-                    <input type="radio" name="situation_pann_photo" value="1" <?= isset($_SESSION['info_situation']['situation_pann_photo']) && ($_SESSION['info_situation']['situation_pann_photo'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_phv" value="1" <?= isset($_SESSION['info_situation']['situation_phv']) && ($_SESSION['info_situation']['situation_phv'])==1 ? "checked=checked" : ""; ?> required/>
                     <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_pann_photo" value="0" <?= isset($_SESSION['info_situation']['situation_pann_photo']) && ($_SESSION['info_situation']['situation_pann_photo'])==0 ? "checked=checked" : ""; ?>/>
+                    <input type="radio" name="situation_phv" value="0" <?= isset($_SESSION['info_situation']['situation_phv']) && ($_SESSION['info_situation']['situation_phv'])==0 ? "checked=checked" : ""; ?>/>
                     <label class="text-gray-500 font-medium"> Non</label>
                 </span>
             </div>
             <div class="ml-10 mt-2">
                 <span class="font-normal">L'opération de construction bénéficie-t-elle d'une installation géothermique ? &ensp;&ensp;
-                    <input type="radio" name="situation_geothermie" value="1" <?= isset($_SESSION['info_situation']['situation_geothermie']) && ($_SESSION['info_situation']['situation_geothermie'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_geo" value="1" <?= isset($_SESSION['info_situation']['situation_geo']) && ($_SESSION['info_situation']['situation_geo'])==1 ? "checked=checked" : ""; ?> required/>
                     <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_geothermie" value="0" <?= isset($_SESSION['info_situation']['situation_geothermie']) && ($_SESSION['info_situation']['situation_geothermie'])==0 ? "checked=checked" : ""; ?>/>
+                    <input type="radio" name="situation_geo" value="0" <?= isset($_SESSION['info_situation']['situation_geo']) && ($_SESSION['info_situation']['situation_geo'])==0 ? "checked=checked" : ""; ?>/>
                     <label class="text-gray-500 font-medium"> Non</label>
                 </span>
             </div>
             <div class="ml-10 mt-2">
                 <span class="font-normal">Y a-t-il intervention d'un contrôleur technique ? &ensp;&ensp;
-                    <input type="radio" name="situation_controle_tech" value="1" <?= isset($_SESSION['info_situation']['situation_controle_tech']) && ($_SESSION['info_situation']['situation_controle_tech'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_ctt" value="1" <?= isset($_SESSION['info_situation']['situation_ctt']) && ($_SESSION['info_situation']['situation_ctt'])==1 ? "checked=checked" : ""; ?> required/>
                     <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_controle_tech" value="0" <?= isset($_SESSION['info_situation']['situation_controle_tech']) && ($_SESSION['info_situation']['situation_controle_tech'])==0 ? "checked=checked" : ""; ?>/>
+                    <input type="radio" name="situation_ctt" value="0" <?= isset($_SESSION['info_situation']['situation_ctt']) && ($_SESSION['info_situation']['situation_ctt'])==0 ? "checked=checked" : ""; ?>/>
                     <label class="text-gray-500 font-medium"> Non</label>
                 </span>
             </div>
             <div class="ml-10 mt-2">
                 <span class="font-normal">Y a-t-il désignation d'un Constructeur Non Réalisateur ? &ensp;&ensp;
-                    <input type="radio" name="situation_cnr" value="1" <?= isset($_SESSION['info_situation']['situation_cnr']) && ($_SESSION['info_situation']['situation_cnr'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_cnr" value="1" <?= isset($_SESSION['info_situation']['situation_cnr']) && ($_SESSION['info_situation']['situation_cnr'])==1 ? "checked=checked" : ""; ?> required />
                     <label class="text-gray-500 font-medium"> Oui &ensp;</label>
                     <input type="radio" name="situation_cnr" value="0" <?= isset($_SESSION['info_situation']['situation_cnr']) && ($_SESSION['info_situation']['situation_cnr'])==0 ? "checked=checked" : ""; ?>/>
                     <label class="text-gray-500 font-medium"> Non</label>

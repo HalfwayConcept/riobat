@@ -19,6 +19,11 @@
     function stepDisplay($currentstep){  
         // Remplissage de la variable $content
         ob_start();
+
+        if(!empty($_GET['session_load_id'])){
+            loadDo($_GET['session_load_id']);
+        }
+
         switch ($currentstep) {
             case 'step0':
                 $title = "Formulaire Dommage Ouvrage";
@@ -57,11 +62,10 @@
          if (isset($_POST['fields'])) {
             foreach ($_POST as $key => $value)
             {
-                $_SESSION['info_'.$_POST['fields']][$key] = $value;                
+                $_SESSION['info_'.$_POST['fields']][$key] = $value;
             }
             $keys = array_keys($_SESSION['info_'.$_POST['fields']]);
             //$res = false;
-            
             if($currentstep == "step0"){
                 if(isset($_POST['checkbox-approuve'])){
                     if($_POST['checkbox-approuve'] == 1){
@@ -72,14 +76,27 @@
                     $message = "Vous devez cocher la case pour accepter les conditions générales du contrat Dommage Ouvrage et les Mentions légales RGPD";
                 }
             }elseif($currentstep == "step1"){
-                $new_DOID = insert($_SESSION["info_souscripteur"]);
+                if(!empty($_GET['session_load_id'])){
+                    $new_DOID = $_GET['session_load_id'];
+                }else{
+                    $new_DOID = insert($_SESSION["info_souscripteur"]);
+                    $new_DOID = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
+                }
                 $_SESSION["DOID"] = $new_DOID;
-            }elseif($currentstep == "step4" || $currentstep == "step5"){
-                ($currentstep == "step4"  ? $prefix = 'sol' : $prefix = 'moe');
-
+                $res=true;
+            }elseif($currentstep == "step4" || $currentstep == "step5"){            
+                if($currentstep == "step4"){
+                    $prefix = 'sol' ;
+                    $session_key = "info_situation";
+                }else{
+                    $prefix = 'moe';
+                    $session_key = "info_dommage_ouvrage";
+                }  
+                $doid = $_SESSION["DOID"];
+                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                 if($_SESSION['info_'.$_POST['fields']][$prefix] == 1){
                     $array_entreprise = array();
-               
+                    
                     $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'];                                          
                     $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'];
                     $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'];
@@ -89,18 +106,19 @@
                     $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_commune'];
                     $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix.'_numero_siret'];
                     $array_entreprise['type']          = $prefix; 
-                     
+
                     if(!empty($array_entreprise['id'])){
-                        $id = updateEntreprise($_SESSION["info_situation"][$prefix.'_entreprise_id'],$array_entreprise);   
-                        $_SESSION["info_situation"][$prefix.'_entreprise_id'] = $id;                                                                                            
+                        $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
+                        $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
                     }else{
                         $id = insertEntreprise($array_entreprise);
-                        $_SESSION["info_situation"][$prefix.'_entreprise_id'] = $id;
+                        $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
                         updateEntrepriseID($id, $prefix, $_SESSION["DOID"]);
                     }      
               
                 }
             }elseif($currentstep == "step4bis"){
+                    $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                     $top = 0;
                     $array_entreprises = array();
                     foreach ($_SESSION["info_travaux_annexes"] as $key => $value) {
@@ -148,6 +166,7 @@
                 $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                 $doid = $_SESSION["DOID"];
             }
+
             if($res === false){
                 // echo ERREUR LORS DE L'AJOUT OU MODIFICATION EN BDD
             }else{                
@@ -156,15 +175,16 @@
                 }
                 $doid = $_SESSION["DOID"];
                 header("Location: index.php?page=".$nextstep."&doid=$doid"); 
+
             }
             
         }
 
         if($currentstep == 'step4bis'){
-            if($_SESSION["info_situation"]['situation_construction_bois']=="0"
-            && $_SESSION["info_situation"]['situation_pann_photo'] =="0" 
-            && $_SESSION["info_situation"]['situation_geothermie'] =="0" 
-            && $_SESSION["info_situation"]['situation_controle_tech'] =="0"
+            if($_SESSION["info_situation"]['situation_boi']=="0"
+            && $_SESSION["info_situation"]['situation_phv'] =="0" 
+            && $_SESSION["info_situation"]['situation_geo'] =="0" 
+            && $_SESSION["info_situation"]['situation_ctt'] =="0"
             && $_SESSION["info_situation"]['situation_cnr'] =="0") {
                 header("Location: index.php?page=step5");
             }  

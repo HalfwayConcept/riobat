@@ -33,7 +33,9 @@
             }else{
                 $ID = "";
             }
-            $coordform = str_replace('##valeur_entreprise_id##', $ID,$coordform);            
+
+            $coordform = str_replace('##valeur_entreprise_id##', $ID,$coordform);    
+            
             $coordform = str_replace('##valeur_entreprise_raison_sociale##', $raison_social,$coordform);
             $coordform = str_replace('##valeur_entreprise_nom##', $nom,$coordform);
             $coordform = str_replace('##valeur_entreprise_prenom##', $prenom,$coordform);
@@ -111,9 +113,9 @@
                     ,`boi_entreprise_id`,`phv_entreprise_id`
                     ,`geo_entreprise_id`,`cnr_entreprise_id`,`ctt_entreprise_id`
                     ,`sol_entreprise_id`, `moe_entreprise_id`
-                    FROM `travaux_annexes` TA, `situation` S, `moe` M
+                    FROM `travaux_annexes` TA, `situation` S, `dommage_ouvrage` DO
                     WHERE   TA.DOID = S.DOID
-                    AND     TA.DOID = M.DOID
+                    AND     TA.DOID = DO.DOID
                     AND     TA.DOID = $doid;";
             $resquery = mysqli_query($GLOBALS["conn"], $sql);
             $DATA = mysqli_fetch_array($resquery, MYSQLI_ASSOC);
@@ -122,7 +124,6 @@
     
     
         function insertEntreprise($array_entreprise){
-            var_dump($array_entreprise);
             $type = $array_entreprise["type"];
             // insertion de souscripteur_id dans dommage_ouvrage
             //$souscripteur_id = mysqli_insert_id($GLOBALS["conn"]);
@@ -151,7 +152,7 @@
                     $table =  "situation";
                     break;
                 case 'moe':
-                    $table =  "moe";
+                    $table =  "dommage_ouvrage";
                     break;                
                 default:
                     $table =  "travaux_annexes";
@@ -159,7 +160,6 @@
             }
 
             $sqlUpdate = "UPDATE `$table` SET `$type_entreprise_id` = '$entreprise_id' WHERE `DOID` = $DOID";
-            echo $sqlUpdate;
             $query = mysqli_query($GLOBALS["conn"], $sqlUpdate);
             return true;
         }

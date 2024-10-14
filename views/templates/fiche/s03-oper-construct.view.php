@@ -6,7 +6,7 @@
 
         <div class="flex flex-col">
             <h3>Nature de l'opération :</h3>
-            <div class="flex flex-row pl-8 mt-4">
+            <div class="flex flex-row pl-8">
     <?php 
         if(isset($DATA['nature_neuf_exist']) && $DATA['nature_neuf_exist'] == "neuve"){
             echo "<strong>Construction neuve</strong>";
@@ -105,7 +105,7 @@
 
         <div class="mt-4">
             <h3>Type de l'ouvrage :</h3>
-            <div class="flex flex-col pl-8 mt-4">
+            <div class="flex flex-col pl-8">
                 <?php 
                     if(isset($DATA['type_ouvrage_mais_indiv']) && $DATA['type_ouvrage_mais_indiv'] == 1){
                         echo "<div class='flex flex-row ml-6'>
@@ -150,13 +150,12 @@
                         $content = boxDisplay("Autre construction :");
                         echo "<div class='flex flex-row'>".$content."&nbsp;<span>".$DATA['type_ouvrage_autre_const_usage']."</span></div>";
                     }
-                    ?>
-                    
+                    ?>                    
         </div>
 
         <div class="flex flex-col">
             <h3>Adresse de la construction :</h3>
-            <div class="flex flex-col pl-8 mt-4">
+            <div class="flex flex-col pl-8">
                 <strong class="pl-4"><?php if(isset($DATA['construction_adresse_num_nom_rue'])){ echo $DATA['construction_adresse_num_nom_rue'];}; ?></strong>
                 <strong class="pl-4"><?php if(isset($DATA['construction_adresse_esc_res_bat'])){ echo $DATA['construction_adresse_esc_res_bat'];};  ?></strong>
                 <strong class="pl-4"><?php if(isset($DATA['construction_adresse_lieu_dit'])){ echo $DATA['construction_adresse_lieu_dit'];}; ?></strong>
@@ -203,9 +202,11 @@
             </div>
         </div>
 
-        <div class="flex flex-row">
+        <div class="flex flex-col mt-2">
+
             <h3>Coût de l'opération de construction :</h3>
-            <div class="flex flex-col">
+
+            <div class="flex flex-col ml-6">
                 <span>Coût en € : <?php if(isset($DATA['construction_cout_operation'])){
                     echo "<strong>".$DATA['construction_cout_operation']."</strong>";
                 } ;?></span>

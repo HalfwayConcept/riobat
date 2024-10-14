@@ -4,13 +4,11 @@
     //lecture des données contenues dans la base
     function getDo($doid){
         $sql = "SELECT 
-                dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.*, moe.*
-        
-                FROM dommage_ouvrage, souscripteur, moa, operation_construction, situation, travaux_annexes, moe
+                dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.* 
+                FROM dommage_ouvrage, souscripteur, moa, operation_construction, situation, travaux_annexes 
                 WHERE dommage_ouvrage.DOID = $doid
                 AND dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
                 AND moa.DOID = dommage_ouvrage.DOID
-                AND moe.DOID = dommage_ouvrage.DOID
                 AND operation_construction.DOID = dommage_ouvrage.DOID
                 AND travaux_annexes.DOID = dommage_ouvrage.DOID
                 AND situation.DOID = dommage_ouvrage.DOID;";
@@ -22,14 +20,13 @@
     function getListDo($user_id = null){
         $sql = "SELECT dommage_ouvrage.*, 
                 operation_construction.*, situation.*,
-                souscripteur.*, moa.*, moe.*, travaux_annexes.*, 
+                souscripteur.*, moa.*, travaux_annexes.*, 
                 utilisateur_session.*
                 FROM souscripteur, dommage_ouvrage, moa, 
-                        operation_construction, situation, travaux_annexes, moe,
+                        operation_construction, situation, travaux_annexes,
                         utilisateur_session
                 WHERE dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
                 AND moa.DOID = dommage_ouvrage.DOID
-                AND moe.DOID = dommage_ouvrage.DOID
                 AND utilisateur_session.DOID = dommage_ouvrage.DOID
                 AND operation_construction.DOID = dommage_ouvrage.DOID
                 AND travaux_annexes.DOID = dommage_ouvrage.DOID
@@ -45,15 +42,12 @@
     }
 
     
-    
     //création du souscripteur et de l'assurance dommage ouvrage + doid dans chaque table
     function insert($array_SESSION){
 
         $DOID = false;
         $souscripteur_id = false;
-        //var_dump($array_SESSION);
         if (strlen($array_SESSION["souscripteur_nom_raison"]) > 0 ){
-
             // insertion des données du souscripteur
             extract($array_SESSION);
             $sql = "INSERT INTO souscripteur (souscripteur_nom_raison, souscripteur_siret, souscripteur_adresse, souscripteur_code_postal, souscripteur_commune, souscripteur_profession, souscripteur_telephone, souscripteur_email, souscripteur_ancien_client_date, souscripteur_ancien_client_num) 
@@ -75,11 +69,7 @@
             $query = mysqli_query($GLOBALS["conn"], $sql);
             $sql = "INSERT INTO travaux_annexes (DOID) VALUES ('$DOID');";
             $query = mysqli_query($GLOBALS["conn"], $sql);
-            $sql = "INSERT INTO moe (DOID) VALUES ('$DOID');";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
-
         }
-
         return $DOID;
     }
 
@@ -95,13 +85,14 @@
             //on ignore certains champs qui ne sont pas en base de données            
             if($field != "fields" &&  $field != "page_next" 
             // && $field !="construction_cout_operation_honoraires_moe"
-            && !str_starts_with($field, "sol_entreprise")  //l'entreprise de sol doit utiliser la table entreprise, on ignore ces champs là
-            && !str_starts_with($field, "boi_entreprise")    //idem pour bois
-            && !str_starts_with($field, "phv_entreprise")    //idem pour le photovoltaique
-            && !str_starts_with($field, "geo_entreprise")    //idem pour géothermie
-            && !str_starts_with($field, "ctt_entreprise")    //idem pour controleur technique
-            && !str_starts_with($field, "moe_entreprise")    //idem pour moe 
-            && !str_starts_with($field, "cnr_entreprise")    //idem pour cnr      
+            && !str_starts_with($field, "sol_")  //l'entreprise de sol doit utiliser la table entreprise, on ignore ces champs là
+            && !str_starts_with($field, "boi_")    //idem pour bois
+            && !str_starts_with($field, "phv_")    //idem pour le photovoltaique
+            && !str_starts_with($field, "geo_")    //idem pour géothermie
+            && !str_starts_with($field, "ctt_")    //idem pour controleur technique
+            && !str_starts_with($field, "moe_")    //idem pour moe 
+            && !str_starts_with($field, "cnr_")    //idem pour cnr      
+            
 
             ){   
                 if($i == 0){
@@ -109,7 +100,7 @@
                 }else{
                     $sqlupdate.=" , $field = ? ";
                 }
-                if(empty($value)){
+                if(empty($value) && $value!=0){
                     $value=null;
                 }
                 array_push($array_values,$value);
@@ -118,34 +109,24 @@
                 
                 $rightPart = substr($field, 11); // Récupère les 11 derniers caractères
                 if($rightPart == "_entreprise"){
-                    //var_dump($array_SESSION);
+                    
                 }
             }
             
         }
-
         $sqlupdate.=" WHERE $table.DOID = $DOID;";
-        if(DEBUG == true){
-            /*echo "<pre>";
-                echo "<br>SQL:<strong>$sqlupdate</strong><br>";
-                print_r($array_values);
-            echo "</pre>";*/
-        }
         
         try {
             /* Crée une requête préparée */
             if ($stmt = mysqli_prepare($GLOBALS["conn"], $sqlupdate)) {
                 /* Exécution de la requête */
-                    print_r($stmt);
                     $res = mysqli_stmt_execute($stmt, $array_values);
-                
                     /* Fermeture du traitement */
                     mysqli_stmt_close($stmt);                
             }
         }catch (Exception $e) {
             echo 'Exception reçue : ',  $e->getMessage(), "\n";
         }
-        var_dump($res); 
         
         return $res;
     }
@@ -159,8 +140,8 @@
     // Affichage des intitulés des radio et checkbox
     function boxDisplay($fieldcontent){
         $display = "<div class='flex flex-row'>
-        <strong class='pl-6'>".$fieldcontent."</strong>
-        </div>";
+                        <strong class='pl-6'>".$fieldcontent."</strong>
+                    </div>";
         return $display;
     };
 
@@ -170,8 +151,6 @@
         $deletesql = "DELETE FROM dommage_ouvrage WHERE DOID = '$doid'";
         mysqli_query($GLOBALS["conn"], $deletesql);
         $deletesql = "DELETE FROM moa WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS["conn"], $deletesql);
-        $deletesql = "DELETE FROM moe WHERE DOID = '$doid'";
         mysqli_query($GLOBALS["conn"], $deletesql);
         $deletesql = "DELETE FROM operation_construction WHERE DOID = '$doid'";
         mysqli_query($GLOBALS["conn"], $deletesql);
@@ -186,21 +165,61 @@
     }
 
 
-    function loadDo(){
+    function loadDo($doid){
+        $user_id =  $_SESSION['user_id'];
+        $_SESSION = [];
 
+        $_SESSION['DOID']       = $doid;
+        $_SESSION['user_id']    = $user_id;
+        $do = getDo($doid);
+
+            $_SESSION["info_souscripteur"]["souscripteur_id"] = $do["souscripteur_id"];
+
+            $array_tables = array('souscripteur', 'operation_construction', 'situation', 'travaux_annexes', 'moa','dommage_ouvrage');
+            
+            foreach ($array_tables as $table) {
+                $col_names =  getColumnNames($table);
+                foreach ($col_names as $key => $col) {
+                    $_SESSION["info_".$table][$col] = $do[$col];                    
+                }
+            }
+            
+
+            $array_type_entreprise =  array('geo','phv','boi','ctt', 'cnr', 'sol');
+            foreach ($array_type_entreprise as $type) {
+                if(is_numeric($do[$type."_entreprise_id"]) && $do[$type."_entreprise_id"]!=0){
+                    $loadEntreprise = loadEntreprise($do[$type."_entreprise_id"]);
+                    foreach ($loadEntreprise as $key => $value) {
+                        if($type == 'sol'){
+                            $_SESSION["info_situation"][$type."_".$key] = $value;
+                        }elseif($type == 'moe'){
+                            $_SESSION["info_dommage_ouvrage"][$type."_".$key] = $value;
+                        }else{
+                            $_SESSION["info_situation"][$type."_".$key] = $value;
+                        }
+                        
+                    }
+                }
+            }
     }
 
-    // récupération des noms de colonne
-    /*function get_column_names($table) {
+    /**
+    * Get the column names for a mysql table
+    **/
+    function getColumnNames($table) {
         $sql = 'DESCRIBE '.$table;
         $result = mysqli_query($GLOBALS["conn"], $sql);
-    
+        
         $rows = array();
         while($row = mysqli_fetch_assoc($result)) {
             $rows[] = $row['Field'];
-        }
-    
+        }    
         return $rows;
-    }*/
+    }
+        
+       
+
+
+
   
   

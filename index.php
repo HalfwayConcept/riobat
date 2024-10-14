@@ -2,7 +2,7 @@
     session_start();
 
     //session_destroy();
-    $_SESSION['env'] = 'dev'; //prod
+    $_SESSION['env'] = 'prod'; //prod
 
     include_once("inc/settings.php");
     require 'controllers/page-erreur.controller.php';

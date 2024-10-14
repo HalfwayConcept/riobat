@@ -34,7 +34,6 @@
 
                         <li>
                         <?php 
-                        //var_dump($_SESSION['user_id']);
                         if(!empty($_SESSION['user_id'])){
                             $name_login = get_infos($_SESSION['user_id']);
                         ?>                                    

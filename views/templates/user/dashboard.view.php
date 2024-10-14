@@ -4,15 +4,12 @@
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>
     </div>
     <section class="bg-white dark:bg-gray-900">
-    <div class="px-4">
-        Bienvenue
-    </div>
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:px-6">
         <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
             <h2 class="mb-4 text-xl tracking-tight font-extrabold text-gray-900 dark:text-white">Votre dashboard</h2>
             <p class="mb-4 text-sm ">
                 <ul class="max-w-md text-sm space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                    <li>Consuler vos dossier de dommages ouvrage</li>
+                    <li>Consuler vos dossiers de dommages ouvrage</li>
                 </ul>
             </div>
         <div class="grid">
@@ -22,12 +19,8 @@
 </section>    
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <!-- Start coding here -->
-        <div class="bg-white flex flex-row flex-wrap dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
-            
+        <div class="bg-white flex flex-row flex-wrap dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">         
                 <?php
-                echo "<pre>";
-                    //var_dump($dos);
-                echo "</pre>";
                 foreach($dos as $key => $do){
                     $doprogress = "0.5";
                     ?>
@@ -59,8 +52,6 @@
                         <?php
                         }
                         ?>
-                        <h5 class="mb-2 font-xl font-bold tracking-tight text-gray-900 dark:text-white">Nombre d'étape :</h5>
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"> ??/5</p>
                         
                         <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                             <div class="bg-<?= ( $doprogress == 1 ? "green" : "blue");?>-600 h-6 rounded-full" style="width: <?= $doprogress*100;?>%">
@@ -83,7 +74,7 @@
                             <?php
                             }else{
                             ?>
-                            <a href="index.php?page=dc&session_id=<?= $do['DOID'];?>" class="inline-flex items-center px-1 py-2 text-sm text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <a href="index.php?page=step1&session_load_id=<?= $do['DOID'];?>" class="inline-flex items-center px-1 py-2 text-sm text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Reprendre
                                 <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>

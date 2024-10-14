@@ -4,7 +4,7 @@
 <form action="" method="post">
     <!-- Construction bois -->
     <?php
-    if($_SESSION["info_situation"]['situation_construction_bois']=="1"):
+    if($_SESSION["info_situation"]['situation_boi']=="1"):
     ?>        
     <hr>
     <div class="mt-4">
@@ -44,7 +44,7 @@
 
     <!-- Panneaux photovoltaïques -->
     <?php
-    if($_SESSION["info_situation"]['situation_pann_photo'] =="1"):
+    if($_SESSION["info_situation"]['situation_phv'] =="1"):
     ?>    
     <hr>
     <div class="mt-4">
@@ -124,7 +124,7 @@
 
     <!-- Géothermie -->
     <?php
-    if($_SESSION["info_situation"]['situation_geothermie'] =="1"):
+    if($_SESSION["info_situation"]['situation_geo'] =="1"):
     ?>
     <hr>
     <div class="mt-4">
@@ -140,7 +140,7 @@
 
     <!-- Contrôleur technique-->
     <?php
-    if($_SESSION["info_situation"]['situation_controle_tech'] =="1"):
+    if($_SESSION["info_situation"]['situation_ctt'] =="1"):
     ?>
     <hr>
     <div class="mt-4 ">
