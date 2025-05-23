@@ -44,36 +44,45 @@
     
     //création du souscripteur et de l'assurance dommage ouvrage + doid dans chaque table
     function insert($array_SESSION){
-
         $DOID = false;
         $souscripteur_id = false;
         if (strlen($array_SESSION["souscripteur_nom_raison"]) > 0 ){
             // insertion des données du souscripteur
             extract($array_SESSION);
+
             $sql = "INSERT INTO souscripteur (souscripteur_nom_raison, souscripteur_siret, souscripteur_adresse, souscripteur_code_postal, souscripteur_commune, souscripteur_profession, souscripteur_telephone, souscripteur_email, souscripteur_ancien_client_date, souscripteur_ancien_client_num) 
             VALUES ('$souscripteur_nom_raison', '$souscripteur_siret', '$souscripteur_adresse', '$souscripteur_code_postal', '$souscripteur_commune', '$souscripteur_profession', '$souscripteur_telephone', '$souscripteur_email', '$souscripteur_ancien_client_date', '$souscripteur_ancien_client_num');";
+            $_SESSION["SQL"]["souscripteur"] = $sql;
             $query = mysqli_query($GLOBALS["conn"], $sql);
 
             // insertion de souscripteur_id dans dommage_ouvrage
             $souscripteur_id = mysqli_insert_id($GLOBALS["conn"]);
-            $sql = "INSERT INTO dommage_ouvrage (souscripteur_id) VALUES ('$souscripteur_id')";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
+            $sql_do = "INSERT INTO dommage_ouvrage (souscripteur_id) VALUES ('$souscripteur_id')";
+            $_SESSION["SQL"]["do"] = $sql_do;
+            $query = mysqli_query($GLOBALS["conn"], $sql_do);
 
             // récupération de DOID et ajout dans toutes les tables
             $DOID = mysqli_insert_id($GLOBALS["conn"]);
-            $sql = "INSERT INTO moa (DOID) VALUES ('$DOID');";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
-            $sql = "INSERT INTO operation_construction (DOID) VALUES ('$DOID');";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
-            $sql = "INSERT INTO situation (DOID) VALUES ('$DOID');";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
-            $sql = "INSERT INTO travaux_annexes (DOID) VALUES ('$DOID');";
-            $query = mysqli_query($GLOBALS["conn"], $sql);
+
+            $sql_moa = "INSERT INTO moa (DOID) VALUES ('$DOID');";
+            $_SESSION["SQL"]["moa"] = $sql_moa;
+            $query = mysqli_query($GLOBALS["conn"], $sql_moa);
+
+            $sql_ope = "INSERT INTO operation_construction (DOID) VALUES ('$DOID');";
+            $_SESSION["SQL"]["ope"] = $sql_ope;
+            $query = mysqli_query($GLOBALS["conn"], $sql_ope);
+
+            $sql_situation = "INSERT INTO situation (DOID) VALUES ('$DOID');";
+            $_SESSION["SQL"]["situation"] = $sql_situation;
+            $query = mysqli_query($GLOBALS["conn"], $sql_situation);
+
+            $sql_travaux = "INSERT INTO travaux_annexes (DOID) VALUES ('$DOID');";
+            $_SESSION["SQL"]["travaux"] = $sql_travaux;
+            $query = mysqli_query($GLOBALS["conn"], $sql_travaux);
+
         }
         return $DOID;
     }
-
-
 
     //mise à jour de la base à partir de la deuxième étape
     function update($array_SESSION, $table, $DOID){
@@ -81,6 +90,7 @@
         $sqlupdate = "UPDATE $table";
         $strparams = "";
         $i =0;
+        
         foreach ($array_SESSION as $field => $value) {  
             //on ignore certains champs qui ne sont pas en base de données            
             if($field != "fields" &&  $field != "page_next" 
@@ -100,8 +110,9 @@
                 }else{
                     $sqlupdate.=" , $field = ? ";
                 }
+                
                 if(empty($value) && $value!=0){
-                    $value=null;
+                    $value="null";
                 }
                 array_push($array_values,$value);
                 $i++;
@@ -122,13 +133,27 @@
                 /* Exécution de la requête */
                     $res = mysqli_stmt_execute($stmt, $array_values);
                     /* Fermeture du traitement */
-                    mysqli_stmt_close($stmt);                
+                    mysqli_stmt_close($stmt);  
+                    echo "<pre>";  
+                    echo $i."===>".$table."<br />";
+                    print_r($array_values);
+                    echo "</pre>";
+                    $_SESSION["SQL"][$table] = debugQuery($sqlupdate, $array_values);   
+                    
+                    //echo debugQuery($sqlupdate, $array_values);
             }
         }catch (Exception $e) {
             echo 'Exception reçue : ',  $e->getMessage(), "\n";
         }
-        
+    
         return $res;
+    }
+
+    function debugQuery($query, $params = array()){ 
+        foreach ($params as $param) {
+            $query = preg_replace('/\?/', "'" . $param . "'", $query, 1);
+        }
+        return $query;
     }
 
     // changement du format de la date
@@ -138,10 +163,12 @@
 
 
     // Affichage des intitulés des radio et checkbox
-    function boxDisplay($fieldcontent){
-        $display = "<div class='flex flex-row'>
-                        <strong class='pl-6'>".$fieldcontent."</strong>
-                    </div>";
+    function boxDisplay($checked){
+        if($checked == 1){
+            $display = 'checked="checked"';
+        }else{
+            $display = "";
+        }
         return $display;
     };
 

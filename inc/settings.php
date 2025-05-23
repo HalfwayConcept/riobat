@@ -12,7 +12,7 @@ if($_SESSION['env'] == 'dev'){
     define("USER",      "ruki5964_riobat");
     define("PASSWORD",  "YNJuzTq/(WqE5lVR");
     define("BDD",       "ruki5964_riobat");
-    define('DEBUG', true );
+    define('DEBUG', false );
 
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');

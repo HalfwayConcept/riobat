@@ -17,21 +17,4 @@
     </div>
 </div>
 
-
-<?php if(DEBUG==true):
-    echo "<div class='mt-24'>
-    <p class='font-medium mb-6'>Récapitulatif des champs soumis :</p>
-    <pre class='ml-12'>";
-    print_r($_SESSION);
-    echo "</pre></div>";
-endif;?> 
-
-
-<?php
-        // if(DEBUG == true){
-        //     echo "<pre>";
-        //     var_dump($_SESSION);
-        //     echo "</pre>";
-?>
-
    

@@ -9,10 +9,12 @@
         $_SESSION["info_souscripteur"]=[];
         $_SESSION["DOID"]=[];
         $_SESSION["info_operation_construction"]=[];
+        $_SESSION["info_dommage_ouvrage"]=[];
         $_SESSION["info_moa"]=[];
         $_SESSION["info_situation"]=[];
         $_SESSION["info_travaux_annexes"]=[];
         $_SESSION["info_moe"]=[];
+        $_SESSION["SQL"]=[];
         return true;
     }
 
@@ -65,7 +67,6 @@
                 $_SESSION['info_'.$_POST['fields']][$key] = $value;
             }
             $keys = array_keys($_SESSION['info_'.$_POST['fields']]);
-            //$res = false;
             if($currentstep == "step0"){
                 if(isset($_POST['checkbox-approuve'])){
                     if($_POST['checkbox-approuve'] == 1){
@@ -80,11 +81,12 @@
                     $new_DOID = $_GET['session_load_id'];
                 }else{
                     $new_DOID = insert($_SESSION["info_souscripteur"]);
-                    $new_DOID = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
+                    $new_user_session = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
                 }
                 $_SESSION["DOID"] = $new_DOID;
                 $res=true;
-            }elseif($currentstep == "step4" || $currentstep == "step5"){            
+            }elseif($currentstep == "step4" || $currentstep == "step5"){  
+        
                 if($currentstep == "step4"){
                     $prefix = 'sol' ;
                     $session_key = "info_situation";
@@ -96,7 +98,6 @@
                 $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                 if($_SESSION['info_'.$_POST['fields']][$prefix] == 1){
                     $array_entreprise = array();
-                    
                     $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'];                                          
                     $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'];
                     $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'];
@@ -107,6 +108,7 @@
                     $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix.'_numero_siret'];
                     $array_entreprise['type']          = $prefix; 
 
+
                     if(!empty($array_entreprise['id'])){
                         $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
                         $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
@@ -115,12 +117,12 @@
                         $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
                         updateEntrepriseID($id, $prefix, $_SESSION["DOID"]);
                     }      
-              
                 }
             }elseif($currentstep == "step4bis"){
                     $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                     $top = 0;
                     $array_entreprises = array();
+                  
                     foreach ($_SESSION["info_travaux_annexes"] as $key => $value) {
                         if(     $key == 'phv_entreprise_raison_sociale'
                             ||  $key == 'cnr_entreprise_raison_sociale'
@@ -135,14 +137,14 @@
                             $array_entreprises[$top]['nom']           = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_nom'];
                             $array_entreprises[$top]['prenom']        = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_prenom'];
                             $array_entreprises[$top]['adresse']       = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_adresse'];
-                            $array_entreprises[$top]['code_postale']  = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_code_postale'];
+                            $array_entreprises[$top]['code_postale']  = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_code_postal'];
                             $array_entreprises[$top]['commune']       = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_commune'];
-                            $array_entreprises[$top]['numero_siret']  = $_SESSION["info_travaux_annexes"][$prefix.'_numero_siret'];
+                            $array_entreprises[$top]['numero_siret']  = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_numero_siret'];
                             $array_entreprises[$top]['type']          = $prefix;
-                            
                             $top++;
                         }
                     }
+                    
                     if(count($array_entreprises)>0){
                         foreach ($array_entreprises as $key => $array_entreprise) {
                             if(!empty($array_entreprise)){

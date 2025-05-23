@@ -1,11 +1,6 @@
-<?php
-    error_reporting(0);
-?>
 <section>
     <!-- Situation de l'ouvrage -->
     <form action="" method="post">
-
-
             <!-- Zone inondable -->
         <div>
             <span class="text-gray-500 font-medium">Est-il situé dans une zone inondable ? &ensp;&ensp;

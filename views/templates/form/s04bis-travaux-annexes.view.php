@@ -1,12 +1,16 @@
 <?php
     error_reporting(0);
 ?>
+    <div class="mt-4">
+        <h2 class="text-2xl text-gray-500 font-medium">Travaux annexes</h2>
+    </div>
 <form action="" method="post">
+    
     <!-- Construction bois -->
     <?php
     if($_SESSION["info_situation"]['situation_boi']=="1"):
     ?>        
-    <hr>
+    <hr>    
     <div class="mt-4">
         <h3 class="text-xl text-gray-500 font-medium">Construction en bois</h3>
         <div class="ml-10 mt-4">

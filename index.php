@@ -10,6 +10,8 @@
     if(empty($_SESSION['user_id'])){
         $_SESSION['user_id']=null;
     }
+
+    
     // Vide la superglobale $_SESSION
     // $_SESSION = [];
     if (isset($_GET['page'])){

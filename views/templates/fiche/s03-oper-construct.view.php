@@ -12,56 +12,96 @@
             echo "<strong>Construction neuve</strong>";
         }elseif(isset($DATA['nature_neuf_exist']) && $DATA['nature_neuf_exist'] == "existante"){
             echo "<div class='flex flex-row'>
-                    <strong>Travaux sur construction existante </strong>
-                    <div class='flex flex-col'>";
+                    
+                    <div class='flex flex-col'><strong>Travaux sur construction existante </strong>";
                         if(isset($DATA['nature_operation_surelev']) && $DATA['nature_operation_surelev'] == 1){
-                            echo "<div class='ml-6'>
-                            <strong>Surélévation</strong>";
-                            if(isset($DATA['nature_operation_surelev_sous_oeuvre']) && $DATA['nature_operation_surelev_sous_oeuvre'] == 1){
-                                $content = boxDisplay("Reprise en sous-oeuvre / Travaux sur fondation");
-                                echo $content;
-                            }
-                            if(isset($DATA['nature_operation_surelev_hors_fond']) && $DATA['nature_operation_surelev_hors_fond'] == 1){
-                                $content = boxDisplay("Intervention sur la structure existante (hors fondation)");
-                                echo $content;
-                            }
+                            echo '<div class="ml-6">
+                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Surélévation:</h2>
+                                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
+
+                                        if(isset($DATA['nature_operation_surelev_sous_oeuvre']) && $DATA['nature_operation_surelev_sous_oeuvre'] == 1){
+                                                echo '<li class="flex items-center">
+                                                    <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                    </svg>
+                                                    Reprise en sous-oeuvre / Travaux sur fondation
+                                                </li>';                                
+                                        }
+                                        if(isset($DATA['nature_operation_surelev_hors_fond']) && $DATA['nature_operation_surelev_hors_fond'] == 1){
+                                                echo '<li class="flex items-center">
+                                                    <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                    </svg>
+                                                    Intervention sur la structure existante (hors fondation)
+                                                </li>';   
+                                        }
+                                    echo '</ul>';
                             echo "</div>";
                         }
-
+                        
                         if($DATA['nature_operation_ext_horizont'] == 1){
-                            echo "<div class='ml-6'>
-                                    <strong>Extension horizontale</strong>";
-                                    if(isset($DATA['nature_operation_ext_horizont_exist']) && $DATA['nature_operation_ext_horizont_exist'] == 1){
-                                        $content = boxDisplay("Intervention sur la structure existante y compris la fondation");
-                                        echo $content;
-                                    }
-                            echo "</div>";
+                            echo '<div class="ml-6">
+                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Extension horizontale:</h2>
+                                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
+
+                                        if(isset($DATA['nature_operation_ext_horizont_exist']) && $DATA['nature_operation_ext_horizont_exist'] == 1){
+                                                echo '<li class="flex items-center">
+                                                    <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                    </svg>
+                                                    Intervention sur la structure existante y compris la fondation
+                                                </li>';   
+                                        }
+                                    echo '</ul>'; 
+                            echo "</div>";                           
                         }
 
                         if($DATA['nature_operation_renovation'] == 1){
-                            echo "<div class='ml-6'>
-                                    <strong>Rénovation</strong>
-                                    ";
+                            echo '<div class="ml-6">
+                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Rénovation:</h2>
+                                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
+
                                     if(isset($DATA['nature_operation_renovation_fond']) && $DATA['nature_operation_renovation_fond'] == 1){
-                                        $content = boxDisplay("Intervention sur la structure existante y compris la fondation");
-                                        echo $content;
+                                        echo '<li class="flex items-center">
+                                            <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Intervention sur la structure existante y compris la fondation
+                                        </li>';
                                     }
                                     if(isset($DATA['nature_operation_renovation_iso_therm']) && $DATA['nature_operation_renovation_iso_therm'] == 1){
-                                        $content = boxDisplay("Isolation thermique extérieure");
-                                        echo $content;
+                                      echo '<li class="flex items-center">
+                                            <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Isolation thermique extérieureon
+                                        </li>';                                        
                                     }
                                     if(isset($DATA['nature_operation_renovation_refect_toit']) && $DATA['nature_operation_renovation_refect_toit'] == 1){
-                                        $content = boxDisplay("Réfection de toiture");
-                                        echo $content;
+                                      echo '<li class="flex items-center">
+                                            <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Réfection de toiture
+                                        </li>';                                          
                                     }
                                     if(isset($DATA['nature_operation_renovation_etancheite']) && $DATA['nature_operation_renovation_etancheite'] == 1){
-                                        $content = boxDisplay("Travaux d'étanchéité");
-                                        echo $content;
+                                      echo '<li class="flex items-center">
+                                            <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Travaux d\'étanchéité
+                                        </li>';                                         
                                     }
                                     if(isset($DATA['nature_operation_renovation_ravalement']) && $DATA['nature_operation_renovation_ravalement'] == 1){
-                                        $content = boxDisplay("Ravalement de façade");
-                                        echo $content;
+                                        echo '<li class="flex items-center">
+                                            <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Ravalement de façade
+                                        </li>';                                                
                                     }
+                            echo '</ul>';
                             echo "</div>";
                         }
 
@@ -154,16 +194,18 @@
         </div>
 
         <div class="flex flex-col">
-            <h3>Adresse de la construction :</h3>
+            <h2>Adresse de la construction :</h2>
             <div class="flex flex-col pl-8">
-                <strong class="pl-4"><?php if(isset($DATA['construction_adresse_num_nom_rue'])){ echo $DATA['construction_adresse_num_nom_rue'];}; ?></strong>
-                <strong class="pl-4"><?php if(isset($DATA['construction_adresse_esc_res_bat'])){ echo $DATA['construction_adresse_esc_res_bat'];};  ?></strong>
-                <strong class="pl-4"><?php if(isset($DATA['construction_adresse_lieu_dit'])){ echo $DATA['construction_adresse_lieu_dit'];}; ?></strong>
-                <strong class="pl-4"><?php if(isset($DATA['construction_adresse_arrond'])){ echo $DATA['construction_adresse_arrond'];}; ?> ième arrondissement</strong>
+                <strong class="pl-4">
+                <?php if(isset($DATA['construction_adresse_num_nom_rue'])){ echo $DATA['construction_adresse_num_nom_rue']."<br>";}; ?>
+                <?php if(isset($DATA['construction_adresse_esc_res_bat'])){ echo $DATA['construction_adresse_esc_res_bat']."<br>";};  ?>
+                <?php if(isset($DATA['construction_adresse_lieu_dit'])){ echo $DATA['construction_adresse_lieu_dit']."<br>";}; ?>
+                <?php if(isset($DATA['construction_adresse_arrond'])){ echo $DATA['construction_adresse_arrond']."&nbsp;ième arrondissement<br>";}; ?> 
                 <div>
-                    <strong class="pl-4"><?php if(isset($DATA['construction_adresse_code_postal'])){ echo $DATA['construction_adresse_code_postal'];}; ?></strong>
-                    <strong class="pl-2"><?php if(isset($DATA['construction_adresse_commune'])){ echo $DATA['construction_adresse_commune'];}; ?></strong>
+                    <?php if(isset($DATA['construction_adresse_code_postal'])){ echo $DATA['construction_adresse_code_postal'];}; ?>
+                    <?php if(isset($DATA['construction_adresse_commune'])){ echo $DATA['construction_adresse_commune'];}; ?>
                 </div>
+                </strong>
             </div>
         </div>
 

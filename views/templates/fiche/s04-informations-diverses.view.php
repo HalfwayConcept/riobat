@@ -96,7 +96,10 @@
             <div class='ml-6'>
                 <?php 
                     if(isset($DATA['sol']) && $DATA['sol'] == 1){
-                        echo coordFormDisplay('sol',$array_entreprises['sol'],true);
+
+                        echo "<div class='ml-6'>";
+                            echo viewEntreprise($DATA['sol_entreprise_id']);
+                        echo "</div>";
                         echo "Mission :";
                             switch ($DATA['sol_bureau_mission']){
                                 case 'g2_amp':

@@ -5,6 +5,14 @@
     if(isset($DATA['situation_boi']) && $DATA['situation_boi'] == 1):
     ?>
     <div id="situation_boi">
+        <?php 
+            if(!empty($DATA['boi_entreprise_id'])){
+                echo "<strong class='ml-6'>Entreprise réalisant la construction en bois :</strong>";
+                echo "<div class='ml-6'>";
+                    echo viewEntreprise($DATA['boi_entreprise_id']);
+                echo "</div>";
+            }
+        ?>        
         <div class='ml-6'>
             <?php 
                 if(isset($DATA['trav_annexes_constr_bois']) && $DATA['trav_annexes_constr_bois'] == 1){
@@ -26,12 +34,7 @@
                 }
             ?>
         </div>
-        <?php 
-            if(!empty($DATA['boi_entreprise_id'])){
-                echo "<strong class='ml-6'>Entreprise réalisant la construction en bois :</strong>";
-                echo coordFormDisplay('boi',$array_entreprises['boi'],true);
-            }
-        ?>
+
     </div>
     <?php 
     endif; //fin bois
@@ -41,7 +44,9 @@
     <div id="situation_phv">
         <?php 
             echo "<strong class='ml-6'>Entreprise réalisant la pause de photovoltaïque :</strong>";
-            echo coordFormDisplay('phv',$array_entreprises['phv'],true);
+            echo "<div class='ml-6'>";
+                echo viewEntreprise($DATA['phv_entreprise_id']);
+            echo "</div>";
             ?>
             <div class='ml-6'>
             <?php 
@@ -83,7 +88,7 @@
             <?php 
             if(isset($DATA['trav_annexes_pv_destination'])){
                 if($DATA['trav_annexes_pv_destination'] == "revente"){
-                echo "<strong>L'électricité produite par l'intallation photovoltaïque est destinée à la revente à un opérateur dans le domaine de l'énergie</strong>";
+                    echo "<strong>L'électricité produite par l'intallation photovoltaïque est destinée à la revente à un opérateur dans le domaine de l'énergie</strong>";
                 }elseif($DATA['trav_annexes_pv_destination'] == "autocons"){
                     echo "<strong>L'électricité produite par l'intallation photovoltaïque est destinée à l'autoconsommation</strong>";
                 }
@@ -95,34 +100,14 @@
 
     if(isset($DATA['situation_geo']) && $DATA['situation_geo'] == 1):
     ?>
-
     <div id="situation_geo">
         <div class="mt-10">
             <?php
                 if(isset($DATA['situation_geo']) && $DATA['situation_geo'] == 1){
                     echo "<h3>Géothermie : Entreprise réalisant les forages :</h3>";
-                    echo "<div class='ml-6'>
-                            <div class='flex flex-row'>
-                                <h3>Nom entreprise ou raison sociale</h3>
-                                <strong class='pl-4'>".$DATA['geo_entreprise_raison_sociale']."</strong>
-                            </div>
-                            <div class='flex flex-row'>
-                                <h3>Nom</h3>
-                                <strong class='pl-4'>".$DATA['geo_entreprise_nom']."</strong>
-                            </div>
-                            <div class='flex flex-row'>
-                                <h3>Prénom</h3>
-                                <strong class='pl-4'>".$DATA['geo_entreprise_prenom']."</strong>
-                            </div>
-                            <div class='flex flex-row'>
-                                <h3>Adresse</h3>
-                                <strong class='pl-4'>".$DATA['geo_entreprise_adresse']."&nbsp;".$DATA['geo_entreprise_code_postal']."&nbsp;".$DATA['geo_entreprise_commune']."</strong>
-                            </div>
-                            <div class='flex flex-row'>
-                                <h3>Siret n°</h3>
-                                <strong class='pl-4'>".$DATA['geo_entreprise_numero_siret']."</strong>
-                            </div>
-                        </div>";
+                    echo "<div class='ml-6'>";
+                        echo viewEntreprise($DATA['geo_entreprise_id']);
+                    echo "</div>";
                     }else{
                         echo "<strong>Pas d'installation géothermique</strong>";
                     }
@@ -138,28 +123,9 @@
         <div class="mt-10">
             <?php
             echo "<strong class='ml-6'>Contrôleur technique :</strong>";
-            echo "<div class='ml-6'>
-                    <div class='flex flex-row'>
-                        <h3>Nom entreprise ou raison sociale</h3>
-                        <strong class='pl-4'>".$DATA['ct_entreprise_raison_sociale']."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Nom</h3>
-                        <strong class='pl-4'>".$DATA['ct_entreprise_nom']."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Prénom</h3>
-                        <strong class='pl-4'>".$DATA['ct_entreprise_prenom']."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Adresse</h3>
-                        <strong class='pl-4'>".$DATA['ct_entreprise_adresse']."&nbsp;".$DATA['ct_entreprise_code_postal']."&nbsp;".$DATA['ct_entreprise_commune']."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Siret n°</h3>
-                        <strong class='pl-4'>".$DATA['ct_entreprise_numero_siret']."</strong>
-                    </div>
-                </div>";
+            echo "<div class='ml-6'>";
+                echo viewEntreprise($DATA['ctt_entreprise_id']);
+            echo "</div>";
 
             ?>
             <div class="mt-10 ml-2">
@@ -222,32 +188,9 @@
     <div>
         <?php
         echo "<h3>Désignation du constructeur non réalisateur :</h3>";
-        echo "<div class='ml-6'>
-                <div class='flex flex-row'>
-                    <h3>Nom entreprise ou raison sociale</h3>
-                    <strong class='pl-4'>".$DATA['cnr_entreprise_raison_sociale']."</strong>
-                </div>
-                <div class='flex flex-row'>
-                    <h3>Nom</h3>
-                    <strong class='pl-4'>".$DATA['cnr_entreprise_nom']."</strong>
-                </div>
-                <div class='flex flex-row'>
-                    <h3>Prénom</h3>
-                    <strong class='pl-4'>".$DATA['cnr_entreprise_prenom']."</strong>
-                </div>
-                <div class='flex flex-row'>
-                    <h3>Adresse</h3>
-                    <strong class='pl-4'>".$DATA['cnr_entreprise_adresse']."&nbsp;".$DATA['cnr_entreprise_code_postal']."&nbsp;".$DATA['cnr_entreprise_commune']."</strong>
-                </div>
-                <div class='flex flex-row'>
-                    <h3>Siret n°</h3>
-                    <strong class='pl-4'>".$DATA['cnr_entreprise_numero_siret']."</strong>
-                </div>
-                <div class='flex flex-row'>
-                    <h3>Siret n°</h3>
-                    <strong class='pl-4'>".$DATA['cnr_qualite']."</strong>
-                </div>
-            </div>";
+        echo "<div class='ml-6'>";
+            echo viewEntreprise($DATA['cnr_entreprise_id']);
+        echo "</div>";
 
         ?>
     </div>     

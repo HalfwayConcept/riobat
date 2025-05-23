@@ -2,7 +2,7 @@
         function coordFormDisplay($type, $array_entreprise, $read = false){
         
             if($read === true){
-                $coordform = file_get_contents('views/templates/fiche/view-entreprise.template.html');
+                
                 $prefix_key ="";
             }else{
                 $coordform = file_get_contents('views/templates/form/form-entreprise.template.html');                
@@ -20,13 +20,13 @@
             $commune ="";
             $numero_siret ="";
 
-            if(!empty($array_entreprise[$prefix_key.'raison_sociale'])){$raison_social = $array_entreprise[$prefix_key.'raison_sociale'];}
-            if(!empty($array_entreprise[$prefix_key.'nom'])){$nom = $array_entreprise[$prefix_key.'nom'];}
-            if(!empty($array_entreprise[$prefix_key.'prenom'])){$prenom = $array_entreprise[$prefix_key.'prenom'];}
-            if(!empty($array_entreprise[$prefix_key.'code_postal'])){$code_postal = $array_entreprise[$prefix_key.'code_postal'];}
-            if(!empty($array_entreprise[$prefix_key.'adresse'])){$adresse = $array_entreprise[$prefix_key.'adresse'];}
-            if(!empty($array_entreprise[$prefix_key.'commune'])){$commune = $array_entreprise[$prefix_key.'commune'];}
-            if(!empty($array_entreprise[$prefix_key.'numero_siret'])){$numero_siret = $array_entreprise[$prefix_key.'numero_siret'];}
+            if(!empty($array_entreprise[$prefix_key.'raison_sociale'])){    $raison_social = $array_entreprise[$prefix_key.'raison_sociale'];}
+            if(!empty($array_entreprise[$prefix_key.'nom'])){               $nom = $array_entreprise[$prefix_key.'nom'];}
+            if(!empty($array_entreprise[$prefix_key.'prenom'])){            $prenom = $array_entreprise[$prefix_key.'prenom'];}
+            if(!empty($array_entreprise[$prefix_key.'code_postal'])){       $code_postal = $array_entreprise[$prefix_key.'code_postal'];}
+            if(!empty($array_entreprise[$prefix_key.'adresse'])){           $adresse = $array_entreprise[$prefix_key.'adresse'];}
+            if(!empty($array_entreprise[$prefix_key.'commune'])){           $commune = $array_entreprise[$prefix_key.'commune'];}
+            if(!empty($array_entreprise[$prefix_key.'numero_siret'])){      $numero_siret = $array_entreprise[$prefix_key.'numero_siret'];}
             
             if(!empty($array_entreprise[$prefix_key.'id'])){
                 $ID = $array_entreprise[$prefix_key.'id'];                
@@ -60,42 +60,53 @@
             return $coordform;
         }
 
-        function viewEntreprise($array_entreprise){
-
-            $echo ="";
-            $type = $array_entreprise["type"];
-            switch ($type) {
-                case 'phv':
-                    $echo .="<strong>Entreprise réalisant l'installation des panneaux photovoltaïques :</strong>";
-                    break;
-                
-                default:
-                    # code...
-                    break;
-            }
+        function viewEntreprise($entreprise_id){
+            $array_entreprise = loadEntreprise($entreprise_id);
+            $type = $array_entreprise["type"];    
+            $echo = '<fieldset class="grid md:grid-cols-2 md:gap-6 border-2 border-gray-400 p-4">
+                            <legend class="mx-2 p-2 text-sm">
+                                <img class="h-6" src="public/pictures/icons/'.$type.'.png"> '.$entreprise_id.'
+                            </legend>';
                         
-            $echo .="<div class='ml-6'>
-                    <div class='flex flex-row'>
-                        <h3>Nom entreprise ou raison sociale</h3>
-                        <strong class='pl-4'>".$array_entreprise["raison_sociale"]."</strong>
-                    </div>            
-                    <div class='flex flex-row'>
-                        <h3>Nom</h3>
-                        <strong class='pl-4'>".$array_entreprise["nom"]."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Prénom</h3>
-                        <strong class='pl-4'>".$array_entreprise["prenom"]."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Adresse</h3>
-                        <strong class='pl-4'>".$array_entreprise["adresse"]."&nbsp;".$array_entreprise["code_postal"]."&nbsp;".$array_entreprise["commune"]."</strong>
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Siret n°</h3>
-                        <strong class='pl-4'>".$array_entreprise["numero_siret"]."</strong>
-                    </div>
-                </div>";
+                        $echo .= '<div class="relative z-0 w-full mb-5 group">
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Nom entreprise ou raison sociale
+                                        <strong class="pl-4">'.$array_entreprise["raison_sociale"].'</strong>
+                                    </label>
+                                </div>
+                                <div class="relative z-0 w-full mb-5 group">                                
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Siret n°
+                                        <strong class="pl-4">'.$array_entreprise["numero_siret"].'</strong>
+                                    </label>
+                                </div>';
+
+                                $echo .= '<div class="relative z-0 w-full mb-5 group">
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Nom
+                                        <strong class="pl-4">'.$array_entreprise["nom"].'</strong>
+                                    </label>
+                                </div>
+                                <div class="relative z-0 w-full mb-5 group">                                
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Prénom 
+                                        <strong class="pl-4">'.$array_entreprise["prenom"].'</strong>
+                                    </label>
+                                </div>';
+
+                                $echo .= '<div class="relative z-0 w-full mb-5 group">
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Adresse
+                                        <strong class="pl-4">'.$array_entreprise["adresse"].'</strong>
+                                    </label>
+                                </div>
+                                <div class="relative z-0 w-full mb-5 group">                                
+                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        Code Postal Ville 
+                                        <strong class="pl-4">'.$array_entreprise["code_postal"]."&nbsp;".$array_entreprise["commune"].'</strong>
+                                    </label>
+                                </div>';
+            $echo .= '</fieldset> ';     
             return $echo;
         }
 
@@ -175,7 +186,6 @@
                                 , `commune` = "'.$array_entreprise['commune'].'"
                                 , `numero_siret`= "'.$array_entreprise['numero_siret'].'"
                              WHERE id='.$entreprise_id ;  
-            //echo $sqlUpdate;
             
             $query = mysqli_query($GLOBALS["conn"], $sqlUpdate);
             return $entreprise_id;

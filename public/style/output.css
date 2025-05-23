@@ -19,3 +19,33 @@
     background-size: cover;
 }
 
+
+legend.mx-2.p-2.text-sm {
+    display: flex
+}
+
+
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    /* Cibler la section spécifique */
+    section.bg-slate-100 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Masquer les éléments non nécessaires à l'impression */
+    header, footer, .no-print {
+        display: none !important;
+    }
+
+    /* Assurez-vous que les images et autres éléments s'ajustent correctement */
+
+}
