@@ -108,7 +108,7 @@
             </div>
             <div id="sol_form" class="<?= isset($_SESSION['info_situation']['sol']) && ($_SESSION['info_situation']['sol'])==1 ? "" : "hidden"; ?> px-8 py-4">
                 <div>
-                    <?php echo coordFormDisplay('sol',$_SESSION['info_situation'] ); ?>
+                    <?php echo coordFormDisplay('sol',$_SESSION['info_situation']['sol_entreprise_id']   ); ?>
                 </div>
                 <div class="flex flex-col lg:flex-row ml-24 mt-2">
                     <span class="text-sm font-medium mt-2">Mission : &ensp;&ensp;</span>

@@ -1,7 +1,7 @@
 <?php
 
-
-    if(substr($_SESSION['action'], 0, 4) === "step"):
+    
+    if(substr($_GET['page'], 0, 4) === "step"):
     if($currentstep != 'rcd'):
     $home='';
     $currentstep1 = "text-gray-500 dark:text-gray-400";

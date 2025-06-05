@@ -78,6 +78,17 @@
         
         $array_datas = $array_fake_data;
 
+        $DATA = array();
+        if (isset($_GET['doid']) && !empty($_GET['doid'])) {    
+            $DATA = getRCD($_GET['doid']);
+            if (empty($DATA)) {
+                //header("Location: index.php?page=error");
+            } else {
+                // On remplace les valeurs de l'array par les valeurs de la BDD
+
+            }
+        }
+
         // Envoi des champs du formulaire
         if (isset($_POST['fields'])) {
             foreach ($_POST as $key => $value)
@@ -97,6 +108,7 @@
 
         // Remplissage de la variable $content
         ob_start();
+        require 'views/templates/fiche/do.header.view.php';
         require 'views/rcd.view.php';
         
         $content = ob_get_clean();

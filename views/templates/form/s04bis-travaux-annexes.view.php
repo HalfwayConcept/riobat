@@ -38,8 +38,8 @@
             </span>
         </div>
         <div class="ml-10 mt-4">
-            <span class="font-normal">Nom de l'entreprise réalisant la construction : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('boi', $_SESSION['info_travaux_annexes']); ?></div>
+            <span class="font-normal">Nom de l'entreprise réalisant la construction bois : &ensp;&ensp;</span>
+            <div><?php echo coordFormDisplay('boi', $_SESSION['info_travaux_annexes']["boi_entreprise_id"]); ?></div>
         </div>
     </div>
     <?php
@@ -119,7 +119,7 @@
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Nom de l'entreprise réalisant l'installation : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('phv', $_SESSION['info_travaux_annexes']); ?></div>
+            <div><?php echo coordFormDisplay('phv', $_SESSION['info_travaux_annexes']["phv_entreprise_id"]); ?></div>
         </div>
     </div>
     <?php
@@ -151,7 +151,7 @@
         <h3 class="text-xl text-gray-500 font-medium">Contrôleur technique</h3>
         <div class="ml-10 mt-6">
             <span class="font-normal">Nom du contrôleur technique : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('ctt', $_SESSION['info_travaux_annexes']); ?></div>
+            <div><?php echo coordFormDisplay('ctt', $_SESSION['info_travaux_annexes']["ctt_entreprise_id"]); ?></div>
         </div>
         <div class="ml-10 mt-14">
             <h3 class="font-normal mb-4">Type de contrôle (choisissez l'option correspondante):</h3>
@@ -183,7 +183,7 @@
     <div class="mt-4">
         <h3 class="text-xl text-gray-500 font-medium">Désignation du constructeur non réalisateur</h3>
         <div class="ml-10">
-            <?php echo coordFormDisplay('cnr',$_SESSION['info_travaux_annexes'] ); ?>
+            <?php echo coordFormDisplay('cnr',$_SESSION['info_travaux_annexes']["cnr_entreprise_id"] ); ?>
         </div>
         <div class="my-2 ml-10">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Intervenant en qualité de ?</label>

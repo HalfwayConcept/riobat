@@ -2,7 +2,7 @@
     require "models/admin.model.php";
     require_once "models/do.model.php";
     require_once "models/user.model.php";
-
+    require_once "models/entreprise.model.php";
     function infoAlerts($message, $type){
 
         switch ($type) {

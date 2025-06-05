@@ -16,7 +16,9 @@
         </div>
         <div id="moe_form" class="<?= isset($_SESSION['info_dommage_ouvrage']['intervention']) && ($_SESSION['info_dommage_ouvrage']['intervention'])==1 ? "" : "hidden"; ?> px-8 py-4">
             <div>
-                <?php echo coordFormDisplay('moe',$_SESSION['info_dommage_ouvrage']); ?>
+                <?php 
+                var_dump($_SESSION['info_dommage_ouvrage']);
+                echo coordFormDisplay('moe',$_SESSION['info_dommage_ouvrage']["moe_entreprise_id"]); ?>
             </div>
             <div class="flex mt-4">
                 <span class="font-normal">Est-il indépendant à l'égard des autres constructeurs et du maître d'ouvrage ?</span>

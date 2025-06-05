@@ -113,6 +113,7 @@
                         $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
                         $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
                     }else{
+                        
                         $id = insertEntreprise($array_entreprise);
                         $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
                         updateEntrepriseID($id, $prefix, $_SESSION["DOID"]);

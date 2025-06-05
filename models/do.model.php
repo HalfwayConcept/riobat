@@ -210,24 +210,6 @@
                     $_SESSION["info_".$table][$col] = $do[$col];                    
                 }
             }
-            
-
-            $array_type_entreprise =  array('geo','phv','boi','ctt', 'cnr', 'sol');
-            foreach ($array_type_entreprise as $type) {
-                if(is_numeric($do[$type."_entreprise_id"]) && $do[$type."_entreprise_id"]!=0){
-                    $loadEntreprise = loadEntreprise($do[$type."_entreprise_id"]);
-                    foreach ($loadEntreprise as $key => $value) {
-                        if($type == 'sol'){
-                            $_SESSION["info_situation"][$type."_".$key] = $value;
-                        }elseif($type == 'moe'){
-                            $_SESSION["info_dommage_ouvrage"][$type."_".$key] = $value;
-                        }else{
-                            $_SESSION["info_situation"][$type."_".$key] = $value;
-                        }
-                        
-                    }
-                }
-            }
     }
 
     /**

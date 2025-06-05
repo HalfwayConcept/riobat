@@ -1,49 +1,43 @@
 <?php
-        function coordFormDisplay($type, $array_entreprise, $read = false){
-        
-            if($read === true){
+        function coordFormDisplay($type, $entreprise_id){
+
+            if(!empty($entreprise_id)){
+                $entreprise[] = loadEntreprise($entreprise_id); 
+                $ID = $entreprise_id;
+                $raison_social = $entreprise[0]["raison_sociale"];
+                $nom = $entreprise[0]["nom"];
+                $prenom = $entreprise[0]["prenom"];
+                $code_postal = $entreprise[0]["code_postal"];
+                $adresse = $entreprise[0]["adresse"];
+                $commune = $entreprise[0]["commune"];
+                $numero_siret = $entreprise[0]["numero_siret"];  
                 
-                $prefix_key ="";
-            }else{
-                $coordform = file_get_contents('views/templates/form/form-entreprise.template.html');                
-                $prefix_key = $type.'_entreprise_';
-            }
-
-            //on ajoute la variable dans le résultat HTML généré
-            $coordform = str_replace('##type##',$type, $coordform);
-            
-            $raison_social = "";
-            $nom = "";
-            $prenom ="";
-            $code_postal ="";
-            $adresse ="";
-            $commune ="";
-            $numero_siret ="";
-
-            if(!empty($array_entreprise[$prefix_key.'raison_sociale'])){    $raison_social = $array_entreprise[$prefix_key.'raison_sociale'];}
-            if(!empty($array_entreprise[$prefix_key.'nom'])){               $nom = $array_entreprise[$prefix_key.'nom'];}
-            if(!empty($array_entreprise[$prefix_key.'prenom'])){            $prenom = $array_entreprise[$prefix_key.'prenom'];}
-            if(!empty($array_entreprise[$prefix_key.'code_postal'])){       $code_postal = $array_entreprise[$prefix_key.'code_postal'];}
-            if(!empty($array_entreprise[$prefix_key.'adresse'])){           $adresse = $array_entreprise[$prefix_key.'adresse'];}
-            if(!empty($array_entreprise[$prefix_key.'commune'])){           $commune = $array_entreprise[$prefix_key.'commune'];}
-            if(!empty($array_entreprise[$prefix_key.'numero_siret'])){      $numero_siret = $array_entreprise[$prefix_key.'numero_siret'];}
-            
-            if(!empty($array_entreprise[$prefix_key.'id'])){
-                $ID = $array_entreprise[$prefix_key.'id'];                
             }else{
                 $ID = "";
-            }
+                $raison_social = "";
+                $nom = "";
+                $prenom ="";
+                $code_postal ="";
+                $adresse ="";
+                $commune ="";
+                $numero_siret ="";
 
-            $coordform = str_replace('##valeur_entreprise_id##', $ID,$coordform);    
+            }            
+
+
+            $coordform = file_get_contents('views/templates/form/form-entreprise.template.html');                
+            $prefix_key = $type.'_entreprise_';
             
-            $coordform = str_replace('##valeur_entreprise_raison_sociale##', $raison_social,$coordform);
-            $coordform = str_replace('##valeur_entreprise_nom##', $nom,$coordform);
-            $coordform = str_replace('##valeur_entreprise_prenom##', $prenom,$coordform);
-            $coordform = str_replace('##valeur_entreprise_code_postal##', $code_postal,$coordform);
-            $coordform = str_replace('##valeur_entreprise_adresse##', $adresse,$coordform);
-            $coordform = str_replace('##valeur_entreprise_commune##', $commune,$coordform);            
-            $coordform = str_replace('##valeur_entreprise_numero_siret##', $numero_siret,$coordform);
-
+            //on ajoute la variable dans le résultat HTML généré
+            $coordform = str_replace('##type##'                                 , $type, $coordform);
+            $coordform = str_replace('##valeur_entreprise_id##'                 , $ID,$coordform);    
+            $coordform = str_replace('##valeur_entreprise_raison_sociale##'     , $raison_social,$coordform);
+            $coordform = str_replace('##valeur_entreprise_nom##'                , $nom,$coordform);
+            $coordform = str_replace('##valeur_entreprise_prenom##'             , $prenom,$coordform);
+            $coordform = str_replace('##valeur_entreprise_code_postal##'        , $code_postal,$coordform);
+            $coordform = str_replace('##valeur_entreprise_adresse##'            , $adresse,$coordform);
+            $coordform = str_replace('##valeur_entreprise_commune##'            , $commune,$coordform);            
+            $coordform = str_replace('##valeur_entreprise_numero_siret##'       , $numero_siret,$coordform);
 
             switch ($type) {
                 case 'sol':
@@ -152,7 +146,8 @@
                             "'.$array_entreprise['numero_siret'].'", "'.$type.'",
                             "","")';       
             $query = mysqli_query($GLOBALS["conn"], $sqlInsert);            
-            $entreprise_id = mysqli_insert_id($GLOBALS["conn"]);           
+            $entreprise_id = mysqli_insert_id($GLOBALS["conn"]);   
+             $_SESSION["SQL"]['entreprise_insert'][$type] = $sqlUpdate;          
             return $entreprise_id;
         };
 
@@ -186,6 +181,7 @@
                                 , `commune` = "'.$array_entreprise['commune'].'"
                                 , `numero_siret`= "'.$array_entreprise['numero_siret'].'"
                              WHERE id='.$entreprise_id ;  
+            $_SESSION["SQL"]['entreprise_upd'][$type] = $sqlUpdate;  
             
             $query = mysqli_query($GLOBALS["conn"], $sqlUpdate);
             return $entreprise_id;

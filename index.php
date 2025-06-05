@@ -2,7 +2,7 @@
     session_start();
 
     //session_destroy();
-    $_SESSION['env'] = 'prod'; //prod
+    $_SESSION['env'] = 'dev'; //prod
 
     include_once("inc/settings.php");
     require 'controllers/page-erreur.controller.php';
@@ -87,7 +87,9 @@
                 break;
         }
     }else{
-        errorDisplay();
+        //errorDisplay();
+        require 'controllers/home.controller.php';
+        homeDisplay('home');
     }
 
 ?>
