@@ -109,7 +109,7 @@
         // Remplissage de la variable $content
         ob_start();
         require 'views/templates/fiche/do.header.view.php';
-        require 'views/rcd.view.php';
+        require 'views/admin/rcd.view.php';
         
         $content = ob_get_clean();
         require("views/base.view.php");

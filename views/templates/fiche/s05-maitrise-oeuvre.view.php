@@ -58,16 +58,9 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg> Pas de garanties demandées
             </li>
-        
         <?php
-        
                 echo "<h3>Garanties demandées</h3>";
                 if(isset($DATA['garantie_do']) && $DATA['garantie_do'] == 1){
-                
-
-                ?>
-
-                <?php
                     echo "<strong class='pl-4'>Dommage Ouvrage</strong>";
                     }
                 if(isset($DATA['garantie_cnr']) && $DATA['garantie_cnr'] == 1){

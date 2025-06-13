@@ -30,7 +30,7 @@
                 $infodelete = infoAlerts('suppression réalisée avec succès', 'success');
                 deleteDo($_GET['deletedo']);
             }
-            require 'views/admin.view.php';
+            require 'views/admin/admin.view.php';
         }else{
             require 'views/page-erreur.view.php';
         }        
@@ -58,7 +58,15 @@
 
 
     function editDo($doid){
-        $_SESSION = getDo($doid);
-        print_r($_SESSION);
+        $title = "Edition de la demande Dommage Ouvrage n° ".$doid;
+        loadDo($doid);
+        //print_r($_SESSION);
+
+        ob_start();
+        require 'views/admin/edit.view.php';
         //header("Location: index.php?page=step1&doid=".$_GET['doid']);
+
+         
+        $content = ob_get_clean();
+        require("views/base.view.php");
     }
