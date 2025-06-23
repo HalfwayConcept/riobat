@@ -2,6 +2,7 @@
 
     require_once 'models/do.model.php';
     require_once 'models/entreprise.model.php';
+    require_once 'models/rcd.model.php';
 
     function validDisplay($currentstep){
         
@@ -29,3 +30,17 @@
             $content = ob_get_clean();
             require("views/base.view.php");
         }
+
+   function finalDisplay($currentstep){
+        
+            $title = "Recueil d'information Dommage ouvrage - Finalisation";         
+
+            // Remplissage de la variable $content
+            ob_start();
+
+            init_RCD_DOID($_SESSION['DOID']);
+            require 'views/finalisation.view.php';
+            $content = ob_get_clean();
+            require("views/base.view.php");
+        
+    }        

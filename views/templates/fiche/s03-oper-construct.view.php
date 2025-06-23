@@ -29,9 +29,9 @@
                                         }
                                         if(isset($DATA['nature_operation_surelev_hors_fond']) && $DATA['nature_operation_surelev_hors_fond'] == 1){
                                                 echo '<li class="flex items-center">
-                                                    <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                                                    </svg>
+                                                        <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                        </svg>
                                                     Intervention sur la structure existante (hors fondation)
                                                 </li>';   
                                         }
@@ -110,23 +110,28 @@
                                     <strong>Réhabilitation</strong>
                                     ";
                                     if(isset($DATA['nature_operation_rehabilitation_fond']) && $DATA['nature_operation_rehabilitation_fond'] == 1){
-                                        $content = boxDisplay("Intervention sur la structure existante y compris la fondation");
+                                        $content = boxDisplay($DATA['nature_operation_rehabilitation_fond'],"nature_operation_rehabilitation_fond","read");
+                                        $content .= "Intervention sur la structure existante y compris la fondation";
                                         echo $content;
                                     }
                                     if(isset($DATA['nature_operation_rehabilitation_iso_therm']) && $DATA['nature_operation_rehabilitation_iso_therm'] == 1){
-                                        $content = boxDisplay("Isolation thermique extérieure");
+                                        $content = boxDisplay($DATA['nature_operation_rehabilitation_iso_therm'],"nature_operation_rehabilitation_iso_therm","read");
+                                        $content .= "Isolation thermique extérieure";
                                         echo $content;
                                     }
                                     if(isset($DATA['nature_operation_rehabilitation_refect_toit']) && $DATA['nature_operation_rehabilitation_refect_toit'] == 1){
-                                        $content = boxDisplay("Réfection de toiture");
+                                        $content = boxDisplay($DATA['nature_operation_rehabilitation_refect_toit'],"nature_operation_rehabilitation_refect_toit","read");
+                                        $content .= "Réfection de toiture";
                                         echo $content;
                                     }
                                     if(isset($DATA['nature_operation_rehabilitation_etancheite']) && $DATA['nature_operation_rehabilitation_etancheite'] == 1){
-                                        $content = boxDisplay("Travaux d'étanchéité");
+                                        $content = boxDisplay($DATA['nature_operation_rehabilitation_etancheite'],"nature_operation_rehabilitation_etancheite","read");
+                                        $content .= "Travaux d'étanchéité";
                                         echo $content;
                                     }
                                     if(isset($DATA['nature_operation_rehabilitation_ravalement']) && $DATA['nature_operation_rehabilitation_ravalement'] == 1){
-                                        $content = boxDisplay("Ravalement de façade");
+                                        $content = boxDisplay($DATA['nature_operation_rehabilitation_ravalement'],"nature_operation_rehabilitation_ravalement","read");
+                                        $content .= "Ravalement de façade";
                                         echo $content;
                                     }
                             echo "</div>";
@@ -145,53 +150,83 @@
 
         <div class="mt-4">
             <h3>Type de l'ouvrage :</h3>
-            <div class="flex flex-col pl-8">
+            
                 <?php 
                     if(isset($DATA['type_ouvrage_mais_indiv']) && $DATA['type_ouvrage_mais_indiv'] == 1){
-                        echo "<div class='flex flex-row ml-6'>
-                                <strong>Maison individuelle</strong>";
-                        echo "<span class='flex flex-row'>";
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_mais_indiv'],"type_ouvrage_mais_indiv","read");
+                        $content .= "Maison individuelle";
+                        echo $content;   
                             if(isset($DATA['type_ouvrage_mais_indiv_piscine']) && $DATA['type_ouvrage_mais_indiv_piscine'] == 1){
-                                echo "<span class='font-medium ml-2'>: présence d'une piscine</span>";
-                                echo "<span class='font-medium ml-4'>( ".$DATA['type_ouvrage_mais_indiv_piscine_situation']." )</span>";
-                            }
-                        echo "</span>
-                            </div>";
+                                echo "<span class='flex flex-row'>";
+                                    echo "<span class='font-medium ml-2'>: présence d'une piscine</span>";
+                                    echo "<span class='font-medium ml-4'>( ".$DATA['type_ouvrage_mais_indiv_piscine_situation']." )</span>";
+                                echo "</span>";
+                            } 
+                        echo "</div>";
                     }
+
                     if(isset($DATA['type_ouvrage_ope_pavill']) && $DATA['type_ouvrage_ope_pavill'] == 1){
-                        $content = boxDisplay("Opération pavillonnaire :");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_ope_pavill'],"type_ouvrage_ope_pavill","read");
+                        $content .= "Opération pavillonnaire :";
+                        echo $content;
                         echo "<div class='flex flex-row'>".$content."&nbsp;<span>".$DATA['type_ouvrage_ope_pavill_nombre']." maisons</span></div>";
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_coll_habit']) && $DATA['type_ouvrage_coll_habit'] == 1){
-                        $content = boxDisplay("Collectif d'habitation :");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_coll_habit'],"type_ouvrage_coll_habit","read");
+                        $content .= "Collectif d'habitation :";
                         echo "<div class='flex flex-row'>".$content."&nbsp;<span>".$DATA['type_ouvrage_coll_habit_nombre']." appartements</span></div>";
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_bat_indus']) && $DATA['type_ouvrage_bat_indus'] == 1){
-                        $content = boxDisplay("Bâtiment à usage industriel ou agricole");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_bat_indus'],"type_ouvrage_bat_indus","read");
+                        $content .= "Bâtiment à usage industriel ou agricole";
                         echo $content;
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_centre_com']) && $DATA['type_ouvrage_centre_com'] == 1){
-                        $content = boxDisplay("Centre commercial, bâtiment à usage de vente :");
-                        echo "<div class='flex flex-row'>".$content."&nbsp;<span>".$DATA['type_ouvrage_centre_com_surf']." m²</span></div>";
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_centre_com'],"type_ouvrage_centre_com","read");
+                        $content.="Centre commercial, bâtiment à usage de vente :";
+                        echo $content;                        
+                        echo "<div class='flex flex-row'>".$DATA['type_ouvrage_centre_com_surf']." m²</div>";
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_bat_bur']) && $DATA['type_ouvrage_bat_bur'] == 1){
-                        $content = boxDisplay("Bâtiment à usage de bureau");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_bat_bur'],"type_ouvrage_bat_bur","read");
+                        $content .= "Bâtiment à usage de bureau";
                         echo $content;
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_hopital']) && $DATA['type_ouvrage_hopital'] == 1){
-                        $content = boxDisplay("Bâtiment d'établissement Hospitalier, de Maison de retraite, Clinique");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_hopital'],"type_ouvrage_hopital","read");
+                        $content .= "Bâtiment d'établissement Hospitalier, de Maison de retraite, Clinique";
                         echo $content;
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_vrd_privatif']) && $DATA['type_ouvrage_vrd_privatif'] == 1){
-                        $content = boxDisplay("Voirie réseaux Divers (VRD) à usage privatif d'un bâtiment");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_hopital'],"type_ouvrage_hopital","read");
+                        $content .= "Voirie réseaux Divers (VRD) à usage privatif d'un bâtiment";
                         echo $content;
+                        echo "</div>";
                     }
                     if(isset($DATA['type_ouvrage_autre_const']) && $DATA['type_ouvrage_autre_const'] == 1){
-                        $content = boxDisplay("Autre construction :");
+                        $content ='<div class="flex flex-row pl-8">';
+                        $content .= boxDisplay($DATA['type_ouvrage_hopital'],"type_ouvrage_hopital","read");
+                        $content .= "Autre construction :";
+                        echo $content;
                         echo "<div class='flex flex-row'>".$content."&nbsp;<span>".$DATA['type_ouvrage_autre_const_usage']."</span></div>";
+                        echo "</div>";
                     }
                     ?>                    
-        </div>
+             </div>
 
         <div class="flex flex-col">
             <h2>Adresse de la construction :</h2>

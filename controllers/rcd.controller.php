@@ -1,6 +1,7 @@
 <?php 
-    //require_once 'models/do.model.php';
+    require_once 'models/do.model.php';
     require_once 'models/rcd.model.php';
+    //require_once 'models/upload.php';
 
     function rcdDisplay($currentstep){
         
@@ -12,7 +13,9 @@
 
         $array_natures = getListNature();
 
-        $array_fake_data = array
+
+
+        /*$array_fake_data = array
         (
             0 => array
                     (
@@ -28,59 +31,28 @@
                         'annexefile' => '',
                         'annexefileremarque' => '',
                         'status' => '1'
-                    ),
-            1 => array
-                    (
-                        'nom' => 'MACON 48',
-                        'montant' => 35500,
-                        'nature' => 3,
-                        'nature-autre' => "",
-                        'debut' => '20/02/2022',
-                        'fin' => '20/02/2032',                        
-                        'folder' => '82f52dfc',
-                        'rcdfile' => '',
-                        'rcdfileremarque' => '',     
-                        'annexefile' => 'urssaf-justificatif-declaration-2024-03-20240425-09h11.pdf',
-                        'annexefileremarque' => 'Yes !  trop bien',
-                        'status' => '2'                                           
-                    ),
-            2 => array
-                    (
-                        'nom' => 'TTRAVO',
-                        'montant' => 35500,
-                        'nature' => 99,
-                        'nature-autre' => "chauffe-eau-solaire",
-                        'debut' => '20/02/2022',
-                        'fin' => '20/02/2032',                        
-                        'folder' => '82f52dfc',
-                        'rcdfile' => '',
-                        'rcdfileremarque' => '',     
-                        'annexefile' => 'urssaf-justificatif-declaration-2024-03-20240425-09h11.pdf',
-                        'annexefileremarque' => 'Encore mieux ☺️',
-                        'status' => '2'                                           
-                    ) ,
-            3 => array
-                    (
-                        'nom' => 'Carreleur',
-                        'montant' => 12500,
-                        'nature' => 11,
-                        'nature-autre' => "",
-                        'debut' => '20/02/2022',
-                        'fin' => '20/02/2032',                        
-                        'folder' => '82f52dfc',
-                        'rcdfile' => '',
-                        'rcdfileremarque' => '',     
-                        'annexefile' => '',
-                        'annexefileremarque' => '',
-                        'status' => '2'                                           
-                    )                                       
+                    ),                              
         );
         
-        $array_datas = $array_fake_data;
+        $array_datas = $array_fake_data;*/
 
+
+
+        if($_FILES){
+            var_dump($_FILES);
+        }
         $DATA = array();
-        if (isset($_GET['doid']) && !empty($_GET['doid'])) {    
-            $DATA = getRCD($_GET['doid']);
+        if (isset($_GET['doid']) && !empty($_GET['doid'])) {   
+
+            $DOID = $_GET['doid'];
+            $DATA = getDo($DOID);
+
+            $array_datas = getRcdByDoid($_GET['doid']);
+            echo "<pre>";
+            var_dump($array_datas);
+            echo "</pre>";
+            //var_dump($DATA_RCD);
+
             if (empty($DATA)) {
                 //header("Location: index.php?page=error");
             } else {

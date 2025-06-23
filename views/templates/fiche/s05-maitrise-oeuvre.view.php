@@ -16,7 +16,8 @@
             
             if(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 1)
             {
-                $content = boxDisplay("L'architecte ou le maitre d'oeuvre est indépendant à l'égard des autres constructeurs et du maitre d'ouvrage");
+                $content = boxDisplay($DATA['moe_intervention_independant'],"moe_intervention_independant","read");
+                $content .="L'architecte ou le maitre d'oeuvre est indépendant à l'égard des autres constructeurs et du maitre d'ouvrage";
                 echo $content;
             }
             elseif(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 0)
@@ -54,9 +55,7 @@
     <div class="flex flex-col">
         <ul class="max-w-md space-y-1 list-inside ml-6">
             <li class="flex items-center text-red-800 dark:text-red">
-                <svg class="w-6 h-6 text-red-800 dark:text-red" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg> Pas de garanties demandées
+
             </li>
         <?php
                 echo "<h3>Garanties demandées</h3>";

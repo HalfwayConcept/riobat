@@ -19,8 +19,6 @@
     $validation = $currentstep1;
     $validationcircle = $currentstep1circle;
  
-
-
     $currentrcd = $currentstep1;
     $currentrcdcircle = $currentstep1circle;
     switch ($currentstep){

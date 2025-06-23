@@ -100,25 +100,34 @@
             <div class="flex flex-col lg:flex-row ml-10 mt-6">
                 <span class="font-normal">Intervention d'un bureau spécialisé ? &ensp;&ensp;</span>
                 <div class="ml-8 text-gray-500 font-medium">
-                    <input type="radio" name="sol" value="1" <?= isset($_SESSION['info_situation']['sol']) && ($_SESSION['info_situation']['sol'])==1 ? "checked=checked" : ""; ?> onclick="showElement('sol_form')" required/>
+                    <input type="radio" name="situation_sol" value="1" <?= isset($_SESSION['info_situation']['situation_sol']) && ($_SESSION['info_situation']['situation_sol'])==1 ? "checked=checked" : ""; ?> onclick="showElement('situation_sol_form')" required/>
                     <label> Oui &ensp;</label>
-                    <input type="radio" name="sol" value="0" <?= isset($_SESSION['info_situation']['sol']) && ($_SESSION['info_situation']['sol'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('sol_form')"/>
+                    <input type="radio" name="situation_sol" value="0" <?= isset($_SESSION['info_situation']['situation_sol']) && ($_SESSION['info_situation']['situation_sol'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('sol_form')"/>
                     <label> Non</label>
                 </div>
             </div>
-            <div id="sol_form" class="<?= isset($_SESSION['info_situation']['sol']) && ($_SESSION['info_situation']['sol'])==1 ? "" : "hidden"; ?> px-8 py-4">
+            <div id="sol_form" class="<?= isset($_SESSION['info_situation']['situation_sol']) && ($_SESSION['info_situation']['situation_sol'])==1 ? "" : "hidden"; ?> px-8 py-4">
                 <div>
                     <?php echo coordFormDisplay('sol',$_SESSION['info_situation']['sol_entreprise_id']   ); ?>
                 </div>
                 <div class="flex flex-col lg:flex-row ml-24 mt-2">
                     <span class="text-sm font-medium mt-2">Mission : &ensp;&ensp;</span>
                     <div class="flex flex-row ml-8 text-gray-500 font-medium mt-2">
-                        <span><input type="radio" name="sol_bureau_mission" value="g2_amp" <?= isset($_SESSION['info_situation']['sol_bureau_mission']) && ($_SESSION['info_situation']['sol_bureau_mission'])=="g2_amp" ? "checked=checked" : ""; ?> onclick="hideElement('sol_bureau_mission_autre')"/> G2 AMP</span>
-                        <span class="ml-6"><input type="radio" name="sol_bureau_mission" value="g2_pro" <?= isset($_SESSION['info_situation']['sol_bureau_mission']) && ($_SESSION['info_situation']['sol_bureau_mission'])=="g2_pro" ? "checked=checked" : ""; ?> onclick="hideElement('sol_bureau_mission_autre')"/> G2 Pro</span>
-                        <span class="ml-6"><input type="radio" name="sol_bureau_mission" value="etude_sol_autre" <?= isset($_SESSION['info_situation']['sol_bureau_mission']) && ($_SESSION['info_situation']['sol_bureau_mission'])=="etude_sol_autre" ? "checked=checked" : ""; ?> onclick="showElement('sol_bureau_mission_autre')"/> Autre </span>
+                        <span>
+                            <input type="radio" name="situation_sol_bureau_mission" value="g2_amp" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_amp" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')"/> 
+                            G2 AMP
+                        </span>
+                        <span class="ml-6">
+                            <input type="radio" name="situation_sol_bureau_mission" value="g2_pro" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_pro" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')"/> 
+                            G2 Pro
+                        </span>
+                        <span class="ml-6">
+                            <input type="radio" name="situation_sol_bureau_mission" value="etude_sol_autre" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="etude_sol_autre" ? "checked=checked" : ""; ?> onclick="showElement('situation_sol_bureau_mission_autre')"/> 
+                            Autre 
+                        </span>
                     </div>
-                    <div id="sol_bureau_mission_autre" class="<?= isset($_SESSION['info_situation']['sol_bureau_mission']) && ($_SESSION['info_situation']['sol_bureau_mission'])=="etude_sol_autre" ? "" : "hidden"; ?> ml-4">
-                        <input type="text" name="sol_bureau_mission_champ" value="<?= isset($_SESSION['info_situation']['sol_bureau_mission_champ']) ? $_SESSION['info_situation']['sol_bureau_mission_champ'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez précisez"/>
+                    <div id="situation_sol_bureau_mission_autre" class="<?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="etude_sol_autre" ? "" : "hidden"; ?> ml-4">
+                        <input type="text" name="situation_sol_bureau_mission_champ" value="<?= isset($_SESSION['info_situation']['situation_sol_bureau_mission_champ']) ? $_SESSION['info_situation']['situation_sol_bureau_mission_champ'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez précisez"/>
                     </div>    
                 </div>
             </div>
@@ -127,9 +136,9 @@
                     Si présence d'un parking et/ou de voiries, l'étude de sol vise-t-elle également ces ouvrages ?  &ensp;&ensp;
                 </span>
                 <div class="text-gray-500 font-medium">
-                    <input type="radio" name="sol_parking" value="1" <?= isset($_SESSION['info_situation']['sol_parking']) && ($_SESSION['info_situation']['sol_parking'])==1 ? "checked=checked" : ""; ?> required/>
+                    <input type="radio" name="situation_sol_parking" value="1" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==1 ? "checked=checked" : ""; ?> required/>
                     <label> Oui &ensp;</label>
-                    <input type="radio" name="sol_parking" value="0" <?= isset($_SESSION['info_situation']['sol_parking']) && ($_SESSION['info_situation']['sol_parking'])==0 ? "checked=checked" : ""; ?>/>
+                    <input type="radio" name="situation_sol_parking" value="0" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==0 ? "checked=checked" : ""; ?>/>
                     <label> Non</label>
                 </div>
             </div>

@@ -1,7 +1,12 @@
 function showElement(elementhidden, type = ""){
     var element = document.getElementById(elementhidden);
     if(type != ""){
-        var required = document.getElementById(type+"_entreprise_raison_sociale");
+        if(type === "moa"){
+            var required = document.getElementById("moa_souscripteur_form_raison_sociale");
+        }else{
+             var required = document.getElementById(type+"_entreprise_raison_sociale");
+        }
+       
         // ✅ Set required attribute
         required.setAttribute('required', '');
     }    
@@ -12,9 +17,15 @@ function hideElement(elementvisible, type){
     var element = document.getElementById(elementvisible);
         element.classList.add('hidden');
     if(type != ""){
-        var required = document.getElementById(type+"_entreprise_raison_sociale");
-        // ✅ Remove required attribute
-        required.removeAttribute('required');
+        console.log(type);
+        if(type === "moa"){
+            var required = document.getElementById("moa_souscripteur_form_raison_sociale");
+            console.log(required);
+        }else{
+            var required = document.getElementById(type+"_entreprise_raison_sociale");
+            // ✅ Remove required attribute
+            required.removeAttribute('required');            
+        }
     }          
 }
 

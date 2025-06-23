@@ -1,8 +1,9 @@
 <?php
 //session_start();
 
-//require_once __DIR__ . '/inc/flash.php';
-//require_once __DIR__ . '/inc/functions.php';
+
+
+require_once 'connect.db.php';
 
 const ALLOWED_FILES = [
     'image/png' => 'png',
@@ -10,10 +11,11 @@ const ALLOWED_FILES = [
     'application/pdf' => 'pdf',
 ];
 
-const MAX_SIZE = 10 * 1024 * 1024; //  10MB
+const MAX_SIZE = 20  * 1024 * 1024; //  20MB
 
 const UPLOAD_DIR = ROOT_PATH . UPLOAD_FOLDER;
-if(!empty($_POST['folder'])){ $folder = $_POST['folder']."/";}
+//if(!empty($_POST['folder'])){ $folder = $_POST['folder']."/";}
+$folder = getFolderName($_GET['doid']);
 
 
 $is_post_request = strtolower($_SERVER['REQUEST_METHOD']) === 'post';
@@ -105,3 +107,5 @@ function get_mime_type(string $filename)
 
     return $mime_type;
 }
+
+

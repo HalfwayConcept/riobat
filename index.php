@@ -40,6 +40,10 @@
                 require 'controllers/validation.controller.php';
                 validDisplay($currentstep);
                 break;
+            case 'final_step':
+                require 'controllers/validation.controller.php';
+                finalDisplay($currentstep);
+                break;                
             case 'rcd':
                 require 'controllers/rcd.controller.php';
                 rcdDisplay($currentstep);

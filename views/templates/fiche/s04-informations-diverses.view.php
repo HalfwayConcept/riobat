@@ -100,18 +100,17 @@
                         echo "<div class='ml-6'>";
                             echo viewEntreprise($DATA['sol_entreprise_id']);
                         echo "</div>";
-                        echo "Mission :";
-                            switch ($DATA['sol_bureau_mission']){
-                                case 'g2_amp':
-                                    echo "G2 AMP";
-                                    break;
-                                case 'g2_pro':
-                                    echo "G2 PRO";
-                                    break;
-                                case 'etude_sol_autre':
-                                    echo $DATA['sol_bureau_mission_champ'];
-                                    break;
-                            }
+                        switch ($DATA['sol_bureau_mission']){
+                            case 'g2_amp':
+                                echo "Mission : AMP";
+                                break;
+                            case 'g2_pro':
+                                echo "Mission :G2 PRO";
+                                break;
+                            case 'etude_sol_autre':
+                                echo "Mission :".$DATA['sol_bureau_mission_champ'];
+                                break;
+                        }
                     }
                 ?>
                 <div class='ml-6'>
@@ -124,14 +123,18 @@
             </div>
             <?php
                 if((isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1) || (isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1)){
-                    echo "<div class='flex flex-col mt-10'>
-                        <h3>Garanties demandées</h3>";
-                    if(isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1){
-                        echo "<strong class='ml-6'>Garanties complètes (CS n°811)</strong>";
-                    }
-                    if(isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1){
-                        echo "<strong class='ml-6'>Dommages matériels subits par les existants (CS n°811)</strong>";
-                    }
+                    echo "<h3>Garanties demandées</h3>";
+                    echo "<div class='flex flex-row mt-10'>";
+                        if(isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1){
+                            echo boxDisplay($DATA['situation_garanties_completes'],"situation_garanties_completes","read");
+                            echo "<strong class='ml-6'>Garanties complètes (CS n°811)</strong>";
+                        }
+
+                    
+                        if(isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1){
+                            echo boxDisplay($DATA['situation_garanties_dommages_existants'],"situation_garanties_dommages_existants","read");
+                            echo "<strong class='ml-6'>Dommages matériels subits par les existants (CS n°811)</strong>";
+                        }
                     echo "</div>";
                 }
             ?>

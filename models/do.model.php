@@ -112,7 +112,7 @@
                 }
                 
                 if(empty($value) && $value!=0){
-                    $value="null";
+                    $value=null;
                 }
                 array_push($array_values,$value);
                 $i++;
@@ -163,13 +163,28 @@
 
 
     // Affichage des intitulés des radio et checkbox
-    function boxDisplay($checked){
-        if($checked == 1){
-            $display = 'checked="checked"';
-        }else{
-            $display = "";
+    function boxDisplay($checked, $name, $mode = "write"){
+
+        if($mode == "write"){
+            if($checked == 1){
+                $display = 'checked="checked"';
+            }else{
+                $display = "";
+            }            
+            $str_checkbox = "<input type='checkbox' $display name='$name' value='1' ";
+
+        }elseif($mode == "read"){
+            if($checked == 1){                                        
+                 $str_checkbox = "<svg class='w-6 h-6 me-2 text-green-500 dark:text-green-400 shrink-0' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 20 20'>
+                                    <path d='M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z'/>
+                                </svg>"; 
+            }else{
+                 $str_checkbox = "<svg class='w-6 h-6 text-red-800 dark:text-red' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
+                                    <path stroke='currentColor' stroke-linecap='round' stroke-width='2' d='m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'/>
+                                </svg> ";
+            }
         }
-        return $display;
+        return $str_checkbox;
     };
 
 
@@ -188,6 +203,12 @@
 
         header( "Location: index.php?page=admin" );
 
+        return true;
+    }
+
+    function validDo($doid){
+        $updatestatusSql = "UPDATE `dommage_ouvrage` SET `status` = '1' WHERE `dommage_ouvrage`.`DOID` = $doid;";
+        mysqli_query($GLOBALS["conn"], $updatestatusSql);
         return true;
     }
 

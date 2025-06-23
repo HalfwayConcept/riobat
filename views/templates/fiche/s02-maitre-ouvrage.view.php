@@ -111,32 +111,32 @@
                         </tr>
                         <tr>
                             <td class="border-r-2 border-l-2 border-b border-gray-300 p-2 pl-4">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_conception_1']).'" name="moa_conception">
+                                '.boxDisplay($DATA['moa_conception_1'],"moa_conception_1","read").'
                                 <label>Conception</label>
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_conception_1']).'" name="moa_conception_1"></td>
+                                '.boxDisplay($DATA['moa_conception_1'],"moa_conception_1","read").'
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_conception_2']).'" name="moa_conception_2"></td>
+                                '.boxDisplay($DATA['moa_conception_2'],"moa_conception_2","read").'
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_conception_3']).'" name="moa_conception_3"></td>
+                                '.boxDisplay($DATA['moa_conception_3'],"moa_conception_3","read").'
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
                                 <input type="text" name="moa_conception_4" value="'.$DATA['moa_conception_4'].'"></td>
                         </tr>
                         <tr>
                             <td class="border-r-2 border-b border-l-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_direction']).' name="moa_direction">
+                                '.boxDisplay($DATA['moa_direction'],"moa_direction","read").'
                                 <label>Direction</label>
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_direction_1']).' name="moa_direction_1">
+                                '.boxDisplay($DATA['moa_direction_1'],"moa_direction_1","read").'
 
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_direction_2']).' name="moa_direction_2">
+                                '.boxDisplay($DATA['moa_direction_2'],"moa_direction_2","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_direction_3']).' name="moa_direction_3">
+                                '.boxDisplay($DATA['moa_direction_3'],"moa_direction_3","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
                                 <input type="text"  name="moa_direction_4" value="'.$DATA['moa_direction_4'].'">
@@ -144,16 +144,16 @@
                         </tr>
                         <tr>
                             <td class="border-r-2 border-b border-l-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_surveillance']).' name="moa_surveillance"> 
+                                '.boxDisplay($DATA['moa_surveillance'],"moa_surveillance","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_surveillance_1']).' name="moa_surveillance_1">
+                                '.boxDisplay($DATA['moa_surveillance_1'],"moa_surveillance_1","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_surveillance_2']).' name="moa_surveillance_2">
+                                '.boxDisplay($DATA['moa_surveillance_2'],"moa_surveillance_2","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_surveillance_3']).' name="moa_surveillance_3">
+                                '.boxDisplay($DATA['moa_surveillance_3'],"moa_","read").'
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
                                 <input type="text" name="moa_surveillance_4" value="'.$DATA['moa_surveillance_4'].'">
@@ -161,17 +161,17 @@
                         </tr>
                         <tr>
                             <td class="border-r-2 border-l-2 border-b-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_execution']).' name="moa_execution">
+                                '.boxDisplay($DATA['moa_execution'],"moa_execution","read").'
                                 <label>Exécution</label>
                             </td>
                             <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_execution_1']).' name="moa_execution_1">
+                                '.boxDisplay($DATA['moa_execution_1'],"moa_execution_1","read").'
                             </td>
                             <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_execution_2']).' name="moa_execution_2">
+                                '.boxDisplay($DATA['moa_execution_2'],"moa_execution_2","read").'
                             </td>
                             <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" disabled '.boxDisplay($DATA['moa_execution_3']).' name="moa_execution_3">
+                                '.boxDisplay($DATA['moa_execution_3'],"moa_execution_3","read").'
                             </td>
                             <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
                                 <input type="text" name="moa_execution_4" value="'.$DATA['moa_execution_4'].'">
