@@ -16,7 +16,7 @@
 <?php endif;?> 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <!-- component -->
-        <form action="" method="post" enctype="multipart/form-data">
+        <form id="'form-rcd" action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="folder" value="<?= getFolderName($_GET['doid']);?>">
                 <input type="hidden" name="fields" value="lots-techniques">
         <table class="border-collapse w-full"  id="lotsTechniquesTable">
@@ -43,7 +43,7 @@
             ?>
             <tr class="<?= $classbg;?> lg:hover:bg-gray-100 flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0">
                 <td class="w-full min-w-40 p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static">
-                    <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nom</span>
+                    <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">NOM DU LOT #<?=$item['rcd_id'];?></span>
                     <div class="relative z-0 w-full mb-5 group">
                         <input type="text" name="nom[]" value="<?= $item['raison_sociale']?>" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                         <label for="nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
@@ -97,8 +97,9 @@
                 <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <?php 
                     if(!empty($item['fichier'])):
+                        //un fichier existe déjà
                     ?>
-                    <a class="flex" target=_blank title="<?= $item['fichier']?>"  href="<?= $_SERVER['SERVER_NAME'].UPLOAD_FOLDER."/".$item['folder']."/".$item['rcdfile'];?>">
+                    <a class="flex" target=_blank title="<?= $item['fichier']?>"  href="<?=UPLOAD_FOLDER."/".$folder."/".$item['fichier'];?>">
                     <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
@@ -109,12 +110,12 @@
                     <div data-popover id="file-rcd-description-<?= $key;?>" role="tooltip" class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">                              
                         <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarques rcd</label>
                         <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ecrivez vos remarques ici">
-                        <?= $item['rcdfileremarque']?>
+                        <?= $item['fichier_remarque']?>
                         </textarea>
                     </div>  
-                    <?php endif;
-
-                    if(empty($item['fichier'])):
+                    <?php 
+                    else:
+                            // Pas de fichier rcd
                     ?>
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">rcd</span>
                     <!-- Button Upload -->
@@ -131,7 +132,7 @@
                                     <!-- Modal header -->
                                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                            Ajouter un fichier rcd <strong>"<?= $item['fichier']?>"</strong>
+                                           Responsabilité décennal <strong>"<?= $item['fichier']?>"</strong>
                                         </h3>
                                         <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="rcd-file-modal<?= $key;?>">
                                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -143,12 +144,12 @@
                                     <!-- Modal body -->
                                     <div class="p-4 md:p-5">
                                         <!-- form class="space-y-4" action="#" -->
-                                            
-                                            <input name="file_rcd" id="file_input" type="file" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" >
+                                            <input type="text" name="file_number[]" value="rcd-<?=$item['rcd_id'];?>">
+                                            <input name="file_rcd[]" id="file_input" type="file" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" >
                                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG or PDF</p>
 
                                             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarques</label>
-                                            <textarea id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ajouter ici vos remarques"></textarea>  
+                                            <textarea  name="rcdRemarques[]" id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ajouter ici vos remarques"></textarea>  
 
                                             <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" data-modal-hide="rcd-file-modal<?= $key;?>">
                                                 Confirmer
@@ -160,8 +161,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>   
-                        <?php endif;?>
+                        </div>  
+                    <?php endif;?>
                 </td>   
 
                 <!-- DEBUT DU TRAITEMENT ANNEXE -->
@@ -169,7 +170,7 @@
                     <?php 
                     if(!empty($item['annexe_fichier'])):
                     ?>
-                    <a class="flex" target=_blank title="<?= $item['annexe_fichier']?>"  href="<?= $_SERVER['SERVER_NAME'].UPLOAD_FOLDER."/".$item['folder']."/".$item['annexefile'];?>">
+                    <a class="flex" target=_blank title="<?= $item['annexe_fichier']?>"  href="<?= UPLOAD_FOLDER."/".$folder."/".$item['annexe_fichier'];?>">
                     <button class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
@@ -202,7 +203,7 @@
                                     <!-- Modal header -->
                                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                            Ajouter un fichier Annexe <strong>"<?= $item['nom']?>"</strong>
+                                            Ajouter un fichier Annexe <strong>"<?= $item['annexefile']?>"</strong>
                                         </h3>
                                         <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="annexe-file-modal<?= $key;?>">
                                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -219,7 +220,7 @@
                                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG or PDF</p>
 
                                             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarques</label>
-                                            <textarea id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ajouter ici vos remarques"></textarea>  
+                                            <textarea id="description" rows="4" name="annexeRemarques[]" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ajouter ici vos remarques"></textarea>  
 
                                             <button onclick="document.getElementById('upload-annexe-<?= $key;?>').classList.add('bg-green-500');" data-modal-hide="annexe-file-modal<?= $key;?>" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >
                                                 Confirmer
@@ -232,6 +233,8 @@
                                 </div>
                             </div>
                         </div>   
+                        <?php else:?>
+
                         <?php endif;?>
                 </td>    
                 
@@ -260,7 +263,7 @@
                                 <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
-                                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Etes vous sûr de vouloir supprimer le lot technique "<span id="lot-del"></span>" ?</h3>
+                                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Etes vous sûr de vouloir supprimer le lot technique "<span id="lot-del">X</span>" ?</h3>
                                 <button data-modal-hide="delete-modal" onclick="console.log(globalrow);deleteRow(globalrow)" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                                     Oui je suis sûr
                                 </button>
@@ -344,14 +347,16 @@
         <tr class="bg-white lg:hover:bg-gray-100 flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0">
             <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nom</span>
+                    <input type="hidden" name="lot_id[]" value="0" />
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="text" name="nom[]" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
+                        <input type="text" name="lot_nom[]" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <label for="lot_nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
                     </div>
                 </td>                
                 <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nature</span>
-                    <select name="nature[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                
+                    <select required name="lot_nature[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option>-- Lot technique --</option>
                             <?php
                             foreach ($array_natures as $nature) {                            
@@ -361,13 +366,13 @@
                             ?>
                             <option value='99'>-Autres-</option>
                     </select>
-                    <input type="text" name="autre[]" />
+                    <input class="" type="text" name="autre[]" placeholder="Autres...." />
                 </td>
                 <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Montant</span>
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="number" name="montant[]" value="" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="montant" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">€uros</label>
+                        <input type="number" min=0 name="lot_montant[]" value="" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" "  />
+                        <label for="lot_montant" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">€uros</label>
                     </div>
                 </td>                   
                 <td colspan=4 class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
@@ -386,10 +391,35 @@ function deleteRow(row) {
 
 
 function insRow() {
-  console.log('hi');
-    var tableltvierge = document.getElementById('lotsTechniquesTableVierge');
-    var new_row = tableltvierge.rows[0].cloneNode(true);
+    var tablevierge = document.getElementById('lotsTechniquesTableVierge');
+    var new_row = tablevierge.rows[0].cloneNode(true);
     var tablelt = document.getElementById('lotsTechniquesTable');
     tablelt.appendChild(new_row);  
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Remplace 'monFormulaire' par l'ID de ton formulaire
+  var form = document.getElementById('form-rcd');
+  var formModified = false;
+
+  // Écoute les changements sur le formulaire
+  form.addEventListener('input', function() {
+    formModified = true;
+    console.log('Formulaire modifié');
+  });
+
+  window.onbeforeunload = function(e) {
+    if (formModified) {
+      var confirmationMessage = "Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter la page ?";
+      e.returnValue = confirmationMessage; // Standard pour la plupart des navigateurs
+      return confirmationMessage;          // Pour certains anciens navigateurs
+    }
+  };
+
+  // Réinitialise formModified à false lorsque le formulaire est soumis
+  form.addEventListener('submit', function() {
+    formModified = false;
+  });
+});
 </script>

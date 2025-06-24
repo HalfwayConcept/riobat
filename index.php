@@ -11,6 +11,7 @@
         $_SESSION['user_id']=null;
     }
 
+    define('ROOT_PATH', dirname(__FILE__) );
     
     // Vide la superglobale $_SESSION
     // $_SESSION = [];

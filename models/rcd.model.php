@@ -16,10 +16,10 @@
     function getFolderName($DOID)
     {
         $folder = '';
-        $sql = "SELECT distinct(repertoire) FROM `rcd` where DOID=$DOID;";
+        $sql = "SELECT distinct(repertoire) as folder FROM `dommage_ouvrage` where DOID=$DOID;";
         $resquery   = mysqli_query($GLOBALS["conn"], $sql);
         $folder       = mysqli_fetch_all($resquery, MYSQLI_ASSOC);
-        return $folder[0];
+        return $folder[0]['folder'];
     }
 
 
@@ -33,6 +33,24 @@
         $DATA       = mysqli_fetch_all($resquery, MYSQLI_ASSOC);
         return $DATA;
     } 
+
+//création du souscripteur et de l'assurance dommage ouvrage + doid dans chaque table
+    function insert_rdc($array_values){
+
+        if (!empty($array_values) ){
+
+            $sql_rcd = "INSERT INTO `rcd` 
+            ( `DOID`,`rcd_nature_id`, `rcd_nom`, `montant`) 
+            VALUES ('".$array_values['doid']."','".$array_values['lot_nature']."', '".$array_values['lot_nom']."','".$array_values['lot_montant']."')";
+
+            //echo $sql_rcd;
+            $query = mysqli_query($GLOBALS["conn"], $sql_rcd);
+            if (!$query) {
+                die("Erreur lors de l'ajout de nouveaux lots: " . mysqli_error($GLOBALS["conn"]));
+            }
+        }
+        return true;
+    }    
 
     function init_RCD_DOID($DOID){
 

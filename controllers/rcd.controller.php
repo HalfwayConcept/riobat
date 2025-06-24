@@ -1,7 +1,7 @@
 <?php 
     require_once 'models/do.model.php';
     require_once 'models/rcd.model.php';
-    //require_once 'models/upload.php';
+    //
 
     function rcdDisplay($currentstep){
         
@@ -11,47 +11,16 @@
         $date = new DateTimeImmutable();
         $newfolder= hash('crc32', $date->getTimestamp());
 
-        $array_natures = getListNature();
-
-
-
-        /*$array_fake_data = array
-        (
-            0 => array
-                    (
-                        'nom' => 'GEVAUBOIS',
-                        'montant' => 5500,
-                        'nature' => 5,
-                        'nature-autre' => "",
-                        'debut' => '20/02/2024',
-                        'fin' => '20/02/2034',
-                        'folder' => '94f52dfc',
-                        'rcdfile' => 'urssaf-justificatif-declaration-2024-03-20240425-09h11.pdf',
-                        'rcdfileremarque' => 'Yes !  trop bien',
-                        'annexefile' => '',
-                        'annexefileremarque' => '',
-                        'status' => '1'
-                    ),                              
-        );
         
-        $array_datas = $array_fake_data;*/
 
-
-
-        if($_FILES){
-            var_dump($_FILES);
-        }
         $DATA = array();
         if (isset($_GET['doid']) && !empty($_GET['doid'])) {   
+            $folder = getFolderName($_GET['doid']);
 
             $DOID = $_GET['doid'];
             $DATA = getDo($DOID);
 
             $array_datas = getRcdByDoid($_GET['doid']);
-            echo "<pre>";
-            var_dump($array_datas);
-            echo "</pre>";
-            //var_dump($DATA_RCD);
 
             if (empty($DATA)) {
                 //header("Location: index.php?page=error");
@@ -62,15 +31,35 @@
         }
 
         // Envoi des champs du formulaire
-        if (isset($_POST['fields'])) {
+        if (isset($_POST)) {
+            if(!empty($_POST['lot_id'])){
+                foreach ($_POST['lot_id'] as $key => $value) {
+                    $array_values = array();
+                    # code...   
+                    $array_values['doid']           = $_GET['doid'];
+                    $array_values['lot_nom']        = $_POST['lot_nom'][$key];
+                    $array_values['lot_montant']    = $_POST['lot_montant'][$key];
+                    $array_values['lot_nature']     = $_POST['lot_nature'][$key];
+                    insert_rdc($array_values);
+                }
+            }
+
+
             foreach ($_POST as $key => $value)
             {
                 $_SESSION['info_'.$_POST['fields']][$key] = $value;
             }
 
+            $files_ok = array();
             if(!empty($_FILES)){
-                require "models/upload.php";
+               require_once 'models/upload.php';
             }            
+            if(!empty($files_ok)){
+                foreach ($files_ok as $key => $value) {
+                    updatercdupload($_POST['fields'], $value, $_POST['doid']);
+                }
+            }
+            
             $keys = array_keys($_SESSION['info_'.$_POST['fields']]);
             if (in_array('send_step8', $keys)) {
                 unset($_SESSION['info_'.$_POST['fields']]['send_step8']);
@@ -78,6 +67,7 @@
             //header("Location: index.php?page=validation");
         }
 
+        $array_natures = getListNature();
         // Remplissage de la variable $content
         ob_start();
         require 'views/templates/fiche/do.header.view.php';

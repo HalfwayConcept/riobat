@@ -5,6 +5,9 @@
 
 require_once 'connect.db.php';
 
+
+define('UPLOAD_FOLDER', "/public/uploads" );
+
 const ALLOWED_FILES = [
     'image/png' => 'png',
     'image/jpeg' => 'jpg',
@@ -14,21 +17,16 @@ const ALLOWED_FILES = [
 const MAX_SIZE = 20  * 1024 * 1024; //  20MB
 
 const UPLOAD_DIR = ROOT_PATH . UPLOAD_FOLDER;
-//if(!empty($_POST['folder'])){ $folder = $_POST['folder']."/";}
-$folder = getFolderName($_GET['doid']);
-
 
 $is_post_request = strtolower($_SERVER['REQUEST_METHOD']) === 'post';
 $has_files = isset($_FILES['files']);
 
 if (!$is_post_request || !$has_files) {
-    redirect_with_message('Opération de téléchargement de fichier invalide', "error");
+    //redirect_with_message('Opération de téléchargement de fichier invalide', "error");
 }
 
-$files = $_FILES['files'];
+$files = $_FILES['file_rcd'];
 $file_count = count($files['name']);
-
-
 // validation
 $errors = [];
 for ($i = 0; $i < $file_count; $i++) {
@@ -62,18 +60,26 @@ for ($i = 0; $i < $file_count; $i++) {
 
         // validate the file type
         if (!in_array(get_mime_type($tmp), array_keys(ALLOWED_FILES))) {
-            $errors[$filename][] = "le fichier $filename est autorisé à télécharger";
+            $errors[$filename][] = "le fichier $filename est autorisé à être téléchargé";
         }
     }
 }
 
 if ($errors) {
-    redirect_with_message("L'erreur suivante s'est produite","Error");
+    //redirect_with_message("L'erreur suivante s'est produite","Error");
 }
 
+$files_number= $_POST['file_number'];
 // move the files
 for($i = 0; $i < $file_count; $i++) {
     $filename = $files['name'][$i];
+
+    $array_file_number = explode('-', $files_number[$i]);
+    if($array_file_number[0] == 'new'){
+        
+    }elseif($array_file_number[0] == 'rcd'){
+
+    }
 
     if(!empty($filename)){
         $tmp = $files['tmp_name'][$i];
@@ -83,14 +89,14 @@ for($i = 0; $i < $file_count; $i++) {
         $uploaded_file = pathinfo($filename, PATHINFO_FILENAME) . '.' . ALLOWED_FILES[$mime_type];
         // new filepath
         if (!file_exists(UPLOAD_DIR . '/'. $folder)) {
-            mkdir(UPLOAD_DIR . '/'. $folder, 0644, true);
+            mkdir(UPLOAD_DIR . '/'. $folder, 0755, true);
         }        
-        $filepath = UPLOAD_DIR . '/'. $folder . $uploaded_file;
+        $filepath = UPLOAD_DIR . '/'. $folder ."/" .$uploaded_file;
     
         // move the file to the upload dir
         $success = move_uploaded_file($tmp, $filepath);
         if(!$success) {
-            $errors[$filename][] = "Le fichier $filename n'a pas pu être déplacé.";
+            $files_ok[$i] = $filepath;
         }
     }
 }

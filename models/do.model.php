@@ -57,7 +57,7 @@
 
             // insertion de souscripteur_id dans dommage_ouvrage
             $souscripteur_id = mysqli_insert_id($GLOBALS["conn"]);
-            $sql_do = "INSERT INTO dommage_ouvrage (souscripteur_id) VALUES ('$souscripteur_id')";
+            $sql_do = "INSERT INTO dommage_ouvrage (souscripteur_id,repertoire) VALUES ('$souscripteur_id',LEFT(MD5(RAND()), 12) );";
             $_SESSION["SQL"]["do"] = $sql_do;
             $query = mysqli_query($GLOBALS["conn"], $sql_do);
 
