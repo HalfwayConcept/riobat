@@ -1,7 +1,7 @@
 <?php
 
     
-    if(substr($_GET['page'], 0, 4) === "step"):
+    if(!empty($_GET['page']) && substr($_GET['page'], 0, 4) === "step"):
     if($currentstep != 'rcd'):
     $home='';
     $currentstep1 = "text-gray-500 dark:text-gray-400";
@@ -62,7 +62,7 @@
     }
     
         if(DEBUG==true){
-            echo '<section id="stepper" class="flex justify-center mb-24 m-8 '.$home.'">
+            echo '<section id="stepper" class="flex justify-center mb-24 m-8 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 '.$home.'">
                     <div class="flex justify-center mt-16">   
                         <ol class="flex flex-wrap items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0">
                             <li id="step1" class="flex items-center space-x-2.5 '.$currentstep1.'">
@@ -145,7 +145,7 @@
                     </div>
                 </section>';
         }else{
-        echo '<section id="stepper" class="flex justify-center mb-24 m-8 '.$home.'">
+        echo '<section id="stepper" class="flex justify-center mb-24 m-8 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 '.$home.'">
         <div class="flex justify-center mt-16">   
             <ol class="flex flex-wrap items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0">
                 <li id="step1" class="flex items-center space-x-2.5 '.$currentstep1.'">

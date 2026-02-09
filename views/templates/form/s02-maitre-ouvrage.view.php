@@ -1,14 +1,33 @@
-<section class="">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- Affichage des erreurs de validation -->
+    <?php if (!empty($_SESSION['validation_errors'])): ?>
+        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <h4 class="font-bold mb-2">Erreurs de validation :</h4>
+            <ul class="list-disc list-inside">
+                <?php foreach ($_SESSION['validation_errors'] as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php unset($_SESSION['validation_errors']); ?>
+    <?php endif; ?>
+    
     <form action="" method="post">
         <!-- Formulaire caché : "Maitre d'ouvrage est-il le souscripteur ?"-->
         <div>
-            <div class="flex flex-col lg:flex-row text-gray-500 font-medium">
-                <span>Le Maitre d'Ouvrage est-il le souscripteur ? &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;</span>
-                <div class="ml-8">
-                    <input type="radio" name="moa_souscripteur" value="1" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==1 ? "checked=checked" : ""; ?> onclick="hideElement('moa_form','moa')"/>
-                    <label> Oui &ensp;</label>
-                    <input type="radio" name="moa_souscripteur" value="0" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "checked=checked" : ""; ?> onclick="showElement('moa_form','moa')"/>
-                    <label> Non</label>
+            <div class="flex flex-col lg:flex-row gap-4">
+                <div class="lg:w-2/3">
+                    <span class="text-gray-500 font-medium">Le Maitre d'Ouvrage est-il le souscripteur ?</span>
+                </div>
+                <div class="lg:w-1/3 flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="moa_souscripteur" value="1" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==1 ? "checked=checked" : ""; ?> onclick="hideElement('moa_form','moa')"/>
+                        <span class="ml-2">Oui</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="moa_souscripteur" value="0" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "checked=checked" : ""; ?> onclick="showElement('moa_form','moa')"/>
+                        <span class="ml-2">Non</span>
+                    </label>
                 </div>
             </div>  
             <div id="moa_form" class="<?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "" : "hidden"; ?> px-8 py-4">
@@ -21,20 +40,20 @@
                         <label>&ensp; Entreprise</label></span>
                     </div>
                     <div class="py-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom</label>
-                        <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? $_SESSION['info_moa']['moa_souscripteur_form_nom_prenom'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom <span class="text-red-600">*</span></label>
+                        <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
                     <div class="py-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse actuelle</label>
-                        <input type="text" name="moa_souscripteur_form_adresse" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? $_SESSION['info_moa']['moa_souscripteur_form_adresse'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse actuelle <span class="text-red-600">*</span></label>
+                        <input type="text" name="moa_souscripteur_form_adresse" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_adresse']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
-                    <div id="raison_champ" class="hidden py-4">moa_entreprise_raison_sociale
+                    <div id="raison_champ" class="hidden py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raison sociale</label>
-                        <input type="text" required="required" id="moa_souscripteur_form_raison_sociale" name="moa_souscripteur_form_raison_sociale" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) ? $_SESSION['info_moa']['moa_souscripteur_form_raison_sociale'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <input type="text" id="moa_souscripteur_form_raison_sociale" name="moa_souscripteur_form_raison_sociale" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
                     <div id="siret_champ" class="hidden py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SIRET n°</label>
-                        <input type="text" name="moa_souscripteur_form_siret" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_siret']) ? $_SESSION['info_moa']['moa_souscripteur_form_siret'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        <input type="text" name="moa_souscripteur_form_siret" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_siret']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_siret']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                     </div>
                 </div>
             </div>
@@ -43,7 +62,7 @@
 
         <!-- Qualité du maitre d'ouvrage -->
         <div class="my-16">
-            <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) :</h3>
+            <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) : <span class="text-red-600">*</span></h3>
             <div class="flex flex-col lg:flex-row mx-6 mb-2">
                 <div class="flex flex-col ml-8">
                     <span><input type="radio" name="moa_qualite" value="etat" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="etat" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')" required/> Etat (services publics)</span>
@@ -54,7 +73,7 @@
                     <span><input type="radio" name="moa_qualite" value="entreprise" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="entreprise" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Entreprise</span>
                     <span><input type="radio" name="moa_qualite" value="moa_qualite_autre" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="moa_qualite_autre" ? "checked=checked" : ""; ?> onclick="showElement('moa_qualite_autre')"/> Autre qualité</span>
                     <div id="moa_qualite_autre" class="hidden mt-2">
-                        <input type="text" name="moa_qualite_champ" value="<?= isset($_SESSION['info_moa']['moa_qualite_champ']) ? $_SESSION['info_moa']['moa_qualite_champ'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez préciser"/>
+                        <input type="text" name="moa_qualite_champ" value="<?= isset($_SESSION['info_moa']['moa_qualite_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_qualite_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez préciser"/>
                     </div>    
                 </div>
                 <div class="flex flex-col ml-8">
@@ -72,7 +91,7 @@
         <!-- Formulaire caché : "Maitre d'ouvrage participe t-il à la construction ?"-->
         <div>
             <div class="flex flex-col lg:flex-row text-gray-500 font-medium">
-                <span>Le Maitre d'Ouvrage participe à la construction ? &ensp;&ensp;</span>
+                <span>Le Maitre d'Ouvrage participe à la construction ? <span class="text-red-600">*</span> &ensp;&ensp;</span>
                 <div class="ml-8">
                     <input type="radio" name="moa_construction" value="1" <?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "checked=checked" : ""; ?> onclick="showElement('moa_construction_form'),showElement('moa_construction_pro_tableau')" required/>
                     <label> Oui &ensp;</label>
@@ -109,7 +128,7 @@
                     </div>
                     <div id="moa_construction_pro_form" class="py-4 <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "" : "hidden"; ?> mx-6">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Veuillez indiquer sa profession :</label>
-                        <input type="text" name="moa_construction_pro_champ" value="<?= isset($_SESSION['info_moa']['moa_construction_pro_champ']) ? $_SESSION['info_moa']['moa_construction_pro_champ'] : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <input type="text" name="moa_construction_pro_champ" value="<?= isset($_SESSION['info_moa']['moa_construction_pro_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_construction_pro_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
                 </div>
                 <div id="moa_construction_pro_tableau" class="<?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "" : "hidden"; ?> mt-10">
@@ -140,7 +159,7 @@
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
                                 <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_conception_3'])==1 ? "checked=checked" : ""; ?> name="moa_conception_3"/></td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" name="moa_conception_4" value="<?= isset($_SESSION['info_moa']['moa_conception_4']) ? $_SESSION['info_moa']['moa_conception_4'] : ''?>"/></td>
+                                <input type="text" name="moa_conception_4" value="<?= isset($_SESSION['info_moa']['moa_conception_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_conception_4']) : ''?>"/></td>
                         </tr>
                         <tr>
                             <td class="border-r-2 border-b border-l-2 border-gray-300 p-2 pl-4">
@@ -158,7 +177,7 @@
                                 <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_direction_3'])==1 ? "checked=checked" : ""; ?> name="moa_direction_3"/>
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" value="<?= isset($_SESSION['info_moa']['moa_direction_4']) ? $_SESSION['info_moa']['moa_direction_4'] : ''?>" name="moa_direction_4"/>
+                                <input type="text" value="<?= isset($_SESSION['info_moa']['moa_direction_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_direction_4']) : ''?>" name="moa_direction_4"/>
                             </td>
                         </tr>
                         <tr>
@@ -176,7 +195,7 @@
                                 <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_surveillance_3'])==1 ? "checked=checked" : ""; ?> name="moa_surveillance_3"/>
                             </td>
                             <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" name="moa_surveillance_4" value="<?= isset($_SESSION['info_moa']['moa_surveillance_4']) ? $_SESSION['info_moa']['moa_surveillance_4'] : ''?>"/>
+                                <input type="text" name="moa_surveillance_4" value="<?= isset($_SESSION['info_moa']['moa_surveillance_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_surveillance_4']) : ''?>"/>
                             </td>
                         </tr>
                         <tr>
@@ -194,7 +213,7 @@
                                 <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_execution_3'])==1 ? "checked=checked" : ""; ?> name="moa_execution_3"/>
                             </td>
                             <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="text" name="moa_execution_4" value="<?= isset($_SESSION['info_moa']['moa_execution_4']) ? $_SESSION['info_moa']['moa_execution_4'] : ''?>"/>
+                                <input type="text" name="moa_execution_4" value="<?= isset($_SESSION['info_moa']['moa_execution_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_execution_4']) : ''?>"/>
                             </td>
                         </tr>
                     </table>

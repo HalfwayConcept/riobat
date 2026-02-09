@@ -31,7 +31,7 @@
             ?>
         </div>
         <div class="flex flex-row">
-            <h3>Qualité du maitre d'ouvrage</h3>
+            <h3>Qualité du maitre d'ouvrage <span class="text-red-600">*</span></h3>
             <strong class="pl-4"><?php
                 switch ($DATA['moa_qualite']){
                     case 'etat':
@@ -81,7 +81,7 @@
             <?php
                 if(isset($DATA['moa_construction']) && ($DATA['moa_construction']) == 1){
                     echo "<div class='flex flex-row'>
-                            <strong>Le maitre d'ouvrage participe à la construction </strong>";
+                            <strong>Le maitre d'ouvrage participe à la construction <span class='text-red-600'>*</span></strong>";
                             if(isset($DATA['moa_construction_pro']) && ($DATA['moa_construction_pro']) == 1){                        
                                 echo ".<h3>en tant que professionel de : </h3><strong class='pl-4'>".$DATA['moa_construction_pro']."</strong>";
                             }else{
@@ -94,7 +94,7 @@
                         (isset($DATA['moa_surveillance']) && $DATA['moa_surveillance'] == 1) || 
                         (isset($DATA['moa_execution']) && $DATA['moa_execution'] == 1)){
 
-                        echo "<h2>Ses activités et/ou missions</h2>";                        
+                        echo "<h2 class=\"section-title\">Ses activités et/ou missions</h2>";                        
                         $content ='<table class="text-sm font-light ml-6 mt-4">
                         <tbody><tr>
                             <td></td>

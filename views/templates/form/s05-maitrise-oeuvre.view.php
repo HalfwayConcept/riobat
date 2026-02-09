@@ -4,7 +4,7 @@
 <form action="" method="post">
     <!-- Maitrise d'oeuvre -->
     <div class="">
-        <h3 class="text-gray-500 font-medium">Maitrise d'oeuvre</h3>
+        <h3 class="text-gray-500 font-medium">Maitrise d'oeuvre <span class="text-red-600">*</span></h3>
         <div class="flex flex-col lg:flex-row ml-10 mt-6">
             <span class="font-normal">Y a-t-il intervention d'un architecte ou d'un maitre d'oeuvre ? &ensp;&ensp;</span>
             <div class="ml-8 text-gray-500 font-medium">
@@ -64,7 +64,7 @@
 
     <!-- Garanties -->
     <div class="mt-8">
-        <h3 class="text-gray-500 font-medium">Garanties demandées</h3>
+        <h3 class="text-gray-500 font-medium">Garanties demandées <span class="text-red-600">*</span></h3>
         <div class="mx-10 mt-4">
             <span class="font-normal text-gray-900">Dommage Ouvrage  &ensp;&ensp;</span>
                 <input type="radio" name="garantie_do" value="1" <?= isset($_SESSION['info_dommage_ouvrage']['garantie_do']) && ($_SESSION['info_dommage_ouvrage']['garantie_do'])==1 ? "checked=checked" : ""; ?> required/>

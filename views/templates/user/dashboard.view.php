@@ -1,9 +1,9 @@
-<section class="dark:bg-gray-900 p-3 sm:p-5">
+<section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
 <p class="text-center font-medium text-2xl mt-16">Bienvenue sur votre tableau de bord</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>
     </div>
-    <section class="bg-white dark:bg-gray-900">
+    <section class="bg-white dark:bg-gray-900 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:px-6">
         <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
             <h2 class="mb-4 text-xl tracking-tight font-extrabold text-gray-900 dark:text-white">Votre dashboard</h2>

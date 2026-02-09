@@ -71,6 +71,19 @@ function displayProfil(){
     $title = "Mon profil";
     $message = "";
     $profil = get_infos($_SESSION['user_id']);
+    
+    // Traiter la mise à jour du profil
+    if (!empty($_POST)) {
+        require_once 'models/user.model.php';
+        $result = update_user_profile($_SESSION['user_id'], $_POST);
+        if ($result === true) {
+            $message = "Profil mis à jour avec succès !";
+            $profil = get_infos($_SESSION['user_id']); // Recharger les infos
+        } else {
+            $message = $result; // Afficher le message d'erreur
+        }
+    }
+    
     require('views/templates/user/profil.view.php');
     $content = ob_get_clean();
     require("views/base.view.php");

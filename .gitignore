@@ -1,3 +1,12 @@
 /inc/setting.php
 inc/settings.php
 inc/settings.php
+
+# Environment file (contains secrets)
+.env
+
+# Uploads and user files
+public/uploads/
+
+# SQL dumps
+inc/bdd/*.sql

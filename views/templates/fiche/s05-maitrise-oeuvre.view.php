@@ -1,5 +1,5 @@
 <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-    <legend class="mx-2 p-2 text-xl font-medium">Maitrise d'oeuvre et Garanties</legend>
+    <legend class="mx-2 p-2 text-xl font-medium">Maitrise d'oeuvre et Garanties <span class="text-red-600">*</span></legend>
 
     <div class="flex flex-col">
         <div class='ml-6'>

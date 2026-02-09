@@ -1,7 +1,7 @@
 <div>
     <!-- Operation de construction : situation de l'ouvrage -->
     <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : situation de l'ouvrage</legend>
+        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : situation de l'ouvrage <span class="text-red-600">*</span></legend>
 
         <div class="flex flex-col">
             <div class='ml-6'>
@@ -123,7 +123,7 @@
             </div>
             <?php
                 if((isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1) || (isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1)){
-                    echo "<h3>Garanties demandées</h3>";
+                    echo "<h3 class=\"section-title\">Garanties demandées</h3>";
                     echo "<div class='flex flex-row mt-10'>";
                         if(isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1){
                             echo boxDisplay($DATA['situation_garanties_completes'],"situation_garanties_completes","read");

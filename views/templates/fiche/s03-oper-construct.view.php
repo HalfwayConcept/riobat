@@ -2,10 +2,10 @@
 <div>
     <!-- Operation de construction : nature de l'ouvrage -->
     <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : nature et type de l'ouvrage</legend>
+        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : nature et type de l'ouvrage <span class="text-red-600">*</span></legend>
 
         <div class="flex flex-col">
-            <h3>Nature de l'opération :</h3>
+            <h3>Nature de l'opération : <span class="text-red-600">*</span></h3>
             <div class="flex flex-row pl-8">
     <?php 
         if(isset($DATA['nature_neuf_exist']) && $DATA['nature_neuf_exist'] == "neuve"){
@@ -15,8 +15,8 @@
                     
                     <div class='flex flex-col'><strong>Travaux sur construction existante </strong>";
                         if(isset($DATA['nature_operation_surelev']) && $DATA['nature_operation_surelev'] == 1){
-                            echo '<div class="ml-6">
-                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Surélévation:</h2>
+                                echo '<div class="ml-6">
+                                    <h2 class="section-title">Surélévation:</h2>
                                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
 
                                         if(isset($DATA['nature_operation_surelev_sous_oeuvre']) && $DATA['nature_operation_surelev_sous_oeuvre'] == 1){
@@ -40,8 +40,8 @@
                         }
                         
                         if($DATA['nature_operation_ext_horizont'] == 1){
-                            echo '<div class="ml-6">
-                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Extension horizontale:</h2>
+                                echo '<div class="ml-6">
+                                    <h2 class="section-title">Extension horizontale:</h2>
                                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
 
                                         if(isset($DATA['nature_operation_ext_horizont_exist']) && $DATA['nature_operation_ext_horizont_exist'] == 1){
@@ -57,8 +57,8 @@
                         }
 
                         if($DATA['nature_operation_renovation'] == 1){
-                            echo '<div class="ml-6">
-                                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Rénovation:</h2>
+                                echo '<div class="ml-6">
+                                    <h2 class="section-title">Rénovation:</h2>
                                     <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">';
 
                                     if(isset($DATA['nature_operation_renovation_fond']) && $DATA['nature_operation_renovation_fond'] == 1){
@@ -229,7 +229,7 @@
              </div>
 
         <div class="flex flex-col">
-            <h2>Adresse de la construction :</h2>
+            <h2 class="section-title">Adresse de la construction : <span class="text-red-600">*</span></h2>
             <div class="flex flex-col pl-8">
                 <strong class="pl-4">
                 <?php if(isset($DATA['construction_adresse_num_nom_rue'])){ echo $DATA['construction_adresse_num_nom_rue']."<br>";}; ?>
@@ -247,7 +247,7 @@
         <div class="flex flex-row">
             <div class="flex flex-col">
                 <div class="flex flex-row">
-                    <h3>Date d'ouverture de chantier : </h3>
+                    <h3>Date d'ouverture de chantier : <span class="text-red-600">*</span></h3>
                     <strong class='pl-6'>
                         <?php if(isset($DATA['construction_date_debut'])){
                                     $datedebut = dateFormat($DATA['construction_date_debut']);
@@ -267,7 +267,7 @@
                     </strong>
                 </div>
                 <div class="flex flex-row">
-                    <h3>Date de réception prévisionnelle : </h3>
+                    <h3>Date de réception prévisionnelle : <span class="text-red-600">*</span></h3>
                     <strong class='pl-6'>
                         <?php if(isset($DATA['construction_date_reception'])){
                                     $datedebut = dateFormat($DATA['construction_date_reception']);
@@ -281,7 +281,7 @@
 
         <div class="flex flex-col mt-2">
 
-            <h3>Coût de l'opération de construction :</h3>
+            <h3>Coût de l'opération de construction : <span class="text-red-600">*</span></h3>
 
             <div class="flex flex-col ml-6">
                 <span>Coût en € : <?php if(isset($DATA['construction_cout_operation'])){

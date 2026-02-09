@@ -1,29 +1,50 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load .env file if present (simple parser)
+$envFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (str_starts_with(trim($line), '#')) continue;
+        [$name, $value] = array_map('trim', explode('=', $line, 2) + [1 => null]);
+        if ($name !== null && $value !== null) {
+            // remove quotes
+            $value = trim($value, "'\"");
+            putenv("$name=$value");
+            $_ENV[$name] = $value;
+        }
+    }
+}
 
 define('ROOT_PATH', dirname(__FILE__) );
 define('UPLOAD_FOLDER', "/public/uploads" );
 
+// Load configuration from environment where possible. Keep sane defaults for local setups.
+define('APP_ENV', getenv('APP_ENV') ?: ($_SESSION['env'] ?? 'prod'));
 
-define('PASSWORD_ADMIN', "9%VBV!7zFkbH" );
+// Admin password: prefer environment variable to avoid committing secrets.
+define('PASSWORD_ADMIN', getenv('PASSWORD_ADMIN') ?: '9%VBV!7zFkbH');
 
-if($_SESSION['env'] == 'dev'){
-    define("SERVER",    "localhost");
-    define("USER",      "ruki5964_riobat");
-    define("PASSWORD",  "YNJuzTq/(WqE5lVR");
-    define("BDD",       "ruki5964_riobat");
-    define('DEBUG', true );
+// Database configuration from environment variables with fallbacks.
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('DB_USER') ?: 'ruki5964_riobat');
+define('DB_PASS', getenv('DB_PASS') ?: 'YNJuzTq/(WqE5lVR');
+define('DB_NAME', getenv('DB_NAME') ?: 'ruki5964_riobat');
+define('DB_PORT', getenv('DB_PORT') ?: 3306);
 
+if (APP_ENV === 'dev') {
+    define('DEBUG', true);
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
-    error_reporting(E_ALL);    
-}else{
-    define("SERVER",    "localhost");
-    define("USER",      "ruki5964_riobat");
-    define("PASSWORD",  "YNJuzTq/(WqE5lVR");
-    define("BDD",       "ruki5964_riobat");
-
-    define('DEBUG', false );
+    error_reporting(E_ALL);
+} else {
+    define('DEBUG', false);
+    ini_set('display_errors', '0');
+    error_reporting(0);
 }
 
 

@@ -2,7 +2,7 @@
     error_reporting(0);
 ?>
     <div class="mt-4">
-        <h2 class="text-2xl text-gray-500 font-medium">Travaux annexes</h2>
+        <h2 class="section-title">Travaux annexes</h2>
     </div>
 <form action="" method="post">
     
@@ -12,7 +12,7 @@
     ?>        
     <hr>    
     <div class="mt-4">
-        <h3 class="text-xl text-gray-500 font-medium">Construction en bois</h3>
+        <h3 class="section-title">Construction en bois</h3>
         <div class="ml-10 mt-4">
             <span class="font-normal">La structure de la construction (poteaux, poutres et voiles) est-elle en bois ? &ensp;&ensp;
                 <input type="radio" name="trav_annexes_constr_bois" value="1" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_constr_bois']) && ($_SESSION['info_travaux_annexes']['trav_annexes_constr_bois'])==1 ? "checked=checked" : ""; ?>/>
@@ -52,9 +52,9 @@
     ?>    
     <hr>
     <div class="mt-4">
-        <h3 class="text-xl text-gray-500 font-medium">Panneaux photovoltaïques</h3>
+        <h3 class="section-title">Panneaux photovoltaïques</h3>
         <div class="ml-10 mt-6">
-            <h3 class="font-normal">Quel est le système de montage des panneaux ? &ensp;&ensp;</h3>
+            <h3 class="section-title">Quel est le système de montage des panneaux ?</h3>
             <div class="ml-10">
                 <span>
                     <input type="radio" name="trav_annexes_pv_montage" value="integre" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && ($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'])=="integre" ? "checked=checked" : ""; ?>/>
@@ -105,7 +105,7 @@
             </span>
         </div>
         <div class="ml-10 mt-4">
-            <h3 class="font-normal">Quelle est la destination de l'électricité produite par l'installation photovoltaïque ? &ensp;&ensp;</h3>
+            <h3 class="section-title">Quelle est la destination de l'électricité produite par l'installation photovoltaïque ?</h3>
             <div class="ml-10">
                 <span>
                     <input type="radio" name="trav_annexes_pv_destination" value="revente" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_destination'])=="revente" ? "checked=checked" : ""; ?>/>

@@ -25,6 +25,24 @@
         if(!empty($_GET['session_load_id'])){
             loadDo($_GET['session_load_id']);
         }
+        
+        // Pré-remplir step1 avec les infos du profil utilisateur
+        if ($currentstep === 'step1' && empty($_GET['session_load_id'])) {
+            require_once 'models/user.model.php';
+            $user_info = get_infos($_SESSION['user_id']);
+            if ($user_info) {
+                $_SESSION["info_souscripteur"] = [
+                    'souscripteur_nom_raison' => $user_info['nom'] . ' ' . $user_info['prenom'],
+                    'souscripteur_siret' => $user_info['siret'] ?? '',
+                    'souscripteur_adresse' => $user_info['adresse'] ?? '',
+                    'souscripteur_code_postal' => $user_info['code_postal'] ?? '',
+                    'souscripteur_commune' => $user_info['commune'] ?? '',
+                    'souscripteur_profession' => $user_info['profession'] ?? '',
+                    'souscripteur_telephone' => $user_info['telephone'] ?? '',
+                    'souscripteur_email' => $user_info['email'] ?? '',
+                ];
+            }
+        }
 
         switch ($currentstep) {
             case 'step0':
@@ -85,6 +103,124 @@
                 }
                 $_SESSION["DOID"] = $new_DOID;
                 $res=true;
+            }elseif($currentstep == "step2"){
+                // Validation step2
+                $errors = [];
+                $moa_construction = isset($_SESSION['info_moa']['moa_construction']) ? $_SESSION['info_moa']['moa_construction'] : '';
+                
+                // Si MOA n'est pas le souscripteur, valider les champs du formulaire
+                if (isset($_SESSION['info_moa']['moa_souscripteur']) && $_SESSION['info_moa']['moa_souscripteur'] == 0) {
+                    if (empty($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom'])) {
+                        $errors[] = "Le nom/prénom du Maître d'Ouvrage est obligatoire.";
+                    }
+                    if (empty($_SESSION['info_moa']['moa_souscripteur_form_adresse'])) {
+                        $errors[] = "L'adresse du Maître d'Ouvrage est obligatoire.";
+                    }
+                    if (isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && $_SESSION['info_moa']['moa_souscripteur_form_civilite'] == 'entreprise') {
+                        if (empty($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale'])) {
+                            $errors[] = "La raison sociale est obligatoire pour une entreprise.";
+                        }
+                    }
+                }
+                
+                // Valider la qualité MOA
+                if (empty($_SESSION['info_moa']['moa_qualite'])) {
+                    $errors[] = "Vous devez sélectionner une qualité de Maître d'Ouvrage.";
+                }
+                
+                // Si "Autre qualité" est sélectionné, valider le champ
+                if (isset($_SESSION['info_moa']['moa_qualite']) && $_SESSION['info_moa']['moa_qualite'] == 'moa_qualite_autre') {
+                    if (empty($_SESSION['info_moa']['moa_qualite_champ'])) {
+                        $errors[] = "Vous devez préciser l'autre qualité du Maître d'Ouvrage.";
+                    }
+                }
+                
+                // Valider construction MOA - accepter '0' ou '1' (chaînes ou entiers)
+                if ($moa_construction === '' || ($moa_construction != '0' && $moa_construction != '1')) {
+                    $errors[] = "Vous devez indiquer si le Maître d'Ouvrage participe à la construction.";
+                }
+                
+                // Si MOA participe à la construction, valider profession
+                if ($moa_construction == '1') {
+                    $moa_construction_pro = isset($_SESSION['info_moa']['moa_construction_pro']) ? $_SESSION['info_moa']['moa_construction_pro'] : '';
+                    if ($moa_construction_pro === '' || ($moa_construction_pro != '0' && $moa_construction_pro != '1')) {
+                        $errors[] = "Vous devez indiquer si le Maître d'Ouvrage est un professionnel de la construction.";
+                    }
+                }
+                
+                if (count($errors) > 0) {
+                    $res = false;
+                    $_SESSION['validation_errors'] = $errors;
+                } else {
+                    // Validation réussie - sauvegarder en BDD
+                    $res = update($_SESSION['info_moa'], 'moa', $_SESSION["DOID"]);
+                    $_SESSION['validation_errors'] = [];
+                }
+            }elseif($currentstep == "step3"){
+                // Validation step3
+                $errors = [];
+                $nature_neuf_exist = isset($_SESSION['info_operation_construction']['nature_neuf_exist']) ? $_SESSION['info_operation_construction']['nature_neuf_exist'] : '';
+                $operation_sinistre = isset($_SESSION['info_operation_construction']['operation_sinistre']) ? $_SESSION['info_operation_construction']['operation_sinistre'] : '';
+                
+                // Valider la nature de l'opération (neuf ou existante)
+                if (empty($nature_neuf_exist) || ($nature_neuf_exist != 'neuve' && $nature_neuf_exist != 'existante')) {
+                    $errors[] = "Vous devez sélectionner la nature de l'opération (Neuve ou Existante).";
+                }
+                
+                // Si construction existante, au moins une option doit être cochée
+                if ($nature_neuf_exist == 'existante') {
+                    $has_existant_option = (isset($_SESSION['info_operation_construction']['nature_operation_surelev']) && $_SESSION['info_operation_construction']['nature_operation_surelev'] == 1)
+                        || (isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont'] == 1)
+                        || (isset($_SESSION['info_operation_construction']['nature_operation_renovation']) && $_SESSION['info_operation_construction']['nature_operation_renovation'] == 1)
+                        || (isset($_SESSION['info_operation_construction']['nature_operation_rehabilitation']) && $_SESSION['info_operation_construction']['nature_operation_rehabilitation'] == 1)
+                        || (isset($_SESSION['info_operation_construction']['operation_sinistre']) && $_SESSION['info_operation_construction']['operation_sinistre'] == 1);
+                    
+                    if (!$has_existant_option) {
+                        $errors[] = "Pour une construction existante, vous devez sélectionner au moins une option (surélévation, extension, rénovation, réhabilitation ou sinistre).";
+                    }
+                }
+                
+                // Valider adresse construction
+                if (empty($_SESSION['info_operation_construction']['construction_adresse_num_nom_rue'])) {
+                    $errors[] = "L'adresse de la construction est obligatoire.";
+                }
+                if (empty($_SESSION['info_operation_construction']['construction_adresse_code_postal'])) {
+                    $errors[] = "Le code postal est obligatoire.";
+                }
+                if (empty($_SESSION['info_operation_construction']['construction_adresse_commune'])) {
+                    $errors[] = "La commune est obligatoire.";
+                }
+                
+                // Valider dates
+                $date_debut = isset($_SESSION['info_operation_construction']['construction_date_debut']) ? $_SESSION['info_operation_construction']['construction_date_debut'] : '';
+                $date_debut_prevue = isset($_SESSION['info_operation_construction']['construction_date_debut_prevue']) ? $_SESSION['info_operation_construction']['construction_date_debut_prevue'] : '';
+                
+                if (!empty($date_debut) && !strtotime($date_debut)) {
+                    $errors[] = "La date de début réelle doit être une date valide.";
+                }
+                if (!empty($date_debut_prevue) && !strtotime($date_debut_prevue)) {
+                    $errors[] = "La date de début prévue doit être une date valide.";
+                }
+                
+                // Valider les coûts (doivent être numériques si remplis)
+                $cout_operation = isset($_SESSION['info_operation_construction']['construction_cout_operation']) ? $_SESSION['info_operation_construction']['construction_cout_operation'] : '';
+                $cout_honoraires = isset($_SESSION['info_operation_construction']['construction_cout_honoraires_moe']) ? $_SESSION['info_operation_construction']['construction_cout_honoraires_moe'] : '';
+                
+                if (!empty($cout_operation) && !is_numeric(str_replace(',', '.', $cout_operation))) {
+                    $errors[] = "Le coût de l'opération doit être un nombre valide.";
+                }
+                if (!empty($cout_honoraires) && !is_numeric(str_replace(',', '.', $cout_honoraires))) {
+                    $errors[] = "Les honoraires du maître d'œuvre doivent être un nombre valide.";
+                }
+                
+                if (count($errors) > 0) {
+                    $res = false;
+                    $_SESSION['validation_errors'] = $errors;
+                } else {
+                    // Validation réussie - sauvegarder en BDD
+                    $res = update($_SESSION['info_operation_construction'], 'operation_construction', $_SESSION["DOID"]);
+                    $_SESSION['validation_errors'] = [];
+                }
             }elseif($currentstep == "step4" || $currentstep == "step5"){  
         
                 if($currentstep == "step4"){

@@ -1,4 +1,4 @@
-<section class="dark:bg-gray-900 p-3 sm:p-5">
+<section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
 <p class="text-center font-medium text-2xl mt-16">Liste des Dommages Ouvrages</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>

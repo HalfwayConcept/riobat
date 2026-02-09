@@ -1,0 +1,58 @@
+/* Custom styles for project enhancements */
+
+/* Align all radio buttons to the right side of their container */
+input[type="radio"]{
+    float: right;
+    margin-left: 0.5rem;
+    margin-top: 0.15rem;
+}
+
+/* Ensure form label and input flows are readable when radios float */
+label{ display: block; }
+
+/* Small utility to force radio alignment in flex containers */
+.radio-right{ display: flex; align-items: center; justify-content: space-between; }
+
+/* Font resizer widget */
+:root{ --root-font-size: 16px; }
+html{ font-size: var(--root-font-size); }
+.font-resizer{
+    position: fixed;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #e5e7eb;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.font-resizer button{
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.35rem 0.45rem;
+    color: #111827;
+}
+.font-resizer button:focus{ outline: 2px solid #3b82f6; outline-offset: 2px; }
+.dark .font-resizer{ background: rgba(17,24,39,0.9); color: #fff; border-color: #374151; }
+
+/* Small labels inside widget */
+.font-resizer .label{ font-size: 0.75rem; text-align:center; display:block; }
+
+/* Section title uniform style */
+.section-title{
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700; /* font-bold */
+    color: #111827; /* text-gray-900 */
+    margin-bottom: 1rem; /* mb-4 */
+}
+.dark .section-title{ color: #fff; }
+
+/* Required field asterisk appended to label (added via JS) */
+.required-asterisk{ color: #e11d48; margin-left: 0.25rem; }

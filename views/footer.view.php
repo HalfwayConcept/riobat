@@ -4,6 +4,13 @@
 
     </footer>
 
+    <!-- Font size resizer widget -->
+    <div class="font-resizer" role="region" aria-label="Contrôles taille du texte">
+        <button id="font-decrease" aria-label="Réduire la taille du texte">A-</button>
+        <button id="font-reset" aria-label="Taille normale"><span class="label">A</span></button>
+        <button id="font-increase" aria-label="Augmenter la taille du texte">A+</button>
+    </div>
+
     <!-- Laisser ce script juste avant la balise fermante body ! -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     

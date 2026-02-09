@@ -1,63 +1,116 @@
-<section>
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
     <!-- Situation de l'ouvrage -->
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Situation de l'ouvrage <span class="text-red-600">*</span></h2>
     <form action="" method="post">
             <!-- Zone inondable -->
-        <div>
-            <span class="text-gray-500 font-medium">Est-il situé dans une zone inondable ? &ensp;&ensp;
-                <input type="radio" name="situation_zone_inond" value="1" <?= isset($_SESSION['info_situation']['situation_zone_inond']) && ($_SESSION['info_situation']['situation_zone_inond'])==1 ? "checked=checked" : ""; ?>/>
-                <label> Oui &ensp;</label>
-                <input type="radio" name="situation_zone_inond" value="0" <?= isset($_SESSION['info_situation']['situation_zone_inond']) && ($_SESSION['info_situation']['situation_zone_inond'])==0 ? "checked=checked" : ""; ?>/>
-                <label> Non</label>
-            </span>  
+        <div class="flex flex-col lg:flex-row gap-4 mt-4">
+            <div class="lg:w-2/3">
+                <span class="text-gray-500 font-medium">Est-il situé dans une zone inondable ?</span>
+            </div>
+            <div class="lg:w-1/3 flex gap-4">
+                <label class="flex items-center">
+                    <input type="radio" name="situation_zone_inond" value="1" <?= isset($_SESSION['info_situation']['situation_zone_inond']) && ($_SESSION['info_situation']['situation_zone_inond'])==1 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Oui</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_zone_inond" value="0" <?= isset($_SESSION['info_situation']['situation_zone_inond']) && ($_SESSION['info_situation']['situation_zone_inond'])==0 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Non</span>
+                </label>
+            </div>
         </div>
             <!-- Zone sismicité -->
-        <div class="flex-column mt-4">
-            <span class="text-gray-500 font-medium">Dans quelle zone de sismicité est-il situé ?</span>
-            <div class="ml-10 mt-2">
-                <input type="radio" name="situation_sismique" value="1" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==1 ? "checked=checked" : ""; ?>/><label class="mr-6 text-sm lg:text-base"> 1 (très faible)</label>
-                <input type="radio" name="situation_sismique" value="2" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==2 ? "checked=checked" : ""; ?>/><label class="mr-6 text-sm lg:text-base"> 2 (faible)</label>
-                <input type="radio" name="situation_sismique" value="3" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==3 ? "checked=checked" : ""; ?>/><label class="mr-6 text-sm lg:text-base"> 3 (modérée)</label>
-                <input type="radio" name="situation_sismique" value="4" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==4 ? "checked=checked" : ""; ?>/><label class="mr-6 text-sm lg:text-base"> 4 (moyenne)</label>
-                <input type="radio" name="situation_sismique" value="5" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==5 ? "checked=checked" : ""; ?>/><label class="text-sm lg:text-base"> 5 (forte)</label>
+        <div class="flex flex-col lg:flex-row gap-4 mt-4">
+            <div class="lg:w-2/3">
+                <span class="text-gray-500 font-medium">Dans quelle zone de sismicité est-il situé ?</span>
+            </div>
+            <div class="lg:w-1/3 flex flex-col gap-2 text-sm lg:text-base">
+                <label class="flex items-center">
+                    <input type="radio" name="situation_sismique" value="1" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==1 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">1 (très faible)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_sismique" value="2" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==2 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">2 (faible)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_sismique" value="3" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==3 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">3 (modérée)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_sismique" value="4" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==4 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">4 (moyenne)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_sismique" value="5" <?= isset($_SESSION['info_situation']['situation_sismique']) && ($_SESSION['info_situation']['situation_sismique'])==5 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">5 (forte)</span>
+                </label>
             </div>
         </div>
             <!-- Zone termites insectes -->
-        <div class="mt-4">
-            <span class="text-gray-500 font-medium">Est-il situé dans une zone contaminée par les termites ou autres insectes xylophages ? &ensp;&ensp;
-                <input type="radio" name="situation_insectes" value="1" <?= isset($_SESSION['info_situation']['situation_insectes']) && ($_SESSION['info_situation']['situation_insectes'])==1 ? "checked=checked" : ""; ?>/>
-                <label> Oui &ensp;</label>
-                <input type="radio" name="situation_insectes" <?= isset($_SESSION['info_situation']['situation_insectes']) && ($_SESSION['info_situation']['situation_insectes'])==0 ? "checked=checked" : ""; ?> value="0"/>
-                <label> Non</label>
-            </span>  
+        <div class="flex flex-col lg:flex-row gap-4 mt-4">
+            <div class="lg:w-2/3">
+                <span class="text-gray-500 font-medium">Est-il situé dans une zone contaminée par les termites ou autres insectes xylophages ?</span>
+            </div>
+            <div class="lg:w-1/3 flex gap-4">
+                <label class="flex items-center">
+                    <input type="radio" name="situation_insectes" value="1" <?= isset($_SESSION['info_situation']['situation_insectes']) && ($_SESSION['info_situation']['situation_insectes'])==1 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Oui</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_insectes" value="0" <?= isset($_SESSION['info_situation']['situation_insectes']) && ($_SESSION['info_situation']['situation_insectes'])==0 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Non</span>
+                </label>
+            </div>
         </div>
             <!-- Matériaux traditionnels ou technique courante -->
-        <div class="mt-4">
-            <span class="text-gray-500 font-medium">Les travaux sont-ils réalisés avec des matériaux traditionnels ou selon des procédés de technique courante ? &ensp;&ensp;
-                <input type="radio" name="situation_proc_techniques" value="1" <?= isset($_SESSION['info_situation']['situation_proc_techniques']) && ($_SESSION['info_situation']['situation_proc_techniques'])==1 ? "checked=checked" : ""; ?>/>
-                <label> Oui &ensp;</label>
-                <input type="radio" name="situation_proc_techniques" value="0" <?= isset($_SESSION['info_situation']['situation_proc_techniques']) && ($_SESSION['info_situation']['situation_proc_techniques'])==0 ? "checked=checked" : ""; ?>/>
-                <label> Non</label>
-            </span>  
+        <div class="flex flex-col lg:flex-row gap-4 mt-4">
+            <div class="lg:w-2/3">
+                <span class="text-gray-500 font-medium">Les travaux sont-ils réalisés avec des matériaux traditionnels ou selon des procédés de technique courante ?</span>
+            </div>
+            <div class="lg:w-1/3 flex gap-4">
+                <label class="flex items-center">
+                    <input type="radio" name="situation_proc_techniques" value="1" <?= isset($_SESSION['info_situation']['situation_proc_techniques']) && ($_SESSION['info_situation']['situation_proc_techniques'])==1 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Oui</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_proc_techniques" value="0" <?= isset($_SESSION['info_situation']['situation_proc_techniques']) && ($_SESSION['info_situation']['situation_proc_techniques'])==0 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Non</span>
+                </label>
+            </div>
         </div>
             <!-- Parking -->
-        <div class="mt-4">
-            <span class="text-gray-500 font-medium">Y a-t-il la présence d'un parking (accessoire de l'ouvrage) desservant l'ouvrage ? &ensp;&ensp;
-                <input type="radio" name="situation_parking" value="1" <?= isset($_SESSION['info_situation']['situation_parking']) && ($_SESSION['info_situation']['situation_parking'])==1 ? "checked=checked" : ""; ?>/>
-                <label> Oui &ensp;</label>
-                <input type="radio" name="situation_parking" value="0" <?= isset($_SESSION['info_situation']['situation_parking']) && ($_SESSION['info_situation']['situation_parking'])==0 ? "checked=checked" : ""; ?>/>
-                <label> Non</label>
-            </span>  
+        <div class="flex flex-col lg:flex-row gap-4 mt-4">
+            <div class="lg:w-2/3">
+                <span class="text-gray-500 font-medium">Y a-t-il la présence d'un parking (accessoire de l'ouvrage) desservant l'ouvrage ?</span>
+            </div>
+            <div class="lg:w-1/3 flex gap-4">
+                <label class="flex items-center">
+                    <input type="radio" name="situation_parking" value="1" <?= isset($_SESSION['info_situation']['situation_parking']) && ($_SESSION['info_situation']['situation_parking'])==1 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Oui</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="situation_parking" value="0" <?= isset($_SESSION['info_situation']['situation_parking']) && ($_SESSION['info_situation']['situation_parking'])==0 ? "checked=checked" : ""; ?>/>
+                    <span class="ml-2">Non</span>
+                </label>
+            </div>
         </div>
             <!-- Travaux sur existants -->
         <div class="mt-4">
             <h3 class="text-gray-500 font-medium">Si travaux sur une contruction existante ou sur existants :</h3>
-                <div class="my-2 ml-10">
-                    <span class="font-normal">Si les existants datent de moins de 10 ans, ont-ils fait l'objet d'un contrat d'assurance "dommages ouvrage" ? &ensp;&ensp;
-                        <input type="radio" name="situation_do_10ans" value="1" <?= isset($_SESSION['info_situation']['situation_do_10ans']) && ($_SESSION['info_situation']['situation_do_10ans'])==1 ? "checked=checked" : ""; ?> onclick="showElement('situation_do_10ans_contrat')"/>
-                        <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                        <input type="radio" name="situation_do_10ans" value="0" <?= isset($_SESSION['info_situation']['situation_do_10ans']) && ($_SESSION['info_situation']['situation_do_10ans'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('situation_do_10ans_contrat')"/>
-                        <label class="text-gray-500 font-medium"> Non</label>
-                    </span>
+                <div class="flex flex-col lg:flex-row gap-4 my-4">
+                    <div class="lg:w-2/3">
+                        <span class="font-normal">Si les existants datent de moins de 10 ans, ont-ils fait l'objet d'un contrat d'assurance "dommages ouvrage" ?</span>
+                    </div>
+                    <div class="lg:w-1/3 flex gap-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="situation_do_10ans" value="1" <?= isset($_SESSION['info_situation']['situation_do_10ans']) && ($_SESSION['info_situation']['situation_do_10ans'])==1 ? "checked=checked" : ""; ?> onclick="showElement('situation_do_10ans_contrat')"/>
+                            <span class="ml-2">Oui</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="situation_do_10ans" value="0" <?= isset($_SESSION['info_situation']['situation_do_10ans']) && ($_SESSION['info_situation']['situation_do_10ans'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('situation_do_10ans_contrat')"/>
+                            <span class="ml-2">Non</span>
+                        </label>
+                    </div>
                     <div id="situation_do_10ans_contrat" class="<?= isset($_SESSION['info_situation']['situation_do_10ans']) && ($_SESSION['info_situation']['situation_do_10ans'])==1 ? "" : "hidden"; ?> ml-10 mt-4 ">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom de l'assureur :&ensp;&ensp;</label>
                         <input type="text" name="situation_do_10ans_contrat_assureur" value="<?= isset($_SESSION['info_situation']['situation_do_10ans_contrat_assureur']) ? $_SESSION['info_situation']['situation_do_10ans_contrat_assureur'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
@@ -65,38 +118,59 @@
                         <input type="text" name="situation_do_10ans_contrat_numero" value="<?= isset($_SESSION['info_situation']['situation_do_10ans_contrat_numero']) ? $_SESSION['info_situation']['situation_do_10ans_contrat_numero'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
                 </div>
-                <div class="mt-4 ml-10">
-                    <span class="font-normal">Les existants sont-ils classés monuments historiques ou font-ils l'objet d'une protection du patrimoine ? &ensp;&ensp;
-                        <input type="radio" name="situation_mon_hist" value="1" <?= isset($_SESSION['info_situation']['situation_mon_hist']) && ($_SESSION['info_situation']['situation_mon_hist'])==1 ? "checked=checked" : ""; ?>/>
-                        <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                        <input type="radio" name="situation_mon_hist" value="0" <?= isset($_SESSION['info_situation']['situation_mon_hist']) && ($_SESSION['info_situation']['situation_mon_hist'])==0 ? "checked=checked" : ""; ?>/>
-                        <label class="text-gray-500 font-medium"> Non</label>
-                    </span>
+                <div class="flex flex-col lg:flex-row gap-4 mt-4">
+                    <div class="lg:w-2/3">
+                        <span class="font-normal">Les existants sont-ils classés monuments historiques ou font-ils l'objet d'une protection du patrimoine ?</span>
+                    </div>
+                    <div class="lg:w-1/3 flex gap-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="situation_mon_hist" value="1" <?= isset($_SESSION['info_situation']['situation_mon_hist']) && ($_SESSION['info_situation']['situation_mon_hist'])==1 ? "checked=checked" : ""; ?>/>
+                            <span class="ml-2">Oui</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="situation_mon_hist" value="0" <?= isset($_SESSION['info_situation']['situation_mon_hist']) && ($_SESSION['info_situation']['situation_mon_hist'])==0 ? "checked=checked" : ""; ?>/>
+                            <span class="ml-2">Non</span>
+                        </label>
+                    </div>
                 </div>
         </div>
             <!-- Label -->
         <div class="mt-4">
             <h3 class="text-gray-500 font-medium">Label :</h3>
-            <div class="my-2 ml-10">
-                <span class="font-normal">L'opération de construction bénéficie-t-elle d'un label de performance énergétique (ex. BBC...) ? &ensp;&ensp;
-                    <input type="radio" name="situation_label_energie" value="1" <?= isset($_SESSION['info_situation']['situation_label_energie']) && ($_SESSION['info_situation']['situation_label_energie'])==1 ? "checked=checked" : ""; ?>/>
-                    <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_label_energie" value="0" <?= isset($_SESSION['info_situation']['situation_label_energie']) && ($_SESSION['info_situation']['situation_label_energie'])==0 ? "checked=checked" : ""; ?>/>
-                    <label class="text-gray-500 font-medium"> Non</label>
-                </span>  
+            <div class="flex flex-col lg:flex-row gap-4 my-2">
+                <div class="lg:w-2/3">
+                    <span class="font-normal">L'opération de construction bénéficie-t-elle d'un label de performance énergétique (ex. BBC...) ?</span>
+                </div>
+                <div class="lg:w-1/3 flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_label_energie" value="1" <?= isset($_SESSION['info_situation']['situation_label_energie']) && ($_SESSION['info_situation']['situation_label_energie'])==1 ? "checked=checked" : ""; ?>/>
+                        <span class="ml-2">Oui</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_label_energie" value="0" <?= isset($_SESSION['info_situation']['situation_label_energie']) && ($_SESSION['info_situation']['situation_label_energie'])==0 ? "checked=checked" : ""; ?>/>
+                        <span class="ml-2">Non</span>
+                    </label>
+                </div>
             </div>
-            <div class="my-2 ml-10">
-                <span class="font-normal">L'opération de construction bénéficie-t-elle d'un label de qualité environnementale (ex. HQE...) ? &ensp;&ensp;
-                    <input type="radio" name="situation_label_qualite" value="1" <?= isset($_SESSION['info_situation']['situation_label_qualite']) && ($_SESSION['info_situation']['situation_label_qualite'])==1 ? "checked=checked" : ""; ?>/>
-                    <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                    <input type="radio" name="situation_label_qualite" value="0" <?= isset($_SESSION['info_situation']['situation_label_qualite']) && ($_SESSION['info_situation']['situation_label_qualite'])==0 ? "checked=checked" : ""; ?>/>
-                    <label class="text-gray-500 font-medium"> Non</label>
-                </span>
+            <div class="flex flex-col lg:flex-row gap-4 my-2">
+                <div class="lg:w-2/3">
+                    <span class="font-normal">L'opération de construction bénéficie-t-elle d'un label de qualité environnementale (ex. HQE...) ?</span>
+                </div>
+                <div class="lg:w-1/3 flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_label_qualite" value="1" <?= isset($_SESSION['info_situation']['situation_label_qualite']) && ($_SESSION['info_situation']['situation_label_qualite'])==1 ? "checked=checked" : ""; ?>/>
+                        <span class="ml-2">Oui</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_label_qualite" value="0" <?= isset($_SESSION['info_situation']['situation_label_qualite']) && ($_SESSION['info_situation']['situation_label_qualite'])==0 ? "checked=checked" : ""; ?>/>
+                        <span class="ml-2">Non</span>
+                    </label>
+                </div>
             </div>
         </div>
             <!-- Etude de sol -->
         <div class="mt-20">
-            <h3 class="text-gray-500 font-medium">Etude de sol</h3>
+            <h3 class="text-gray-500 font-medium">Etude de sol <span class="text-red-600">*</span></h3>
             <div class="flex flex-col lg:flex-row ml-10 mt-6">
                 <span class="font-normal">Intervention d'un bureau spécialisé ? &ensp;&ensp;</span>
                 <div class="ml-8 text-gray-500 font-medium">
@@ -131,15 +205,19 @@
                     </div>    
                 </div>
             </div>
-            <div class="flex flex-col lg:flex-row mt-6">
-                <span class="ml-10 font-normal">
-                    Si présence d'un parking et/ou de voiries, l'étude de sol vise-t-elle également ces ouvrages ?  &ensp;&ensp;
-                </span>
-                <div class="text-gray-500 font-medium">
-                    <input type="radio" name="situation_sol_parking" value="1" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==1 ? "checked=checked" : ""; ?> required/>
-                    <label> Oui &ensp;</label>
-                    <input type="radio" name="situation_sol_parking" value="0" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==0 ? "checked=checked" : ""; ?>/>
-                    <label> Non</label>
+            <div class="flex flex-col lg:flex-row gap-4 mt-6">
+                <div class="lg:w-2/3">
+                    <span class="font-normal">Si présence d'un parking et/ou de voiries, l'étude de sol vise-t-elle également ces ouvrages ?</span>
+                </div>
+                <div class="lg:w-1/3 flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_sol_parking" value="1" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==1 ? "checked=checked" : ""; ?> required/>
+                        <span class="ml-2">Oui</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="situation_sol_parking" value="0" <?= isset($_SESSION['info_situation']['situation_sol_parking']) && ($_SESSION['info_situation']['situation_sol_parking'])==0 ? "checked=checked" : ""; ?>/>
+                        <span class="ml-2">Non</span>
+                    </label>
                 </div>
             </div>
         </div>

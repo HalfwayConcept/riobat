@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : ven. 11 oct. 2024 à 17:11
--- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Hôte : localhost:3306
+-- Généré le : lun. 09 fév. 2026 à 15:02
+-- Version du serveur : 11.4.10-MariaDB
+-- Version de PHP : 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,31 +29,33 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `dommage_ouvrage` (
   `DOID` int(11) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `repertoire` varchar(255) NOT NULL,
   `souscripteur_id` int(11) NOT NULL,
   `date_creation` date NOT NULL DEFAULT current_timestamp(),
   `date_modification` date DEFAULT NULL,
-  `date_validation` date DEFAULT NULL
+  `date_validation` date DEFAULT NULL,
+  `garantie_do` tinyint(4) NOT NULL,
+  `garantie_chantier` tinyint(4) NOT NULL,
+  `garantie_juridique` tinyint(4) NOT NULL,
+  `moe` tinyint(4) NOT NULL,
+  `moe_entreprise_id` int(11) NOT NULL,
+  `intervention_moe_independant` tinyint(4) NOT NULL,
+  `intervention_moe_independant_qualite` varchar(255) NOT NULL,
+  `intervention_moe_independant_mission` enum('conception','direction','complete','autre') NOT NULL,
+  `intervention_moe_independant_mission_autre_descr` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `dommage_ouvrage`
 --
 
-INSERT INTO `dommage_ouvrage` (`DOID`, `souscripteur_id`, `date_creation`, `date_modification`, `date_validation`) VALUES
-(80, 81, '2024-05-28', NULL, NULL),
-(81, 82, '2024-05-28', NULL, NULL),
-(82, 83, '2024-05-28', NULL, NULL),
-(83, 84, '2024-05-28', NULL, NULL),
-(84, 85, '2024-05-28', NULL, NULL),
-(85, 86, '2024-05-28', NULL, NULL),
-(88, 89, '2024-05-29', NULL, NULL),
-(89, 90, '2024-10-07', NULL, NULL),
-(90, 91, '2024-10-09', NULL, NULL),
-(91, 92, '2024-10-09', NULL, NULL),
-(92, 93, '2024-10-11', NULL, NULL),
-(93, 94, '2024-10-11', NULL, NULL),
-(94, 95, '2024-10-11', NULL, NULL),
-(95, 96, '2024-10-11', NULL, NULL);
+INSERT INTO `dommage_ouvrage` (`DOID`, `status`, `repertoire`, `souscripteur_id`, `date_creation`, `date_modification`, `date_validation`, `garantie_do`, `garantie_chantier`, `garantie_juridique`, `moe`, `moe_entreprise_id`, `intervention_moe_independant`, `intervention_moe_independant_qualite`, `intervention_moe_independant_mission`, `intervention_moe_independant_mission_autre_descr`) VALUES
+(127, 0, '0000a8945fd8', 129, '2025-07-03', NULL, NULL, 0, 0, 0, 1, 116, 1, '', 'conception', ''),
+(129, 0, 'ce400bab89b5', 131, '2025-07-03', NULL, NULL, 0, 0, 0, 0, 0, 0, '', 'conception', ''),
+(130, 0, '3ccd8325c2b6', 132, '2025-07-03', NULL, NULL, 0, 0, 0, 0, 0, 0, '', 'conception', ''),
+(131, 0, '8af6265e8521', 133, '2025-07-04', NULL, NULL, 0, 0, 0, 0, 0, 0, '', 'conception', ''),
+(132, 0, 'affb52e1d895', 134, '2025-07-05', NULL, NULL, 0, 0, 0, 0, 0, 0, '', 'conception', '');
 
 -- --------------------------------------------------------
 
@@ -70,7 +72,7 @@ CREATE TABLE `entreprise` (
   `code_postal` varchar(255) NOT NULL,
   `commune` varchar(255) NOT NULL,
   `numero_siret` varchar(255) NOT NULL,
-  `type` enum('boi','phv','geo','ctt','cnr','sol') NOT NULL,
+  `type` enum('boi','phv','geo','ctt','cnr','sol','moe','moa') NOT NULL,
   `num_contrat` varchar(255) NOT NULL,
   `nat_juri` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -80,19 +82,16 @@ CREATE TABLE `entreprise` (
 --
 
 INSERT INTO `entreprise` (`ID`, `raison_sociale`, `nom`, `prenom`, `adresse`, `code_postal`, `commune`, `numero_siret`, `type`, `num_contrat`, `nat_juri`) VALUES
-(47, '', 'CONS', 'Contructeur NOM', 'rue de la construction', '', 'LFIRMINY', '', 'ctt', '', ''),
-(48, '', 'Max', 'X', 'Rue de l\'archi', '', 'MILLAU', '', 'boi', '', ''),
-(49, '', 'CONSTR', 'Contructeur NOM', 'rue de la construction', '', 'LFIRMINY', '', 'ctt', '', ''),
-(56, 'SOL entreprise', 'Tecte', 'dza', 'Rue de l\'archi', '', 'MILLAU', '', 'sol', '', ''),
-(57, 'ELEC', 'CONS', '', 'rue de la construction', '', 'LFIRMINY', '', 'boi', '', ''),
-(58, 'ELEC', 'ELEC', '', 'rue du PV', '', 'CLERMINT', '', 'phv', '', ''),
-(59, 'MARTIN', 'Ludivine', '', 'rue du PV', '', 'CLERMINT', '', 'cnr', '', ''),
-(60, 'Contructeur NOM', 'CONS', '', 'rue de la construction', '', 'LFIRMINY', '', 'boi', '', ''),
-(61, 'ELEC', 'ELEC', 'ELEC', 'rue du PV', '', 'CLERMINT', '', 'geo', '', ''),
-(62, 'ELEC', 'ELEC', 'ELEC', 'rue du PV', '', 'CLERMINT', '', 'ctt', '', ''),
-(63, 'ELEC', 'ELEC', '', 'rue du PV', '', 'CLERMINT', '', 'cnr', '', ''),
-(64, 'MOE', 'MOE Nom', 'MOE PRENOM', 'MOE RUE', '', 'MOE VILLE', '', '', '', ''),
-(65, 'MOE', 'MOE Nom', 'MOE PRENOM', 'MOE RUE', '', 'MOE VILLE', '', '', '', '');
+(109, 'Nom entreprise- BOIS', 'Nom Dirigeant - BOIS', 'Prénom Dirigeant - BOIS', 'Adresse Bois', '', 'Commune Bois', 'Siret Bois', 'boi', '', ''),
+(110, 'Nom Entreprise PHV', 'Nom Dirigeant - PHV', 'Prénom Dirigeant - PHV', 'Adresse PHV', '', 'Commune Phv', '165162165156 PHV', 'phv', '', ''),
+(111, 'Francois', 'MOE Nom', 'MOE PRENOM', '16 rue de la commune', '', 'LANGONGE', '', 'moe', '', ''),
+(112, '', 'LP SEI HAND', '', '', '', '', '', 'sol', '', ''),
+(113, 'A remplir', 'Architecte', 'A remplir', '', '', '', '', 'moe', '', ''),
+(114, 'Francois', 'Regis', '', '16 rue de la commune', '', 'LANGONGE', '5165415615', 'boi', '', ''),
+(115, 'LP SEI HAND', 'Mr X', '', '', '', '', '', 'cnr', '', ''),
+(116, 'LP SEI HAND', 'Mr X', '', '', '', 'mende', '', 'moe', '', ''),
+(117, 'ELEC PV', '', '', '', '', '', '', 'phv', '', ''),
+(118, '', '', '', '', '', '', '', 'phv', '', '');
 
 -- --------------------------------------------------------
 
@@ -140,60 +139,11 @@ CREATE TABLE `moa` (
 --
 
 INSERT INTO `moa` (`DOID`, `moa_souscripteur`, `moa_souscripteur_form_civilite`, `moa_souscripteur_form_nom_prenom`, `moa_souscripteur_form_adresse`, `moa_souscripteur_form_raison_sociale`, `moa_souscripteur_form_siret`, `moa_qualite`, `moa_qualite_champ`, `moa_construction`, `moa_construction_pro`, `moa_construction_pro_champ`, `moa_conception`, `moa_conception_1`, `moa_conception_2`, `moa_conception_3`, `moa_conception_4`, `moa_direction`, `moa_direction_1`, `moa_direction_2`, `moa_direction_3`, `moa_direction_4`, `moa_surveillance`, `moa_surveillance_1`, `moa_surveillance_2`, `moa_surveillance_3`, `moa_surveillance_4`, `moa_execution`, `moa_execution_1`, `moa_execution_2`, `moa_execution_3`, `moa_execution_4`) VALUES
-(80, 1, NULL, NULL, NULL, NULL, NULL, 'asso', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(81, 1, NULL, NULL, NULL, NULL, NULL, 'particulier', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(82, 1, NULL, NULL, NULL, NULL, NULL, 'collectivites', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(83, 1, NULL, NULL, NULL, NULL, NULL, 'prom_prive', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(84, 1, NULL, NULL, NULL, NULL, NULL, 'particulier', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(85, 1, NULL, NULL, NULL, NULL, NULL, 'particulier', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(88, 1, 'particulier', NULL, NULL, NULL, NULL, 'sci', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(89, 1, NULL, NULL, NULL, NULL, NULL, 'hlm_public', NULL, 1, 1, NULL, 1, NULL, 1, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(90, 1, NULL, NULL, NULL, NULL, NULL, 'hlm_public', NULL, 1, 1, NULL, 1, NULL, 1, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(91, 1, NULL, NULL, NULL, NULL, NULL, 'syndic', NULL, 1, 1, 'Architecte', 1, 1, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(92, 1, 'entreprise', NULL, NULL, NULL, NULL, 'hlm_public', NULL, 1, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(93, 1, 'entreprise', NULL, NULL, NULL, NULL, 'hlm_public', NULL, 1, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(94, NULL, 'entreprise', NULL, NULL, NULL, NULL, 'hlm_public', NULL, 1, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(95, 1, NULL, NULL, NULL, NULL, NULL, 'hlm_prive', NULL, 1, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `moe`
---
-
-CREATE TABLE `moe` (
-  `DOID` int(11) NOT NULL,
-  `moe` tinyint(1) DEFAULT NULL,
-  `moe_entreprise_id` int(11) DEFAULT NULL,
-  `moe_intervention_independant` tinyint(1) DEFAULT NULL,
-  `moe_intervention_independant_qualite` varchar(255) DEFAULT NULL,
-  `moe_intervention_independant_mission` enum('conception','direction','complete','autre') DEFAULT NULL,
-  `moe_intervention_independant_mission_autre_descr` varchar(255) DEFAULT NULL,
-  `moe_garantie_do` tinyint(1) NOT NULL,
-  `moe_garantie_cnr` tinyint(1) NOT NULL,
-  `moe_garantie_chantier` tinyint(1) NOT NULL,
-  `moe_garantie_juridique` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `moe`
---
-
-INSERT INTO `moe` (`DOID`, `moe`, `moe_entreprise_id`, `moe_intervention_independant`, `moe_intervention_independant_qualite`, `moe_intervention_independant_mission`, `moe_intervention_independant_mission_autre_descr`, `moe_garantie_do`, `moe_garantie_cnr`, `moe_garantie_chantier`, `moe_garantie_juridique`) VALUES
-(80, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(81, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(82, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(83, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(84, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(85, 1, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0),
-(88, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 1),
-(89, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 0),
-(90, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(91, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(92, 1, NULL, 1, NULL, NULL, NULL, 1, 0, 0, 0),
-(93, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(94, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0),
-(95, 1, 65, NULL, NULL, NULL, NULL, 0, 0, 0, 0);
+(127, 0, 'entreprise', 'SCI IMMO', '3 chemin de Sejalan 48000 MENDE', 'SCI IMMO', NULL, 'sci', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(129, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(130, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(131, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(132, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -225,7 +175,7 @@ CREATE TABLE `operation_construction` (
   `operation_sinistre_descr` text DEFAULT NULL,
   `type_ouvrage_mais_indiv` tinyint(1) DEFAULT NULL,
   `type_ouvrage_mais_indiv_piscine` tinyint(1) DEFAULT NULL,
-  `type_ouvrage_mais_indiv_piscine_situation` varchar(255) NOT NULL,
+  `type_ouvrage_mais_indiv_piscine_situation` varchar(255) DEFAULT NULL,
   `type_ouvrage_ope_pavill` tinyint(1) DEFAULT NULL,
   `type_ouvrage_ope_pavill_nombre` int(11) DEFAULT NULL,
   `type_ouvrage_coll_habit` tinyint(1) DEFAULT NULL,
@@ -257,20 +207,11 @@ CREATE TABLE `operation_construction` (
 --
 
 INSERT INTO `operation_construction` (`DOID`, `nature_neuf_exist`, `nature_operation_surelev`, `nature_operation_surelev_sous_oeuvre`, `nature_operation_surelev_hors_fond`, `nature_operation_ext_horizont`, `nature_operation_ext_horizont_exist`, `nature_operation_renovation`, `nature_operation_renovation_fond`, `nature_operation_renovation_iso_therm`, `nature_operation_renovation_refect_toit`, `nature_operation_renovation_etancheite`, `nature_operation_renovation_ravalement`, `nature_operation_rehabilitation`, `nature_operation_rehabilitation_fond`, `nature_operation_rehabilitation_iso_therm`, `nature_operation_rehabilitation_refect_toit`, `nature_operation_rehabilitation_etancheite`, `nature_operation_rehabilitation_ravalement`, `operation_sinistre`, `operation_sinistre_descr`, `type_ouvrage_mais_indiv`, `type_ouvrage_mais_indiv_piscine`, `type_ouvrage_mais_indiv_piscine_situation`, `type_ouvrage_ope_pavill`, `type_ouvrage_ope_pavill_nombre`, `type_ouvrage_coll_habit`, `type_ouvrage_coll_habit_nombre`, `type_ouvrage_bat_indus`, `type_ouvrage_centre_com`, `type_ouvrage_centre_com_surf`, `type_ouvrage_bat_bur`, `type_ouvrage_hopital`, `type_ouvrage_vrd_privatif`, `type_ouvrage_autre_const`, `type_ouvrage_autre_const_usage`, `construction_adresse_esc_res_bat`, `construction_adresse_num_nom_rue`, `construction_adresse_lieu_dit`, `construction_adresse_arrond`, `construction_adresse_code_postal`, `construction_adresse_commune`, `construction_date_debut`, `construction_date_debut_prevue`, `construction_date_reception`, `construction_cout_operation`, `construction_cout_honoraires_moe`, `cout_operation_tva`) VALUES
-(80, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 'khjkjhkjhk', 'hkjhk', 'jhkjhk', 'jhkh', 0, 'hkjkj', '0022-02-12', '0022-02-22', '0022-02-22', 7487686, 6546, NULL),
-(81, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 'jhijhikjh', 'kjhjh', 'kjhk', 'jhkjh', 0, 'hkjhkj', '0546-06-04', '0455-05-06', '0555-04-05', 768469, 65156, 1),
-(82, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 'hgbiuhbguhg', 'uihgviu', 'gviu', 'gviyguvi', 0, 'yugvu', '0062-05-14', '5465-06-04', '0046-05-06', 6587654, 654645, 1),
-(83, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 'iygobçuy', 'iuygbçuyh', 'uiygbui', 'uygui', 62000, 'Bruxelles', '0465-05-04', '0046-05-06', '0465-05-06', 6387, 65741645, 1),
-(84, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(85, 'existante', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 'ugugu', 'ygu', 'yguyg', 'uyguy', 0, 'uguy', '0554-12-04', '0055-05-05', '0055-05-05', 0, 6546456546, 1),
-(88, 'existante', 1, 1, NULL, 1, 1, 1, 1, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'piscine extérieure', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rthrthvrthrvthrthtrhrhtrr', 'jhg', 'jhgj', 'hgjh', 'gjhg', 0, 'jhghjgjhj', '0022-05-04', '0222-02-22', '0658-02-22', 5647516, 654153, 1),
-(89, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '45 rue de la margeride', NULL, NULL, 48300, 'LANGOGNE', '2024-10-07', '2024-10-16', '2024-10-26', 1500, 1250, 1),
-(90, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '46 rue de la margeride', NULL, NULL, 48300, 'LANGOGNE', '2024-10-07', '2024-10-16', '2024-10-26', 1500, 1250, 1),
-(91, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rue de la construction', 'rue de la construction', 'rue de la construction', 'rue de la construction', 43000, 'LFIRMINY', '2024-11-01', '2024-12-08', '2025-03-01', 350000, 1250, NULL),
-(92, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rue de la construction', 'rue de la construction', 'rue de la construction', 'rue de la construction', 43000, 'LFIRMINY', '2024-10-11', '2024-10-25', '2025-11-15', 350000, 1250, NULL),
-(93, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rue de la construction', 'rue de la construction', 'rue de la construction', 'rue de la construction', 43000, 'LFIRMINY', '2024-10-11', '2024-10-25', '2025-11-15', 350000, 1250, NULL),
-(94, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rue de la construction', 'rue de la construction', 'rue de la construction', 'rue de la construction', 43000, 'LFIRMINY', '2024-10-11', '2024-10-25', '2025-11-15', 350000, 1250, NULL),
-(95, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'rue du PV', 'rue du PV', 'rue du PV', 'rue du PV', 63000, 'CLERMINT', '2024-10-05', '2024-10-12', '2025-11-02', 350000, 1250, NULL);
+(127, 'neuve', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, 'ZAC ', 'Lou CHAOUSSE ', NULL, NULL, 48000, 'MENDE', '2025-07-10', '2025-07-15', '2028-07-30', 11000000, 0, 1),
+(129, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(130, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(131, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(132, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -281,10 +222,10 @@ INSERT INTO `operation_construction` (`DOID`, `nature_neuf_exist`, `nature_opera
 CREATE TABLE `rcd` (
   `rcd_id` int(11) NOT NULL,
   `DOID` int(11) NOT NULL,
+  `rcd_entreprise_id` int(11) NOT NULL,
   `rcd_nature_id` int(11) NOT NULL,
   `rcd_nature_autre` varchar(255) NOT NULL,
   `rcd_nom` varchar(255) NOT NULL,
-  `repertoire` varchar(255) NOT NULL,
   `fichier` varchar(255) NOT NULL,
   `fichier_remarque` text NOT NULL,
   `annexe_fichier` varchar(255) NOT NULL,
@@ -293,6 +234,19 @@ CREATE TABLE `rcd` (
   `construction_date_debut` date NOT NULL,
   `construction_date_fin` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `rcd`
+--
+
+INSERT INTO `rcd` (`rcd_id`, `DOID`, `rcd_entreprise_id`, `rcd_nature_id`, `rcd_nature_autre`, `rcd_nom`, `fichier`, `fichier_remarque`, `annexe_fichier`, `annexe_fichier_remarque`, `montant`, `construction_date_debut`, `construction_date_fin`) VALUES
+(40, 127, 0, 3, '', 'GEVAUBOIS', '', '', '', '', 120000, '0000-00-00', '0000-00-00'),
+(41, 127, 0, 28, '', 'PLOMBIER 48', '', '', '', '', 35000, '0000-00-00', '0000-00-00'),
+(42, 130, 117, 5, '', 'PV', '', '', '', '', 15000, '0000-00-00', '0000-00-00'),
+(43, 130, 0, 28, '', 'PLOMBIER ', '', '', '', '', 12000, '0000-00-00', '0000-00-00'),
+(44, 130, 0, 29, '', 'MO', '', '', '', '', 0, '0000-00-00', '0000-00-00'),
+(45, 130, 0, 34, '', 'Artisan', '', '', '', '', 45000, '0000-00-00', '0000-00-00'),
+(46, 127, 118, 5, '', '', '', '', '', '', 0, '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -310,21 +264,26 @@ CREATE TABLE `rcd_nature` (
 --
 
 INSERT INTO `rcd_nature` (`rcd_nature_id`, `rcd_nature_nom`) VALUES
-(1, 'BET\r\n'),
-(2, 'Ingénieur conseil'),
-(3, 'Maçonnerie'),
-(4, 'Enduit'),
-(5, 'Charpente bois'),
-(6, 'Charpente métallique'),
-(7, 'Couverture / étanchéité'),
-(8, 'Plomberie'),
-(9, 'Carrelage'),
-(10, 'Menuiseries'),
-(11, 'Plaques de plâtres'),
-(12, 'Revêtements souples sols murs'),
-(13, 'Électricité'),
-(14, 'Fondation'),
-(15, 'Terrassement');
+(1, 'Contrôleur technique'),
+(2, 'Etude de sol'),
+(3, 'Construction en bois'),
+(4, 'Installation géothermique'),
+(5, 'Photovoltaïques'),
+(21, 'BET\r\n'),
+(22, 'Ingénieur conseil'),
+(23, 'Maçonnerie'),
+(24, 'Enduit'),
+(25, 'Charpente bois'),
+(26, 'Charpente métallique'),
+(27, 'Couverture / étanchéité'),
+(28, 'Plomberie'),
+(29, 'Carrelage'),
+(30, 'Menuiseries'),
+(31, 'Plaques de plâtres'),
+(32, 'Revêtements souples sols murs'),
+(33, 'Électricité'),
+(34, 'Fondation'),
+(35, 'Terrassement');
 
 -- --------------------------------------------------------
 
@@ -345,17 +304,17 @@ CREATE TABLE `situation` (
   `situation_mon_hist` tinyint(1) DEFAULT NULL,
   `situation_label_energie` tinyint(1) DEFAULT NULL,
   `situation_label_qualite` tinyint(1) DEFAULT NULL,
-  `sol` tinyint(1) DEFAULT NULL,
+  `situation_sol` tinyint(1) DEFAULT NULL,
   `sol_entreprise_id` int(11) DEFAULT NULL,
-  `sol_bureau_mission` enum('g2_amp','g2_pro','etude_sol_autre') DEFAULT NULL,
-  `sol_bureau_mission_champ` varchar(255) DEFAULT NULL,
-  `sol_parking` tinyint(1) DEFAULT NULL,
+  `situation_sol_bureau_mission` enum('g2_amp','g2_pro','etude_sol_autre') DEFAULT NULL,
+  `situation_sol_bureau_mission_champ` varchar(255) DEFAULT NULL,
+  `situation_sol_parking` tinyint(1) DEFAULT NULL,
   `situation_garanties_completes` tinyint(1) DEFAULT NULL,
   `situation_garanties_dommages_existants` tinyint(1) DEFAULT NULL,
-  `situation_construction_bois` tinyint(1) DEFAULT NULL,
-  `situation_pann_photo` tinyint(1) DEFAULT NULL,
-  `situation_geothermie` tinyint(1) DEFAULT NULL,
-  `situation_controle_tech` tinyint(1) DEFAULT NULL,
+  `situation_boi` tinyint(1) DEFAULT NULL,
+  `situation_phv` tinyint(1) DEFAULT NULL,
+  `situation_geo` tinyint(1) DEFAULT NULL,
+  `situation_ctt` tinyint(1) DEFAULT NULL,
   `situation_cnr` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -363,21 +322,12 @@ CREATE TABLE `situation` (
 -- Déchargement des données de la table `situation`
 --
 
-INSERT INTO `situation` (`DOID`, `situation_zone_inond`, `situation_sismique`, `situation_insectes`, `situation_proc_techniques`, `situation_parking`, `situation_do_10ans`, `situation_do_10ans_contrat_assureur`, `situation_do_10ans_contrat_numero`, `situation_mon_hist`, `situation_label_energie`, `situation_label_qualite`, `sol`, `sol_entreprise_id`, `sol_bureau_mission`, `sol_bureau_mission_champ`, `sol_parking`, `situation_garanties_completes`, `situation_garanties_dommages_existants`, `situation_construction_bois`, `situation_pann_photo`, `situation_geothermie`, `situation_controle_tech`, `situation_cnr`) VALUES
-(80, NULL, 5, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(81, 1, 5, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(82, 1, 5, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(83, 1, 2, 1, NULL, 1, 1, 'MMA', '1236579', 1, 1, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL),
-(84, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(85, NULL, 4, 1, 1, 1, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, 1),
-(88, 1, 5, 1, 1, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, 1, NULL, 1, 1, 1, 1, 1, 1),
-(89, 1, 4, 1, 1, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 1),
-(90, 1, 4, 1, 1, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, 1),
-(91, NULL, 2, 1, 1, NULL, NULL, NULL, NULL, 1, 1, 1, 1, NULL, 'g2_pro', NULL, NULL, NULL, NULL, 1, NULL, NULL, 1, NULL),
-(92, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 56, 'g2_pro', NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, NULL),
-(93, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(94, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(95, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `situation` (`DOID`, `situation_zone_inond`, `situation_sismique`, `situation_insectes`, `situation_proc_techniques`, `situation_parking`, `situation_do_10ans`, `situation_do_10ans_contrat_assureur`, `situation_do_10ans_contrat_numero`, `situation_mon_hist`, `situation_label_energie`, `situation_label_qualite`, `situation_sol`, `sol_entreprise_id`, `situation_sol_bureau_mission`, `situation_sol_bureau_mission_champ`, `situation_sol_parking`, `situation_garanties_completes`, `situation_garanties_dommages_existants`, `situation_boi`, `situation_phv`, `situation_geo`, `situation_ctt`, `situation_cnr`) VALUES
+(127, 0, 2, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 1),
+(129, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(130, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(131, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(132, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -388,15 +338,15 @@ INSERT INTO `situation` (`DOID`, `situation_zone_inond`, `situation_sismique`, `
 CREATE TABLE `souscripteur` (
   `souscripteur_id` int(11) NOT NULL,
   `souscripteur_nom_raison` varchar(255) NOT NULL,
-  `souscripteur_siret` varchar(255) NOT NULL,
+  `souscripteur_siret` varchar(255) DEFAULT NULL,
   `souscripteur_adresse` varchar(255) NOT NULL,
   `souscripteur_code_postal` int(11) NOT NULL,
   `souscripteur_commune` varchar(255) NOT NULL,
-  `souscripteur_profession` varchar(255) NOT NULL,
+  `souscripteur_profession` varchar(255) DEFAULT NULL,
   `souscripteur_telephone` varchar(255) NOT NULL,
   `souscripteur_email` varchar(255) NOT NULL,
-  `souscripteur_ancien_client_date` date NOT NULL,
-  `souscripteur_ancien_client_num` varchar(255) NOT NULL
+  `souscripteur_ancien_client_date` date DEFAULT NULL,
+  `souscripteur_ancien_client_num` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -404,22 +354,18 @@ CREATE TABLE `souscripteur` (
 --
 
 INSERT INTO `souscripteur` (`souscripteur_id`, `souscripteur_nom_raison`, `souscripteur_siret`, `souscripteur_adresse`, `souscripteur_code_postal`, `souscripteur_commune`, `souscripteur_profession`, `souscripteur_telephone`, `souscripteur_email`, `souscripteur_ancien_client_date`, `souscripteur_ancien_client_num`) VALUES
-(81, 'César Jules', '4564656546', 'Via Appia', 82000, 'Rome', 'Empereur', '0682026840', 'j.cesar@gmail.fr', '0000-00-00', ''),
-(82, 'Trump Donald', '678479', 'Trump Tower', 82000, 'New York', 'Milliardaire', '0682026840', 'd.trump@gmail.fr', '0000-00-00', ''),
-(83, 'Turner Tina', '64', 'Chicago', 92000, 'Chicago', 'Chanteuse', '0682026840', 't.turner@gmail.com', '0000-00-00', ''),
-(84, 'Poirot Hercule', '54545', 'Rue de Liège', 62000, 'Bruxelles', 'Enquêteur', '0682026840', 'h.poirot@gmail.com', '0000-00-00', ''),
-(85, 'ugvjug', 'ugug', 'uygui', 0, 'uguiy', 'guyg', 'iuyguiyg', 'uiyg@gmail.com', '0000-00-00', ''),
-(86, 'ugvjug', 'ugug', 'uygui', 0, 'uguiy', 'guyg', 'iuyguiyg', 'uiyg@gmail.com', '0000-00-00', ''),
-(87, 'Steph', 'Steph', 'Steph', 48700, 'Serverette', 'Dev', '0682026840', 's.vincent@gmail.com', '0000-00-00', ''),
-(88, 'jh', 'jhgj', 'hgjh', 0, 'jhg', 'jhg', 'jhgjhgjghj', 'hgjh@gmail.com', '0000-00-00', ''),
-(89, 'kjh', 'khk', 'hkj', 0, 'hkj', 'hkjh', 'kjhkjhkjhkj', 'hkjhkj@gmail.com', '0000-00-00', ''),
-(90, 'MARTIN Ludivine', '50 avenue foch', 'Rue du ruisseau', 48300, 'Langogene', '', '0471009626', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(91, 'MARTIN Ludivine', '50 avenue foch', 'Rue du ruisseau', 48300, 'Langogene', '', '0471009626', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(92, 'MARTIN Ludivine', '', 'rue du PV', 63000, 'CLERMINT', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(93, 'MARTIN Ludivine', '', 'rue du PV', 63000, 'CLERMINT', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(94, 'MARTIN Ludivine', '', 'rue du PV', 63000, 'CLERMINT', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(95, 'MARTIN Ludivine', '', 'rue du PV', 63000, 'CLERMINT', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', ''),
-(96, 'MARTIN Ludivine', '', 'rue du PV', 63000, 'CLERMINT', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', '');
+(123, 'Christophe Leydier', '', '20 Rue de la Margeride', 48300, 'Langogne', '', '0664824793', 'christophe_leydier@hotmail.com', '2025-01-02', '5645646'),
+(124, 'Christophe Leydier', '', '20 Rue de la Margeride', 48300, 'Langogne', '', '0664824793', 'christophe_leydier@hotmail.com', '2025-01-02', '5645646'),
+(125, 'SCI NOT IMMO48', '', '3 Chemin de sejauan', 48000, 'MENDE', '', '04XXXXXXXX', 'scinotimmo48@gmail.com', '0000-00-00', ''),
+(126, 'Nom, Prénom et/ou Raison Sociale', 'Siret 1', 'Adresse 1', 0, 'Commune 1', 'Prof', '04XXXXXXX', 'email1@gmail.com', '2025-06-27', '21519512'),
+(127, 'Christophe Leydier', '', '20 Rue de la Margeride', 48300, 'Langogne', '', '0664824793', 'christophe_leydier@hotmail.com', '0000-00-00', ''),
+(128, 'Christophe Leydier', '', '20 Rue de la Margeride', 48300, 'Langogne', '', '0664824793', 'christophe_leydier@hotmail.com', '0000-00-00', ''),
+(129, 'SCI NOT IMMO 48', '', '3 chemin de Sejalan', 48000, 'MENDE', '', '0411223344', 'email@email.com', '0000-00-00', ''),
+(130, 'Nom, Prénom et/ou Raison Sociale', '', 'rue de la construction', 43000, 'LFIRMINY', '', '0141418364', 'ludivine.martin@mail.com', '0000-00-00', ''),
+(131, 'SCI NOT IMMO 48', '', '3 chemin de Sejalan', 48000, 'MENDE', '', '0411223344', 'email@email.com', '0000-00-00', ''),
+(132, 'SCI NOT IMMO 48', '', '3 chemin de Sejalan', 48000, 'MENDE', '', '0411223344', 'email@email.com', '0000-00-00', ''),
+(133, 'Bruno', '', '1111111', 430000, 'LE PUY', '', '0466656565', 'AAA@orange.fr', '0000-00-00', ''),
+(134, 'Vincent', '', '5 bd du soubeyrand', 48000, 'Mende', '', '0466657979', 'vincent@vincent.fr', '0000-00-00', '');
 
 -- --------------------------------------------------------
 
@@ -457,20 +403,11 @@ CREATE TABLE `travaux_annexes` (
 --
 
 INSERT INTO `travaux_annexes` (`DOID`, `boi_entreprise_id`, `trav_annexes_constr_bois`, `trav_annexes_constr_bois_enveloppe`, `phv_entreprise_id`, `trav_annexes_pv_montage`, `trav_annexes_pv_etn`, `trav_annexes_pv_liste_c2p`, `trav_annexes_pv_surface`, `trav_annexes_pv_proc_tech`, `trav_annexes_pv_puissance`, `trav_annexes_pv_destination`, `geo_entreprise_id`, `trav_annexes_constr_produits_ce`, `trav_annexes_ct_type_controle`, `trav_annexes_ct_type_controle_l_autres`, `trav_annexes_ct_type_controle_lth_autres`, `trav_annexes_ct_type_controle_le_autres`, `trav_annexes_ct_type_controle_leth_autres`, `cnr_entreprise_id`, `cnr_qualite`, `ctt_entreprise_id`) VALUES
-(80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(81, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(82, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(83, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(84, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(85, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'guygiuyuyguo', NULL),
-(88, NULL, 1, NULL, NULL, 'integre', NULL, 1, 12, 1, 23, 'autocons', NULL, NULL, 'lth', NULL, NULL, NULL, NULL, 0, 'kijgyboui', NULL),
-(89, NULL, NULL, NULL, NULL, 'surimpose', NULL, NULL, 45, 1, 3, 'autocons', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'maçon', NULL),
-(90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(91, 48, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', 49),
-(92, 57, NULL, NULL, 58, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 59, '', NULL),
-(93, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(94, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
-(95, 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 61, NULL, NULL, NULL, NULL, NULL, NULL, 63, '', 62);
+(127, NULL, NULL, NULL, 118, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 115, '', NULL),
+(129, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
+(130, NULL, NULL, NULL, 117, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
+(131, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL),
+(132, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', NULL);
 
 -- --------------------------------------------------------
 
@@ -492,9 +429,11 @@ CREATE TABLE `utilisateur` (
 --
 
 INSERT INTO `utilisateur` (`ID`, `nom`, `prenom`, `email`, `pass`, `utilisateur_date_creation`) VALUES
-(1, 'ADMIN', '', 'admin@admin.com', '21232f297a57a5a743894a0e4a801fc3', '2024-10-03 09:57:58'),
-(11, 'LEYDIER', 'Christophe', 'christophe_leydier3@hotmail.com', '1697918c7f9551712f531143df2f8a37', '2024-10-04 15:14:01'),
-(12, 'Ludivine', 'MARTIN', 'ludivine.martin@mail.com', '1697918c7f9551712f531143df2f8a37', '2024-10-07 13:18:05');
+(1, 'ADMIN', '', 'admin@admin.com', '25f9e794323b453885f5181f1b624d0b', '2024-10-03 09:57:58'),
+(2, 'COTTON', 'Alexandre', 'alexandre.cotton@mma.fr', '1697918c7f9551712f531143df2f8a37', '2024-10-04 15:14:01'),
+(13, 'Leydier', 'Christophe', 'christophe_leydier@hotmail.com', '916b1f8ffa36850547113519050a76e3', '2024-10-14 08:21:41'),
+(14, 'LEYDIER', 'Christophe', 'c.leydier@velay.greta.fr', '1697918c7f9551712f531143df2f8a37', '2024-10-15 09:52:20'),
+(15, 'Ludivine', 'MARTIN', 'ludivine.martin@mail.com', '25f9e794323b453885f5181f1b624d0b', '2025-05-20 11:41:52');
 
 -- --------------------------------------------------------
 
@@ -516,17 +455,18 @@ CREATE TABLE `utilisateur_session` (
 --
 
 INSERT INTO `utilisateur_session` (`utilisateur_session_id`, `utilisateur_id`, `DOID`, `session_debut`, `session_maj`, `session_fin`) VALUES
-(2, 7, 0, '2024-09-08 16:45:00', '2024-09-08 16:45:17', NULL),
-(3, 1, 91, '2024-09-09 16:45:00', '2024-09-10 16:45:17', '2024-10-10 07:39:57'),
-(5, 1, 89, '2024-09-10 16:45:00', '2024-09-10 16:45:17', '2024-10-10 07:50:44'),
-(6, 2, 0, '2024-09-17 17:43:56', '2024-09-17 17:43:56', '2024-10-01 14:58:11'),
-(7, 7, 0, '2024-09-30 15:40:28', '2024-09-30 15:40:28', NULL),
-(8, 7, 0, '2024-09-30 15:42:53', '2024-09-30 15:42:53', NULL),
-(9, 7, 0, '2024-09-30 15:43:00', '2024-09-30 15:43:00', NULL),
-(10, 7, 0, '2024-10-01 14:38:46', '2024-10-01 14:38:46', NULL),
-(11, 7, 0, '2024-10-01 14:39:07', '2024-10-01 14:39:07', NULL),
-(12, 7, 0, '2024-10-01 16:53:18', '2024-10-01 16:53:18', NULL),
-(13, 11, 0, '2024-10-04 17:14:30', '2024-10-04 17:21:57', '2024-10-04 15:21:57');
+(39, 15, 121, '2025-05-27 16:22:11', '2025-05-27 16:22:11', NULL),
+(40, 15, 122, '2025-06-05 13:42:47', '2025-06-05 13:42:47', NULL),
+(41, 1, 123, '2025-06-23 11:20:26', '2025-06-23 11:20:26', NULL),
+(42, 1, 124, '2025-06-23 13:45:09', '2025-06-23 13:45:09', NULL),
+(43, 1, 125, '2025-06-24 15:03:08', '2025-06-24 15:03:08', NULL),
+(44, 1, 126, '2025-06-24 15:04:50', '2025-06-24 15:04:50', NULL),
+(45, 1, 127, '2025-07-03 16:14:16', '2025-07-03 16:14:16', NULL),
+(46, 1, 128, '2025-07-03 16:17:19', '2025-07-03 16:17:19', NULL),
+(47, 1, 129, '2025-07-03 16:48:40', '2025-07-03 16:48:40', NULL),
+(48, 1, 130, '2025-07-03 16:50:12', '2025-07-03 16:50:12', NULL),
+(49, 1, 131, '2025-07-04 15:11:41', '2025-07-04 15:11:41', NULL),
+(50, 1, 132, '2025-07-05 09:14:53', '2025-07-05 09:14:53', NULL);
 
 --
 -- Index pour les tables déchargées
@@ -537,7 +477,8 @@ INSERT INTO `utilisateur_session` (`utilisateur_session_id`, `utilisateur_id`, `
 --
 ALTER TABLE `dommage_ouvrage`
   ADD PRIMARY KEY (`DOID`),
-  ADD KEY `souscripteur_id` (`souscripteur_id`);
+  ADD KEY `souscripteur_id` (`souscripteur_id`),
+  ADD KEY `moe_entreprise_id` (`moe_entreprise_id`);
 
 --
 -- Index pour la table `entreprise`
@@ -550,13 +491,6 @@ ALTER TABLE `entreprise`
 --
 ALTER TABLE `moa`
   ADD PRIMARY KEY (`DOID`);
-
---
--- Index pour la table `moe`
---
-ALTER TABLE `moe`
-  ADD PRIMARY KEY (`DOID`),
-  ADD KEY `moe_entreprise_id` (`moe_entreprise_id`);
 
 --
 -- Index pour la table `operation_construction`
@@ -625,43 +559,43 @@ ALTER TABLE `utilisateur_session`
 -- AUTO_INCREMENT pour la table `dommage_ouvrage`
 --
 ALTER TABLE `dommage_ouvrage`
-  MODIFY `DOID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `DOID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
 -- AUTO_INCREMENT pour la table `entreprise`
 --
 ALTER TABLE `entreprise`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT pour la table `rcd`
 --
 ALTER TABLE `rcd`
-  MODIFY `rcd_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rcd_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT pour la table `rcd_nature`
 --
 ALTER TABLE `rcd_nature`
-  MODIFY `rcd_nature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `rcd_nature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT pour la table `souscripteur`
 --
 ALTER TABLE `souscripteur`
-  MODIFY `souscripteur_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `souscripteur_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT pour la table `utilisateur_session`
 --
 ALTER TABLE `utilisateur_session`
-  MODIFY `utilisateur_session_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `utilisateur_session_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- Contraintes pour les tables déchargées

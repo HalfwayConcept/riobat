@@ -1,7 +1,7 @@
-    <section class="bg-white dark:bg-gray-900">
+    <section class="bg-white dark:bg-gray-900 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
     <div class="py-8 mt-12 text-center lg:py-16">
         <div class="flex flex-col justify-center mb-4">
-            <section class="bg-white dark:bg-gray-900">
+            <section class="bg-white dark:bg-gray-900 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
                 <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto  lg:py-0">
                     <p class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                         Connexion    
