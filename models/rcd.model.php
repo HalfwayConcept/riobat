@@ -38,7 +38,6 @@
     function insert_rdc($array_values){
 
         if (!empty($array_values) ){
-
             $sql_rcd = "INSERT INTO `rcd` 
             ( `DOID`,`rcd_nature_id`, `rcd_nom`, `montant`) 
             VALUES ('".$array_values['doid']."','".$array_values['lot_nature']."', '".$array_values['lot_nom']."','".$array_values['lot_montant']."')";
@@ -50,7 +49,30 @@
             }
         }
         return true;
-    }    
+    }   
+    
+//création du souscripteur et de l'assurance dommage ouvrage + doid dans chaque table
+    function update_rdc($lot_id, $array_values){
+
+        if (!empty($array_values) ){
+
+            $sql_rcd = "UPDATE `rcd` SET    
+            `rcd_nature_id` = '".$array_values['lot_nature']."',
+            `rcd_nom` = '".$array_values['lot_nom']."',
+            `montant` = '".$array_values['lot_montant']."',
+            `construction_date_debut` = '".convertDateFormat($array_values['date_debut'], 'us-fr')."',
+            `construction_date_fin` = '".convertDateFormat($array_values['date_fin'], 'us-fr')  ."'
+            WHERE `rcd_id` = $lot_id;";
+            // Exemple d'utilisation
+            //echo $sql_rcd;
+
+            $query = mysqli_query($GLOBALS["conn"], $sql_rcd);
+            if (!$query) {
+                die("Erreur lors de l'ajout de nouveaux lots: " . mysqli_error($GLOBALS["conn"]));
+            }
+        }
+        return true;
+    }      
 
     function init_RCD_DOID($DOID){
 
@@ -79,5 +101,32 @@
         return $sql;
 
     }
+
+
+function convertDateFormat($date, $direction) {
+    // Vérifier la direction de conversion
+    if ($direction === 'us-fr') {
+        // Conversion de MM/DD/YYYY vers YYYY-MM-DD
+        $parts = explode('/', $date);
+        if (count($parts) === 3) {
+            $month = $parts[0];
+            $day = $parts[1];
+            $year = $parts[2];
+            return "$year-$month-$day";
+        }
+    } elseif ($direction === 'fr-us') {
+        // Conversion de YYYY-MM-DD vers MM/DD/YYYY
+        $parts = explode('-', $date);
+        if (count($parts) === 3) {
+            $year = $parts[0];
+            $month = $parts[1];
+            $day = $parts[2];
+            return "$month/$day/$year";
+        }
+    }
+    // Retourner la date originale en cas de format invalide
+    return $date;
+}
+
 
 ?>

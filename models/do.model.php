@@ -134,10 +134,6 @@
                     $res = mysqli_stmt_execute($stmt, $array_values);
                     /* Fermeture du traitement */
                     mysqli_stmt_close($stmt);  
-                    echo "<pre>";  
-                    echo $i."===>".$table."<br />";
-                    print_r($array_values);
-                    echo "</pre>";
                     $_SESSION["SQL"][$table] = debugQuery($sqlupdate, $array_values);   
                     
                     //echo debugQuery($sqlupdate, $array_values);

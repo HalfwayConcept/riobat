@@ -60,7 +60,6 @@
     function editDo($doid){
         $title = "Edition de la demande Dommage Ouvrage n° ".$doid;
         loadDo($doid);
-        //print_r($_SESSION);
 
         ob_start();
         require 'views/admin/edit.view.php';

@@ -2,30 +2,49 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.min.js"></script>
 
 <div class="myContainer">
-<?php if(DEBUG==true):?>
-    <div id="debug">
-        <pre>
-        <?php
-        //if(!empty($_POST)){ var_dump($_POST);};
-        //if(!empty($_FILES)){ var_dump($_FILES);};
-        //if(!empty($_SESSION)){ var_dump($_SESSION);};
-        //var_dump($array_datas);
-        ?>
-        </pre>
-    </div>
-<?php endif;?> 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <!-- component -->
         <form id="'form-rcd" action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="folder" value="<?= getFolderName($_GET['doid']);?>">
                 <input type="hidden" name="fields" value="lots-techniques">
+
+        <div class="w-full max-w-sm">
+            <div class="mb-2 flex justify-between items-center">
+                <label for="url-shortener" class="text-sm font-medium text-gray-900 dark:text-white">URL:</label>
+            </div>
+            <div class="flex items-center">
+                <button class="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-white bg-blue-700 dark:bg-blue-600 border hover:bg-blue-800 dark:hover:bg-blue-700 rounded-s-lg border-blue-700 dark:border-blue-600 hover:border-blue-700 dark:hover:border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">Lien à partager</button>
+                <div class="relative w-full">
+                    <input id="url-shortener" type="text" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-e-0 border-gray-300 text-gray-500 dark:text-gray-400 text-sm border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500" value="https://bit.ly/3U2SXcF" readonly disabled />
+                </div>
+                <button data-tooltip-target="tooltip-url-shortener" data-copy-to-clipboard-target="url-shortener" class="shrink-0 z-10 inline-flex items-center py-3 px-4 text-sm font-medium text-center text-gray-500 dark:text-gray-400 hover:text-gray-900 bg-gray-100 border border-gray-300 rounded-e-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:hover:text-white dark:border-gray-600" type="button">
+                    <span id="default-icon">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                            <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z"/>
+                        </svg>
+                    </span>
+                    <span id="success-icon" class="hidden">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                        </svg>
+                    </span>
+                </button>
+                <div id="tooltip-url-shortener" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                    <span id="default-tooltip-message">Copier le lien</span>
+                    <span id="success-tooltip-message" class="hidden">Copié!</span>
+                    <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
+            </div>
+            <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Attention à ne communiquer cet url qu'à l'émetteur de la demande</p>
+        </div>
+
         <table class="border-collapse w-full"  id="lotsTechniquesTable">
         <thead>
             <tr>
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Nom</th>
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Nature</th>
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Montant des travaux</th>
-                <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Période de Garantie</th>
+                <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Période de Garantie Assurance</th>
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">RCD</th>
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Annexe</th>                
                 <th class="p-3 text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 lg:table-cell">Actions</th>
@@ -44,14 +63,15 @@
             <tr class="<?= $classbg;?> lg:hover:bg-gray-100 flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0">
                 <td class="w-full min-w-40 p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">NOM DU LOT #<?=$item['rcd_id'];?></span>
+                    <input type="hidden" name="lot_id[]" value="<?=$item['rcd_id'];?>" />
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="text" name="nom[]" value="<?= $item['raison_sociale']?>" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
+                        <input type="text" name="lot_nom[]" value="<?= $item['rcd_nom']?>" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <label for="lot_nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
                     </div>
                 </td>
                 <td class="w-full w-[500px] p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nature</span>
-                    <select  style="min-width: 180px;" onchange="console.log(this.value);if(this.value==99){showElement('autre-nature<?= $key;?>')}else{hideElement('autre-nature<?= $key;?>')}" name="nature[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select  style="min-width: 180px;" onchange="console.log(this.value);if(this.value==99){showElement('autre-nature<?= $key;?>')}else{hideElement('autre-nature<?= $key;?>')}" name="lot_nature[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option selected="selected">-- Lot technique --</option>
                             <?php
                             foreach ($array_natures as $nature) {
@@ -62,18 +82,18 @@
                             ?>
                             <option value='99' <?php if($item['rcd_nature_id'] == 99){echo "selected";}?>>-Autre-</option>
                     </select>
-                    <input type="text" class="<?php if($item['rcd_nature_id'] != 99){echo 'hidden';}?>" name="autre-nature[]" value="<?= $item['rcd_nature_autre']?>" id="autre-nature<?= $key;?>" />
+                    <input type="text" class="<?php if($item['rcd_nature_id'] != 99){echo 'hidden';}?>" name="lot_nature_autre[]" value="<?= $item['rcd_nature_autre']?>" id="autre-nature<?= $key;?>" />
 
                 </td>
                 <td class="w-full lg:min-w-24 p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Montant</span>
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="number" name="montant[]" value="<?= $item['montant']?>" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="montant" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">€uros</label>
+                        <input type="number" name="lot_montant[]" value="<?= $item['montant']?>" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <label for="lot_montant" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">€uros</label>
                     </div>
                 </td>
                 <td class="w-full min-w-40 p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static">
-                    <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Période de garantie</span>
+                    <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Période de garantie assurance</span>
                     <h4>Début</h4>
                     <div class="relative max-w-sm">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -81,7 +101,7 @@
                             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                             </svg>
                         </div>
-                        <input name="dateDebut[]" value="<?= $item['construction_date_debut']?>" datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                        <input name="lot_date_debut[]" value="<?= convertDateFormat($item['construction_date_debut'], 'fr-us')?>" datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
                     </div>
                     <h4>Fin</h4>
                     <div class="relative max-w-sm">
@@ -90,7 +110,7 @@
                             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                             </svg>
                         </div>
-                        <input name="dateFin[]" value="<?= $item['construction_date_fin']?>"  datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                        <input name="lot_date_fin[]" value="<?= convertDateFormat($item['construction_date_fin'], 'fr-us')?>"  datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
                     </div>
                 </td>                                   
                 <!-- DEBUT DU TRAITEMENT RCD -->
@@ -263,7 +283,7 @@
                                 <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
-                                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Etes vous sûr de vouloir supprimer le lot technique "<span id="lot-del">X</span>" ?</h3>
+                                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Etes vous sûr de vouloir supprimer le lot technique "<span id="lot-del"><?=$item['rcd_id']?></span>" ?</h3>
                                 <button data-modal-hide="delete-modal" onclick="console.log(globalrow);deleteRow(globalrow)" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                                     Oui je suis sûr
                                 </button>
@@ -347,7 +367,7 @@
         <tr class="bg-white lg:hover:bg-gray-100 flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0">
             <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nom</span>
-                    <input type="hidden" name="lot_id[]" value="0" />
+                    <input type="hidden" name="lot_id[]" value="NEW_LOT" />
                     <div class="relative z-0 w-full mb-5 group">
                         <input type="text" name="lot_nom[]" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                         <label for="lot_nom[]" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom</label>
@@ -357,7 +377,7 @@
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Nature</span>
                 
                     <select required name="lot_nature[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option>-- Lot technique --</option>
+                            <option value="">-- Lot technique --</option>
                             <?php
                             foreach ($array_natures as $nature) {                            
                                 echo "<option value=\"".$nature['rcd_nature_id']."\">".$nature['rcd_nature_nom']."</option>";
@@ -366,7 +386,7 @@
                             ?>
                             <option value='99'>-Autres-</option>
                     </select>
-                    <input class="" type="text" name="autre[]" placeholder="Autres...." />
+                    <input class="" type="text" name="lot_nature_autre[]" placeholder="Autres...." />
                 </td>
                 <td class="w-full lg:w-auto p-3 text-gray-800 text-center border border-b text-center block lg:table-cell relative lg:static">
                     <span class="lg:hidden absolute top-0 left-0 bg-blue-200 px-2 py-1 text-xs font-bold uppercase">Montant</span>
@@ -422,4 +442,43 @@ document.addEventListener('DOMContentLoaded', function() {
     formModified = false;
   });
 });
+
+
+
+document.addEventListener('load', function() {
+    const clipboard = FlowbiteInstances.getInstance('CopyClipboard', 'url-shortener');
+    const tooltip = FlowbiteInstances.getInstance('Tooltip', 'tooltip-url-shortener');
+
+    const $defaultIcon = document.getElementById('default-icon');
+    const $successIcon = document.getElementById('success-icon');
+
+    const $defaultTooltipMessage = document.getElementById('default-tooltip-message');
+    const $successTooltipMessage = document.getElementById('success-tooltip-message');
+
+    clipboard.updateOnCopyCallback((clipboard) => {
+        showSuccess();
+
+        // reset to default state
+        setTimeout(() => {
+            resetToDefault();
+        }, 2000);
+    })
+
+    const showSuccess = () => {
+        $defaultIcon.classList.add('hidden');
+        $successIcon.classList.remove('hidden');
+        $defaultTooltipMessage.classList.add('hidden');
+        $successTooltipMessage.classList.remove('hidden');    
+        tooltip.show();
+    }
+
+    const resetToDefault = () => {
+        $defaultIcon.classList.remove('hidden');
+        $successIcon.classList.add('hidden');
+        $defaultTooltipMessage.classList.remove('hidden');
+        $successTooltipMessage.classList.add('hidden');
+        tooltip.hide();
+    }
+})
+
 </script>
