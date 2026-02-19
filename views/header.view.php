@@ -13,6 +13,7 @@
     <link href="public/style/output.css" rel="stylesheet" />
     <link href="public/style/custom.css" rel="stylesheet" />
     <script src="public/script/script-main.js"></script>
+    <script src="public/script/adresse-autocomplete.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     <title><?php echo $title ?></title>
 </head>

@@ -79,18 +79,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom <span class="text-red-600">*</span></label>
                         <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
-                    <div class="py-4">
-                        <div class="relative">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7-7.5 11-7.5 11s-7.5-4-7.5-11a7.5 7.5 0 1115 0z"/></svg>
-                                Adresse de la construction <span class="text-red-600">*</span>
-                            </label>
-                            <input type="text" id="adresse_autocomplete" name="moa_souscripteur_form_adresse" autocomplete="off" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_adresse']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                            <ul id="adresse_suggestions" class="absolute z-10 bg-white border border-gray-300 rounded-lg shadow-lg w-full hidden"></ul>
-                            <script src="/public/script/adresse-autocomplete.js"></script>
-                            <script>adresseAutocomplete('adresse_autocomplete', 'adresse_suggestions');</script>
-                        </div>
-                    </div>
+
                     <div id="raison_champ" class="hidden py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raison sociale</label>
                         <input type="text" id="moa_souscripteur_form_raison_sociale" name="moa_souscripteur_form_raison_sociale" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
