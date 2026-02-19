@@ -15,37 +15,81 @@
     <form action="" method="post">
         <!-- Formulaire caché : "Maitre d'ouvrage est-il le souscripteur ?"-->
         <div>
-            <div class="flex flex-col lg:flex-row gap-4">
+            <div class="flex flex-col lg:flex-row gap-4 items-center">
                 <div class="lg:w-2/3">
                     <span class="text-gray-500 font-medium">Le Maitre d'Ouvrage est-il le souscripteur ?</span>
                 </div>
-                <div class="lg:w-1/3 flex gap-4">
-                    <label class="flex items-center">
-                        <input type="radio" name="moa_souscripteur" value="1" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==1 ? "checked=checked" : ""; ?> onclick="hideElement('moa_form','moa')"/>
-                        <span class="ml-2">Oui</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="moa_souscripteur" value="0" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "checked=checked" : ""; ?> onclick="showElement('moa_form','moa')"/>
-                        <span class="ml-2">Non</span>
+                <div class="lg:w-1/3">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle_moa_souscripteur" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_souscripteur']) ? ($_SESSION['info_moa']['moa_souscripteur']==1 ? "checked=checked" : "") : "checked=checked"; ?> onchange="handleToggleSouscripteur(this)"/>
+                        <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
+                        <span class="select-none ms-3 text-sm font-medium text-heading" id="moa_souscripteur_value"><?= isset($_SESSION['info_moa']['moa_souscripteur']) ? ($_SESSION['info_moa']['moa_souscripteur']==1 ? 'Oui' : 'Non') : 'Oui' ?></span>
                     </label>
                 </div>
-            </div>  
+                <input type="radio" name="moa_souscripteur" value="1" id="radio_moa_souscripteur_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur']) ? ($_SESSION['info_moa']['moa_souscripteur']==1 ? "checked=checked" : "") : "checked=checked"; ?> onclick="hideElement('moa_form','moa')"/>
+                <input type="radio" name="moa_souscripteur" value="0" id="radio_moa_souscripteur_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "checked=checked" : ""; ?> onclick="showElement('moa_form','moa')"/>
+            </div>
+            <script>
+            function handleToggleSouscripteur(checkbox) {
+                const radioOui = document.getElementById('radio_moa_souscripteur_oui');
+                const radioNon = document.getElementById('radio_moa_souscripteur_non');
+                const spanValue = document.getElementById('moa_souscripteur_value');
+                if (checkbox.checked) {
+                    radioOui.checked = true;
+                    spanValue.textContent = 'Oui';
+                    hideElement('moa_form','moa');
+                } else {
+                    radioNon.checked = true;
+                    spanValue.textContent = 'Non';
+                    showElement('moa_form','moa');
+                }
+            }
+            </script>  
             <div id="moa_form" class="<?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "" : "hidden"; ?> px-8 py-4">
                 <div class="mb-6 md:grid-cols-2">
-                    <div class="flex flex-row py-4">
-                        <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Civilité : &ensp;&ensp;
-                        <input type="radio" name="moa_souscripteur_form_civilite" value="particulier" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="particulier" ? "checked=checked" : ""; ?> onclick="hideElement('siret_champ'),hideElement('raison_champ')">
-                        <label>&ensp; Particulier &ensp;&ensp;</label>
-                        <input type="radio" name="moa_souscripteur_form_civilite" value="entreprise" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="entreprise" ? "checked=checked" : ""; ?> onclick="showElement('siret_champ'),showElement('raison_champ')">
-                        <label>&ensp; Entreprise</label></span>
+                    <div class="flex flex-row py-4 items-center gap-4">
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">Civilité :</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-medium text-gray-700">Particulier</span>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle_moa_civilite" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="entreprise" ? "checked=checked" : ""; ?> onchange="handleToggleCivilite(this)"/>
+                                <div class="relative w-9 h-5 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-300 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                            </label>
+                            <span class="text-sm font-medium text-gray-700">Entreprise</span>
+                        </div>
+                        <input type="radio" name="moa_souscripteur_form_civilite" value="particulier" id="radio_moa_civilite_particulier" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="particulier" ? "checked=checked" : ""; ?>/>
+                        <input type="radio" name="moa_souscripteur_form_civilite" value="entreprise" id="radio_moa_civilite_entreprise" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="entreprise" ? "checked=checked" : ""; ?>/>
                     </div>
+                    <script>
+                    function handleToggleCivilite(checkbox) {
+                        const radioParticulier = document.getElementById('radio_moa_civilite_particulier');
+                        const radioEntreprise = document.getElementById('radio_moa_civilite_entreprise');
+                        if (checkbox.checked) {
+                            radioEntreprise.checked = true;
+                            showElement('siret_champ');
+                            showElement('raison_champ');
+                        } else {
+                            radioParticulier.checked = true;
+                            hideElement('siret_champ');
+                            hideElement('raison_champ');
+                        }
+                    }
+                    </script>
                     <div class="py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom <span class="text-red-600">*</span></label>
                         <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
                     <div class="py-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse actuelle <span class="text-red-600">*</span></label>
-                        <input type="text" name="moa_souscripteur_form_adresse" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_adresse']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <div class="relative">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7-7.5 11-7.5 11s-7.5-4-7.5-11a7.5 7.5 0 1115 0z"/></svg>
+                                Adresse de la construction <span class="text-red-600">*</span>
+                            </label>
+                            <input type="text" id="adresse_autocomplete" name="moa_souscripteur_form_adresse" autocomplete="off" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_adresse']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                            <ul id="adresse_suggestions" class="absolute z-10 bg-white border border-gray-300 rounded-lg shadow-lg w-full hidden"></ul>
+                            <script src="/public/script/adresse-autocomplete.js"></script>
+                            <script>adresseAutocomplete('adresse_autocomplete', 'adresse_suggestions');</script>
+                        </div>
                     </div>
                     <div id="raison_champ" class="hidden py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raison sociale</label>
@@ -61,6 +105,29 @@
 
 
         <!-- Qualité du maitre d'ouvrage -->
+                <!-- Bloc Dates et Coût de l'opération en 2 colonnes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Dates de l'opération de construction
+                        </label>
+                        <div class="flex flex-col gap-2">
+                            <input type="date" name="date_debut_operation" value="<?= isset($_SESSION['info_moa']['date_debut_operation']) ? htmlspecialchars($_SESSION['info_moa']['date_debut_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Date de début" />
+                            <input type="date" name="date_fin_operation" value="<?= isset($_SESSION['info_moa']['date_fin_operation']) ? htmlspecialchars($_SESSION['info_moa']['date_fin_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Date de fin" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-4.41 0-8-1.79-8-4V6c0-2.21 3.59-4 8-4s8 1.79 8 4v8c0 2.21-3.59 4-8 4z"/></svg>
+                            Coût de l'opération de construction
+                        </label>
+                        <div class="flex flex-col gap-2">
+                            <input type="number" step="0.01" name="cout_operation" value="<?= isset($_SESSION['info_moa']['cout_operation']) ? htmlspecialchars($_SESSION['info_moa']['cout_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Montant (€)" />
+                            <input type="text" name="devise_operation" value="<?= isset($_SESSION['info_moa']['devise_operation']) ? htmlspecialchars($_SESSION['info_moa']['devise_operation']) : 'EUR' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Devise (ex: EUR)" />
+                        </div>
+                    </div>
+                </div>
         <div class="my-16">
             <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) : <span class="text-red-600">*</span></h3>
             <div class="flex flex-col lg:flex-row mx-6 mb-2">
@@ -90,15 +157,36 @@
 
         <!-- Formulaire caché : "Maitre d'ouvrage participe t-il à la construction ?"-->
         <div>
-            <div class="flex flex-col lg:flex-row text-gray-500 font-medium">
-                <span>Le Maitre d'Ouvrage participe à la construction ? <span class="text-red-600">*</span> &ensp;&ensp;</span>
-                <div class="ml-8">
-                    <input type="radio" name="moa_construction" value="1" <?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "checked=checked" : ""; ?> onclick="showElement('moa_construction_form'),showElement('moa_construction_pro_tableau')" required/>
-                    <label> Oui &ensp;</label>
-                    <input type="radio" name="moa_construction" value="0" <?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('moa_construction_form'),hideElement('moa_construction_pro_tableau')"/>
-                    <label> Non</label>
+            <div class="flex flex-col lg:flex-row gap-4 items-center text-gray-500 font-medium">
+                <span class="lg:w-2/3">Le Maitre d'Ouvrage participe à la construction ? <span class="text-red-600">*</span></span>
+                <div class="lg:w-1/3">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle_moa_construction" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : "checked=checked"; ?> onchange="handleToggleConstruction(this)"/>
+                        <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
+                        <span id="moa_construction_value" class="select-none ms-3 text-sm font-medium text-gray-900"><?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? 'Oui' : 'Non') : 'Oui' ?></span>
+                    </label>
                 </div>
+                <input type="radio" name="moa_construction" value="1" id="radio_moa_construction_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : "checked=checked"; ?> required/>
+                <input type="radio" name="moa_construction" value="0" id="radio_moa_construction_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==0 ? "checked=checked" : ""; ?>/>
             </div>
+            <script>
+            function handleToggleConstruction(checkbox) {
+                const radioOui = document.getElementById('radio_moa_construction_oui');
+                const radioNon = document.getElementById('radio_moa_construction_non');
+                const spanValue = document.getElementById('moa_construction_value');
+                if (checkbox.checked) {
+                    radioOui.checked = true;
+                    spanValue.textContent = 'Oui';
+                    showElement('moa_construction_form');
+                    showElement('moa_construction_pro_tableau');
+                } else {
+                    radioNon.checked = true;
+                    spanValue.textContent = 'Non';
+                    hideElement('moa_construction_form');
+                    hideElement('moa_construction_pro_tableau');
+                }
+            }
+            </script>
             <div id="moa_construction_form" class="<?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "" : "hidden"; ?> py-4">
                 <div class="flex flex-row p-2 mb-6">
                     <div class="flex items-center">
@@ -108,10 +196,10 @@
                     <p class="text-gray-900 text-sm block w-full p-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white">La clause contrat n°001 des Conventions Spéciales n°811 "Intervention du maître d'ouvrage dans la conception, la direction, la surveillance ou la réalisation des travaux" est obligatoirement souscrite.</p>
                 </div>
                 <div class="mb-6">
-                    <div class="flex flex-row">
+                    <div class="flex flex-row items-center gap-4">
                         <span class="text-gray-500 font-medium">Le Maitre d'Ouvrage est-il un professionnel de la construction ? &ensp;&ensp; </span>
                         <div> <!-- Infobulle -->
-                            <button data-popover-target="popover-description" data-popover-placement="bottom-end" type="button" class="mr-8"><svg class="w-4 h-4 ms-2 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
+                            <button data-popover-target="popover-description" data-popover-placement="bottom-end" type="button" class="mr-2"><svg class="w-4 h-4 ms-2 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
                             <div data-popover id="popover-description" role="tooltip" class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
                                 <div class="p-3 space-y-2">
                                     <h3 class="font-semibold text-gray-900 dark:text-white">Conditions d'acceptation : </h3>
@@ -119,13 +207,30 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <input type="radio" name="moa_construction_pro" value="1" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "checked=checked" : ""; ?> onclick="showElement('moa_construction_pro_form')"/>
-                            <label class="text-gray-500 font-medium"> Oui &ensp;</label>
-                            <input type="radio" name="moa_construction_pro" value="0" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==0 ? "checked=checked" : ""; ?> onclick="hideElement('moa_construction_pro_form')"/>
-                            <label class="text-gray-500 font-medium"> Non</label>
-                        </div>
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle_moa_construction_pro" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_construction_pro']) ? ($_SESSION['info_moa']['moa_construction_pro']==1 ? "checked=checked" : "") : ""; ?> onchange="handleToggleConstructionPro(this)"/>
+                            <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
+                            <span class="select-none ms-3 text-sm font-medium text-gray-900" id="moa_construction_pro_value"><?= isset($_SESSION['info_moa']['moa_construction_pro']) ? ($_SESSION['info_moa']['moa_construction_pro']==1 ? 'Oui' : 'Non') : 'Non' ?></span>
+                        </label>
+                        <input type="radio" name="moa_construction_pro" value="1" id="radio_moa_construction_pro_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "checked=checked" : ""; ?> required/>
+                        <input type="radio" name="moa_construction_pro" value="0" id="radio_moa_construction_pro_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==0 ? "checked=checked" : "checked=checked"; ?> required/>
                     </div>
+                    <script>
+                    function handleToggleConstructionPro(checkbox) {
+                        const radioOui = document.getElementById('radio_moa_construction_pro_oui');
+                        const radioNon = document.getElementById('radio_moa_construction_pro_non');
+                        const spanValue = document.getElementById('moa_construction_pro_value');
+                        if (checkbox.checked) {
+                            radioOui.checked = true;
+                            spanValue.textContent = 'Oui';
+                            showElement('moa_construction_pro_form');
+                        } else {
+                            radioNon.checked = true;
+                            spanValue.textContent = 'Non';
+                            hideElement('moa_construction_pro_form');
+                        }
+                    }
+                    </script>
                     <div id="moa_construction_pro_form" class="py-4 <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "" : "hidden"; ?> mx-6">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Veuillez indiquer sa profession :</label>
                         <input type="text" name="moa_construction_pro_champ" value="<?= isset($_SESSION['info_moa']['moa_construction_pro_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_construction_pro_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
