@@ -188,3 +188,17 @@ function markRequiredLabels(){
         });
     }catch(e){ }
 }
+
+
+function handleToggleYN(checkbox, radioOuiId, radioNonId, spanValueId) {
+    const radioOui = document.getElementById(radioOuiId);
+    const radioNon = document.getElementById(radioNonId);
+    const spanValue = document.getElementById(spanValueId);
+    if (checkbox.checked) {
+        if (radioOui) radioOui.checked = true;
+        if (spanValue) spanValue.textContent = 'Oui';
+    } else {
+        if (radioNon) radioNon.checked = true;
+        if (spanValue) spanValue.textContent = 'Non';
+    }
+}

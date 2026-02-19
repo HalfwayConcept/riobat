@@ -168,6 +168,11 @@ function update($array_SESSION, $table, $DOID){
             && !str_starts_with($field, "ctt_")
             && !str_starts_with($field, "moe_")
             && !str_starts_with($field, "cnr_")
+            && !str_starts_with($field, "moa_conception")
+            && !str_starts_with($field, "moa_direction")
+            && !str_starts_with($field, "moa_surveillance")
+            && !str_starts_with($field, "moa_execution")
+            
         ){
             $fields[] = "$field = :$field";
             $params[":$field"] = ($value === '' ? null : $value);

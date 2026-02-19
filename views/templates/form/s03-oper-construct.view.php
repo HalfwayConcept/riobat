@@ -1,5 +1,17 @@
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
     <script src="public/script/s03-oper-construct.js"></script>
+    <script src="public/script/adresse-autocomplete.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initAdresseAutocomplete === 'function') {
+            var input = document.getElementById('construction_adresse_autocomplete');
+            if (input) {
+                initAdresseAutocomplete(input);
+            }
+        }
+    });
+    </script>
+    <script src="public/script/adresse-autocomplete.js"></script>
     <script>
     // Initialisation dynamique des blocs dépendants des toggles au chargement
     document.addEventListener('DOMContentLoaded', function() {
@@ -55,6 +67,31 @@
     
     
     <form action="" method="post">
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $checkboxes = [
+                'type_ouvrage_mais_indiv',
+                'type_ouvrage_ope_pavill',
+                'type_ouvrage_coll_habit',
+                'type_ouvrage_bat_indus',
+                'type_ouvrage_centre_com',
+                'type_ouvrage_bat_bur',
+                'type_ouvrage_hopital',
+                'type_ouvrage_vrd_privatif',
+                'type_ouvrage_autre_const'
+            ];
+            $atLeastOneChecked = false;
+            foreach ($checkboxes as $cb) {
+                if (!empty($_POST[$cb])) {
+                    $atLeastOneChecked = true;
+                    break;
+                }
+            }
+            if (!$atLeastOneChecked) {
+                $_SESSION['validation_errors'][] = 'Veuillez cocher au moins un type d\'ouvrage.';
+            }
+        }
+        ?>
         <!-- SECTION 1 : Nature de l'opération -->
         <div>
             <h2 class="text-lg font-bold text-gray-900 mb-4">1. Nature de l'opération <span class="text-red-600">*</span></h2>
@@ -200,7 +237,7 @@
 
                     <div id="nature_operation_ext_horizont" class="<?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont']) && ($_SESSION['info_operation_construction']['nature_operation_ext_horizont'])==1 ? "" : "hidden"; ?> px-8 py-4">
                         <div class="mb-2 md:grid-cols-2">
-                            <div class="flex flex-row py-2 radio-right">
+                            <div class="flex flex-row py-2 radio-right items-center">
                                 <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center">Intervention sur la structure existante y compris la fondation ?
                                     <button data-popover-target="extension-horizont-existante-popup" data-popover-placement="bottom-end" type="button" class="ml-2"><svg class="w-4 h-4 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
                                 </span>
@@ -210,11 +247,31 @@
                                         <p>Sont visés tous les travaux :<br> - avec intervention quelle qu'elle soit, sur des éléments structurels, et/ou <br>- consistant en la suppression de poteaux, de poutres ou d'éléments structurels.<br><br>Exemples d'intervention sur la structure existante : <br> - lors d'une surélévation : création d'une nouvelle poutre ou poteau dans la partie existante qui pourra charger ou sous-charger certain élément existant <br> - lors d'une extension horizontale : nouvelle dalle repose sur un voile ou poutre existant ce qui engendrera une surcharge sur la fondation existante <br> - lors d'une rénovation : remplacement d'un mur porteur par une poutre IPN</p>
                                     </div>
                                 </div>
-                                <input type="radio" name="nature_operation_ext_horizont_exist" value="1" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && ($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist'])==1 ? "checked=checked" : ""; ?>>
-                                <label class="text-gray-500 font-medium">&ensp; Oui &ensp;&ensp;</label>
-                                <input type="radio" name="nature_operation_ext_horizont_exist" value="0" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && ($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist'])==0 ? "checked=checked" : ""; ?>>
-                                <label class="text-gray-500 font-medium">&ensp; Non</label>
+                                <label class="inline-flex items-center cursor-pointer ml-4">
+                                    <input type="checkbox" id="toggle_ext_horizont_exist" class="sr-only peer" onchange="handleToggleExtHorizontExist(this)" 
+                                        <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==1 ? "checked=checked" : ""; ?> />
+                                    <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
+                                    <span id="ext_horizont_exist_value" class="select-none ms-3 text-sm font-medium text-gray-900">
+                                        <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) ? ($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==1 ? 'Oui' : 'Non') : 'Non' ?>
+                                    </span>
+                                </label>
+                                <input type="radio" name="nature_operation_ext_horizont_exist" value="1" id="radio_ext_horizont_exist_oui" class="hidden" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==1 ? "checked=checked" : ""; ?> />
+                                <input type="radio" name="nature_operation_ext_horizont_exist" value="0" id="radio_ext_horizont_exist_non" class="hidden" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==0 ? "checked=checked" : (!isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) ? "checked=checked" : ""); ?> />
                             </div>
+                            <script>
+                            function handleToggleExtHorizontExist(checkbox) {
+                                const radioOui = document.getElementById('radio_ext_horizont_exist_oui');
+                                const radioNon = document.getElementById('radio_ext_horizont_exist_non');
+                                const spanValue = document.getElementById('ext_horizont_exist_value');
+                                if (checkbox.checked) {
+                                    radioOui.checked = true;
+                                    spanValue.textContent = 'Oui';
+                                } else {
+                                    radioNon.checked = true;
+                                    spanValue.textContent = 'Non';
+                                }
+                            }
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -556,8 +613,9 @@
                 <input type="text" name="construction_adresse_esc_res_bat" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_esc_res_bat']) ? $_SESSION['info_operation_construction']['construction_adresse_esc_res_bat'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
             </div>
             <div class="mx-8 my-2">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Numéro et nom de la rue <span class="text-red-600">*</span></label>
-                <input type="text" name="construction_adresse_num_nom_rue" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_num_nom_rue']) ? $_SESSION['info_operation_construction']['construction_adresse_num_nom_rue'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
+                <label for="construction_adresse_autocomplete" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse de la construction</label>
+                <input type="text" id="construction_adresse_autocomplete" name="construction_adresse" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse']) ? htmlspecialchars($_SESSION['info_operation_construction']['construction_adresse']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Commencez à taper l'adresse..." autocomplete="off"  />
+                <small class="text-gray-500">Saisissez l'adresse puis sélectionnez dans la liste proposée.</small>
             </div>
             <div class="grid gap-6 mb-2 mx-8 md:grid-cols-2">
                 <div>
@@ -661,5 +719,7 @@
         </div>
 
         <input type="hidden" name="fields" value="operation_construction">
+
+        <!-- SECTION: Etude de sol (step4) supprimée à la demande -->
     </form>
 </section>

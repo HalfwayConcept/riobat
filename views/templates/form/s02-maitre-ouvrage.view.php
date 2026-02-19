@@ -93,54 +93,38 @@
         </div>
 
 
-        <!-- Qualité du maitre d'ouvrage -->
-                <!-- Bloc Dates et Coût de l'opération en 2 colonnes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            Dates de l'opération de construction
-                        </label>
-                        <div class="flex flex-col gap-2">
-                            <input type="date" name="date_debut_operation" value="<?= isset($_SESSION['info_moa']['date_debut_operation']) ? htmlspecialchars($_SESSION['info_moa']['date_debut_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Date de début" />
-                            <input type="date" name="date_fin_operation" value="<?= isset($_SESSION['info_moa']['date_fin_operation']) ? htmlspecialchars($_SESSION['info_moa']['date_fin_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Date de fin" />
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-4.41 0-8-1.79-8-4V6c0-2.21 3.59-4 8-4s8 1.79 8 4v8c0 2.21-3.59 4-8 4z"/></svg>
-                            Coût de l'opération de construction
-                        </label>
-                        <div class="flex flex-col gap-2">
-                            <input type="number" step="0.01" name="cout_operation" value="<?= isset($_SESSION['info_moa']['cout_operation']) ? htmlspecialchars($_SESSION['info_moa']['cout_operation']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Montant (€)" />
-                            <input type="text" name="devise_operation" value="<?= isset($_SESSION['info_moa']['devise_operation']) ? htmlspecialchars($_SESSION['info_moa']['devise_operation']) : 'EUR' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Devise (ex: EUR)" />
-                        </div>
-                    </div>
-                </div>
+                <!-- Bloc Dates et Coût de l'opération supprimé -->
         <div class="my-16">
             <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) : <span class="text-red-600">*</span></h3>
-            <div class="flex flex-col lg:flex-row mx-6 mb-2">
+            <?php
+                require_once __DIR__ . '/../../../models/moa_qualite.model.php';
+                $moa_qualites = getAllMoaQualites();
+                $selected_qualite = isset($_SESSION['info_moa']['moa_qualite']) ? $_SESSION['info_moa']['moa_qualite'] : '';
+            ?>
+            <div class="flex flex-col mx-6 mb-2">
                 <div class="flex flex-col ml-8">
-                    <span><input type="radio" name="moa_qualite" value="etat" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="etat" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')" required/> Etat (services publics)</span>
-                    <span><input type="radio" name="moa_qualite" value="hlm_public" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="hlm_public" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Organismes d'habitations à loyer modéré (secteur public)</span>
-                    <span><input type="radio" name="moa_qualite" value="syndic" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="syndic" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Syndicats de copropriétaires</span>
-                    <span><input type="radio" name="moa_qualite" value="vendeur_prive" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="vendeur_prive" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Vendeur privé après achèvement</span>
-                    <span><input type="radio" name="moa_qualite" value="sci" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="sci" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Société Civile Immobilière</span>
-                    <span><input type="radio" name="moa_qualite" value="entreprise" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="entreprise" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Entreprise</span>
-                    <span><input type="radio" name="moa_qualite" value="moa_qualite_autre" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="moa_qualite_autre" ? "checked=checked" : ""; ?> onclick="showElement('moa_qualite_autre')"/> Autre qualité</span>
-                    <div id="moa_qualite_autre" class="hidden mt-2">
-                        <input type="text" name="moa_qualite_champ" value="<?= isset($_SESSION['info_moa']['moa_qualite_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_qualite_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez préciser"/>
-                    </div>    
-                </div>
-                <div class="flex flex-col ml-8">
-                    <span><input type="radio" name="moa_qualite" value="collectivites" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="collectivites" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Collectivités locales</span>
-                    <span><input type="radio" name="moa_qualite" value="hlm_prive" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="hlm_prive" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Organismes d'habitations à loyer modéré (secteur privé)</span>
-                    <span><input type="radio" name="moa_qualite" value="vendeur_prive_imm" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="vendeur_prive_imm" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Vendeur privé d'immeubles à construire</span>
-                    <span><input type="radio" name="moa_qualite" value="particulier" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="particulier" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Particulier</span>
-                    <span><input type="radio" name="moa_qualite" value="prom_prive" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="prom_priv" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Promoteur privé immobilier</span>
-                    <span><input type="radio" name="moa_qualite" value="asso" <?= isset($_SESSION['info_moa']['moa_qualite']) && ($_SESSION['info_moa']['moa_qualite'])=="asso" ? "checked=checked" : ""; ?> onclick="hideElement('moa_qualite_autre')"/> Association</span>
+                    <select id="moa_qualite_select" name="moa_qualite" class="block w-full bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-4 py-3.5 shadow-xs placeholder:text-body mb-4" required onchange="toggleMoaQualiteAutre(this)">
+                        <option value="" disabled <?= $selected_qualite=='' ? 'selected' : '' ?>>Sélectionnez une qualité</option>
+                        <?php foreach ($moa_qualites as $qualite): ?>
+                            <option value="<?= $qualite['id'] ?>" <?= ($selected_qualite == $qualite['id']) ? 'selected' : '' ?>><?= htmlspecialchars($qualite['label']) ?></option>
+                        <?php endforeach; ?>
+                        <option value="999" <?= ($selected_qualite == 999) ? 'selected' : '' ?>>Autre qualité</option>
+                    </select>
+                    <div id="moa_qualite_autre_div" class="<?= ($selected_qualite == 999 ) ? '' : 'hidden' ?> mt-2">
+                        <input type="text" name="moa_qualite_autre" value="<?= isset($_SESSION['info_moa']['moa_qualite_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_qualite_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez préciser"/>
+                    </div>
                 </div>
             </div>
+            <script>
+            function toggleMoaQualiteAutre(select) {
+                var autre = document.getElementById('moa_qualite_autre_div');
+                if (select.value === '999') {
+                    autre.classList.remove('hidden');
+                } else {
+                    autre.classList.add('hidden');
+                }
+            }
+            </script>
         </div>
 
 
@@ -150,13 +134,13 @@
                 <span class="lg:w-2/3">Le Maitre d'Ouvrage participe à la construction ? <span class="text-red-600">*</span></span>
                 <div class="lg:w-1/3">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle_moa_construction" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : "checked=checked"; ?> onchange="handleToggleConstruction(this)"/>
+                        <input type="checkbox" id="toggle_moa_construction" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : ""; ?> onchange="handleToggleConstruction(this)"/>
                         <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
-                        <span id="moa_construction_value" class="select-none ms-3 text-sm font-medium text-gray-900"><?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? 'Oui' : 'Non') : 'Oui' ?></span>
+                        <span id="moa_construction_value" class="select-none ms-3 text-sm font-medium text-gray-900"><?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? 'Oui' : 'Non') : 'Non' ?></span>
                     </label>
                 </div>
-                <input type="radio" name="moa_construction" value="1" id="radio_moa_construction_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : "checked=checked"; ?> required/>
-                <input type="radio" name="moa_construction" value="0" id="radio_moa_construction_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==0 ? "checked=checked" : ""; ?>/>
+                <input type="radio" name="moa_construction" value="1" id="radio_moa_construction_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : ""; ?> />
+                <input type="radio" name="moa_construction" value="0" id="radio_moa_construction_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==0 ? "checked=checked" : "") : "checked=checked"; ?> />
             </div>
             <script>
             function handleToggleConstruction(checkbox) {

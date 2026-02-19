@@ -21,6 +21,7 @@
     }
 
     
+
     function adminDisplay(){
         $title = "Administration des demandes Dommage Ouvrage";
         require 'views/header.view.php';
@@ -30,10 +31,55 @@
                 $infodelete = infoAlerts('suppression réalisée avec succès', 'success');
                 deleteDo($_GET['deletedo']);
             }
-            require 'views/admin/admin.view.php';
+
+            // Gestion du lancement des tests automatiques
+            if (isset($_GET['page']) && $_GET['page'] === 'admin' && isset($_GET['run_tests'])) {
+                // Exécution du script CLI en mode web
+                ob_start();
+                $result = null;
+                $output = null;
+                if (file_exists('test_runner.php')) {
+                    // Utilisation de PHP CLI pour exécuter le script et récupérer le JSON
+                    $cmd = PHP_BINARY . ' test_runner.php';
+                    exec($cmd, $output, $ret);
+                    // Recherche du résultat dans la sortie
+                    $success = false;
+                    $log = [];
+                    $logStart = false;
+                    foreach ($output as $line) {
+                        if (strpos($line, '--- Etape') !== false) $logStart = true;
+                        if ($logStart && preg_match('/--- Etape (\d+) ---/', $line, $m)) {
+                            $log[] = [
+                                'step' => $m[1],
+                                'url' => '', 'http' => '', 'error' => '', 'fields' => ''
+                            ];
+                        } elseif ($logStart && !empty($log)) {
+                            $last = &$log[count($log)-1];
+                            if (strpos($line, 'URL:') === 0) $last['url'] = trim(substr($line, 4));
+                            if (strpos($line, 'HTTP:') === 0) $last['http'] = trim(substr($line, 5));
+                            if (strpos($line, 'Erreur cURL:') === 0) $last['error'] = trim(substr($line, 12));
+                            if (strpos($line, 'Champs envoyés:') === 0) $last['fields'] = trim(substr($line, 15));
+                        }
+                        if (strpos($line, 'TOUS LES TESTS PASSÉS') !== false) $success = true;
+                    }
+                    $test_result = [
+                        'success' => $success,
+                        'log' => $log
+                    ];
+                } else {
+                    $test_result = [
+                        'success' => false,
+                        'log' => [],
+                        'error' => 'Script test_runner.php introuvable.'
+                    ];
+                }
+                require 'views/admin/test_runner.view.php';
+            } else {
+                require 'views/admin/admin.view.php';
+            }
         }else{
             require 'views/page-erreur.view.php';
-        }        
+        }
         require 'views/footer.view.php';
     }
 

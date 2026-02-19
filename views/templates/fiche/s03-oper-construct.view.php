@@ -232,7 +232,7 @@
             <h2 class="section-title">Adresse de la construction : <span class="text-red-600">*</span></h2>
             <div class="flex flex-col pl-8">
                 <strong class="pl-4">
-                <?php if(isset($DATA['construction_adresse_num_nom_rue'])){ echo $DATA['construction_adresse_num_nom_rue']."<br>";}; ?>
+                <?php if(isset($DATA['construction_adresse'])){ echo $DATA['construction_adresse']."<br>";}; ?>
                 <?php if(isset($DATA['construction_adresse_esc_res_bat'])){ echo $DATA['construction_adresse_esc_res_bat']."<br>";};  ?>
                 <?php if(isset($DATA['construction_adresse_lieu_dit'])){ echo $DATA['construction_adresse_lieu_dit']."<br>";}; ?>
                 <?php if(isset($DATA['construction_adresse_arrond'])){ echo $DATA['construction_adresse_arrond']."&nbsp;ième arrondissement<br>";}; ?> 

@@ -132,48 +132,22 @@
                 <?php
                     if(isset($DATA['trav_annexes_ct_type_controle'])){
                         echo "<div class='flex flex-row'><h3>Type de contrôle :</h3><div class='flex flex-row ml-2'>";
-                        switch ($DATA['trav_annexes_ct_type_controle']){
-                            case 'l':
-                                echo "<strong>L</strong>";
-                                break;
-                            case 'lth':
-                                echo "<strong>L + TH</strong>";
-                                break;
-                            case 'le':
-                                echo "<strong>LE</strong>";
-                                break;
-                            case 'leth':
-                                echo "<strong>LE + TH</strong>";
-                                break;
-                            case'lautre':
-                                echo "<strong>L + autres :</strong>";
-                                if(isset($DATA['trav_annexes_ct_type_controle_l_autres'])){
-                                    $result = boxDisplay($DATA['trav_annexes_ct_type_controle_l_autres']);
-                                echo $result;
-                                }
-                                break;
-                            case 'entreprise':
-                                echo "<strong>L + TH + autres :</strong>";
-                                if(isset($DATA['trav_annexes_ct_type_controle_lth_autres'])){
-                                    $result = boxDisplay($DATA['trav_annexes_ct_type_controle_lth_autres']);
-                                echo $result;
-                                }
-                                break;
-                            case'moa_qualite_autre':
-                                echo "<strong>LE + autres :</strong>";
-                                if(isset($DATA['trav_annexes_ct_type_controle_le_autres'])){
-                                    $result = boxDisplay($DATA['trav_annexes_ct_type_controle_le_autres']);
-                                echo $result;
-                                }
-                                break;
-                            case'moa_qualite_autre':
-                                echo "<strong>LE + TH + autres :</strong>";
-                                if(isset($DATA['trav_annexes_ct_type_controle_leth_autres'])){
-                                    $result = boxDisplay($DATA['trav_annexes_ct_type_controle_leth_autres']);
-                                echo $result;
-                                }
-                                break;
+                        $types = array();
+                        if (!empty($DATA['trav_annexes_ct_type_controle'])) {
+                            // Peut être une chaîne (ex: "le,th") ou un tableau
+                            $types = is_array($DATA['trav_annexes_ct_type_controle']) ? $DATA['trav_annexes_ct_type_controle'] : explode(',', $DATA['trav_annexes_ct_type_controle']);
+                        }
+                        $labels = ['le' => 'LE', 'th' => 'TH'];
+                        $out = [];
+                        foreach ($types as $t) {
+                            $t = trim($t);
+                            if ($t === 'autres' && !empty($DATA['trav_annexes_ct_type_controle_autres'])) {
+                                $out[] = "Autres : <strong>".htmlspecialchars($DATA['trav_annexes_ct_type_controle_autres'])."</strong>";
+                            } elseif (isset($labels[$t])) {
+                                $out[] = "<strong>".$labels[$t]."</strong>";
                             }
+                        }
+                        echo implode(' + ', $out);
                         echo "</div></div>";
                         }
                     ?>

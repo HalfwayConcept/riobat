@@ -1,4 +1,7 @@
 <section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <div class="flex justify-end mb-4">
+        <a href="index.php?page=admin&run_tests=1" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Tests automatiques DO</a>
+    </div>
 <p class="text-center font-medium text-2xl mt-16">Liste des Dommages Ouvrages</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>
@@ -34,7 +37,7 @@
                                 <td class="px-4 py-3 text-center"><?php echo $do['souscripteur_nom_raison']; ?></td>
                                 <td class="px-4 py-3">
                                     <div class="flex flex-col text-center">
-                                        <?php echo "<span>".$do['construction_adresse_num_nom_rue']."</span>"; ?>
+                                        <?php echo "<span>".$do['construction_adresse']."</span>"; ?>
                                         <?php echo "<span>".$do['construction_adresse_code_postal']."&nbsp;". $do['construction_adresse_commune'] ."</span>"; ?>
                                     </div>
                                 </td>

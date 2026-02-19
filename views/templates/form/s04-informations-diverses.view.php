@@ -199,11 +199,11 @@
         <div class="mt-20">
             <h3 class="text-gray-500 font-medium">Etude de sol <span class="text-red-600">*</span></h3>
             <div class="flex flex-col lg:flex-row ml-10 mt-6 gap-4">
-                <span class="font-normal flex-1">Intervention d'un bureau spécialisé ? <span class="text-red-600">*</span></span>
+                <span class="font-normal flex-1">Intervention d'un bureau spécialisé ?</span>
                 <div class="flex justify-end items-center">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle_sol" class="sr-only peer" onchange="handleToggleYN(this, 'radio_sol_oui', 'radio_sol_non', 'sol_value'); if(this.checked){showElement('sol_form');}else{hideElement('sol_form');}"
-                            <?= isset($_SESSION['info_situation']['situation_sol']) && $_SESSION['info_situation']['situation_sol']==1 ? "checked=checked" : ""; ?> required />
+                        <input type="checkbox" id="toggle_sol" value="0" class="sr-only peer" onchange="handleToggleYN(this, 'radio_sol_oui', 'radio_sol_non', 'sol_value'); if(this.checked){showElement('sol_form');}else{hideElement('sol_form');}"
+                            <?= isset($_SESSION['info_situation']['situation_sol']) && $_SESSION['info_situation']['situation_sol']==1 ? "checked=checked" : ""; ?>  />
                         <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
                         <span id="sol_value" class="select-none ms-3 text-sm font-medium text-gray-900">
                             <?= isset($_SESSION['info_situation']['situation_sol']) ? ($_SESSION['info_situation']['situation_sol']==1 ? 'Oui' : 'Non') : 'Non' ?>
@@ -256,43 +256,7 @@
                 </div>
             </div>
         </div>
-        <!-- Garanties demandées -->
-        <div>
-            <h3 class="text-gray-500 font-medium mt-4">Garanties demandées</h3>
-            <div class="ml-10 mt-2">
-                <h4 class="font-normal">Garanties complètes </h4>
-                <div class="flex justify-end items-center">
-                    <span class="text-sm font-normal text-left flex-1">Dommages ouvrages obligatoire + dommages aux éléments d'équipement et immatériels</span>
-                    <label class="inline-flex items-center cursor-pointer justify-end">
-                        <input type="checkbox" id="toggle_garanties_completes" class="sr-only peer" onchange="handleToggleYN(this, 'radio_garanties_completes_oui', 'radio_garanties_completes_non', 'garanties_completes_value')"
-                            <?= isset($_SESSION['info_situation']['situation_garanties_completes']) && $_SESSION['info_situation']['situation_garanties_completes']==1 ? "checked=checked" : ""; ?> />
-                        <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
-                        <span id="garanties_completes_value" class="select-none ms-3 text-sm font-medium text-gray-900">
-                            <?= isset($_SESSION['info_situation']['situation_garanties_completes']) ? ($_SESSION['info_situation']['situation_garanties_completes']==1 ? 'Oui' : 'Non') : 'Non' ?>
-                        </span>
-                    </label>
-                    <input type="radio" name="situation_garanties_completes" value="1" id="radio_garanties_completes_oui" class="hidden" <?= isset($_SESSION['info_situation']['situation_garanties_completes']) && $_SESSION['info_situation']['situation_garanties_completes']==1 ? "checked=checked" : ""; ?> />
-                    <input type="radio" name="situation_garanties_completes" value="0" id="radio_garanties_completes_non" class="hidden" <?= isset($_SESSION['info_situation']['situation_garanties_completes']) && $_SESSION['info_situation']['situation_garanties_completes']==0 ? "checked=checked" : (!isset($_SESSION['info_situation']['situation_garanties_completes']) ? "checked=checked" : ""); ?> />
-                </span>
-            </div>
-        
-            <div class="mt-2">
-                <div class="flex justify-end items-center">
-                    <span class="font-normal text-left flex-1">Dommages matériels subits par les existants</span>
-                    <label class="inline-flex items-center cursor-pointer justify-end">
-                        <input type="checkbox" id="toggle_garanties_dommages_existants" class="sr-only peer" onchange="handleToggleYN(this, 'radio_garanties_dommages_existants_oui', 'radio_garanties_dommages_existants_non', 'garanties_dommages_existants_value')"
-                            <?= isset($_SESSION['info_situation']['situation_garanties_dommages_existants']) && $_SESSION['info_situation']['situation_garanties_dommages_existants']==1 ? "checked=checked" : ""; ?> />
-                        <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
-                        <span id="garanties_dommages_existants_value" class="select-none ms-3 text-sm font-medium text-gray-900">
-                            <?= isset($_SESSION['info_situation']['situation_garanties_dommages_existants']) ? ($_SESSION['info_situation']['situation_garanties_dommages_existants']==1 ? 'Oui' : 'Non') : 'Non' ?>
-                        </span>
-                    </label>
-                    <input type="radio" name="situation_garanties_dommages_existants" value="1" id="radio_garanties_dommages_existants_oui" class="hidden" <?= isset($_SESSION['info_situation']['situation_garanties_dommages_existants']) && $_SESSION['info_situation']['situation_garanties_dommages_existants']==1 ? "checked=checked" : ""; ?> />
-                    <input type="radio" name="situation_garanties_dommages_existants" value="0" id="radio_garanties_dommages_existants_non" class="hidden" <?= isset($_SESSION['info_situation']['situation_garanties_dommages_existants']) && $_SESSION['info_situation']['situation_garanties_dommages_existants']==0 ? "checked=checked" : (!isset($_SESSION['info_situation']['situation_garanties_dommages_existants']) ? "checked=checked" : ""); ?> />
-                </span>
-                </div>
-            </div>
-        </div>
+        <!-- Section Garanties demandées supprimée à la demande -->
         <!-- Travaux annexes -->
         <div class="flex-column mt-4">
             <span class="text-gray-500 font-medium">Travaux annexes :</span>
@@ -373,25 +337,19 @@
             </div>
         </div>
 
-
         <div class="flex flex-row justify-center mt-4">
             <!-- Bouton précédent -->                                          
             <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="step3" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Précédent</button>
+                <button type="submit" name="page_next" value="step2" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Précédent</button>
             </div>
             <!-- Bouton suivant -->
             <div class="text-center ml-6">
-                <button type="submit" name="page_next" value="step4bis" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>
+                <button type="submit" name="page_next" value="step4" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>
             </div>
         </div>
 
-
         <input type="hidden" name="fields" value="situation">
+
+        <!-- SECTION: Etude de sol (step4) supprimée à la demande -->
     </form>
-    <script src="public/script/s04-informations-diverses.js"></script>
 </section>
-
-
-
-    
-    

@@ -5,7 +5,7 @@ function getListDOBoard($user_id = null){
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) {
         // fallback to mysqli
-        $sql = "SELECT dommage_ouvrage.DOID, situation.DOID, date_creation, souscripteur_nom_raison, construction_adresse_num_nom_rue, construction_adresse_code_postal, construction_adresse_commune, construction_cout_operation
+        $sql = "SELECT dommage_ouvrage.DOID, situation.DOID, date_creation, souscripteur_nom_raison, construction_adresse, construction_adresse_code_postal, construction_adresse_commune, construction_cout_operation
         FROM souscripteur
         JOIN dommage_ouvrage ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
         JOIN situation ON situation.DOID = dommage_ouvrage.DOID
@@ -15,7 +15,7 @@ function getListDOBoard($user_id = null){
         return $boardata;
     }
 
-    $sql = "SELECT dommage_ouvrage.DOID, situation.DOID, date_creation, souscripteur_nom_raison, construction_adresse_num_nom_rue, construction_adresse_code_postal, construction_adresse_commune, construction_cout_operation
+    $sql = "SELECT dommage_ouvrage.DOID, situation.DOID, date_creation, souscripteur_nom_raison, construction_adresse, construction_adresse_code_postal, construction_adresse_commune, construction_cout_operation
             FROM souscripteur
             JOIN dommage_ouvrage ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
             JOIN situation ON situation.DOID = dommage_ouvrage.DOID

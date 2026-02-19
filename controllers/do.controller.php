@@ -85,6 +85,13 @@
                 $_SESSION['info_'.$_POST['fields']][$key] = $value;
             }
             $keys = array_keys($_SESSION['info_'.$_POST['fields']]);
+            // DEV: Vider les tableaux de session si demandé
+            if ($currentstep == "step1" && isset($_POST['dev_clear_session']) && $_POST['dev_clear_session'] == '1') {
+                $_SESSION['info_moa'] = [];
+                $_SESSION['info_operation_construction'] = [];
+                $_SESSION['info_situation'] = [];
+                $_SESSION['info_travaux_annexes'] = [];
+            }
             if($currentstep == "step0"){
                 if(isset($_POST['checkbox-approuve'])){
                     if($_POST['checkbox-approuve'] == 1){
@@ -123,16 +130,11 @@
                     }
                 }
                 
-                // Valider la qualité MOA
+                // Valider la qualité MOA (id ou "moa_qualite_autre")
                 if (empty($_SESSION['info_moa']['moa_qualite'])) {
                     $errors[] = "Vous devez sélectionner une qualité de Maître d'Ouvrage.";
-                }
-                
-                // Si "Autre qualité" est sélectionné, valider le champ
-                if (isset($_SESSION['info_moa']['moa_qualite']) && $_SESSION['info_moa']['moa_qualite'] == 'moa_qualite_autre') {
-                    if (empty($_SESSION['info_moa']['moa_qualite_champ'])) {
-                        $errors[] = "Vous devez préciser l'autre qualité du Maître d'Ouvrage.";
-                    }
+                } else if ($_SESSION['info_moa']['moa_qualite'] !== 'moa_qualite_autre' && !is_numeric($_SESSION['info_moa']['moa_qualite'])) {
+                    $errors[] = "La qualité sélectionnée est invalide.";
                 }
                 
                 // Valider construction MOA - accepter '0' ou '1' (chaînes ou entiers)
@@ -152,7 +154,10 @@
                     $res = false;
                     $_SESSION['validation_errors'] = $errors;
                 } else {
-                    // Validation réussie - sauvegarder en BDD
+                    // Nettoyer le champ moa_qualite_champ si présent
+                    if (isset($_SESSION['info_moa']['moa_qualite_champ'])) {
+                        unset($_SESSION['info_moa']['moa_qualite_champ']);
+                    }
                     $res = update($_SESSION['info_moa'], 'moa', $_SESSION["DOID"]);
                     $_SESSION['validation_errors'] = [];
                 }
@@ -181,7 +186,7 @@
                 }
                 
                 // Valider adresse construction
-                if (empty($_SESSION['info_operation_construction']['construction_adresse_num_nom_rue'])) {
+                if (empty($_SESSION['info_operation_construction']['construction_adresse'])) {
                     $errors[] = "L'adresse de la construction est obligatoire.";
                 }
                 if (empty($_SESSION['info_operation_construction']['construction_adresse_code_postal'])) {
@@ -191,27 +196,7 @@
                     $errors[] = "La commune est obligatoire.";
                 }
                 
-                // Valider dates
-                $date_debut = isset($_SESSION['info_operation_construction']['construction_date_debut']) ? $_SESSION['info_operation_construction']['construction_date_debut'] : '';
-                $date_debut_prevue = isset($_SESSION['info_operation_construction']['construction_date_debut_prevue']) ? $_SESSION['info_operation_construction']['construction_date_debut_prevue'] : '';
-                
-                if (!empty($date_debut) && !strtotime($date_debut)) {
-                    $errors[] = "La date de début réelle doit être une date valide.";
-                }
-                if (!empty($date_debut_prevue) && !strtotime($date_debut_prevue)) {
-                    $errors[] = "La date de début prévue doit être une date valide.";
-                }
-                
-                // Valider les coûts (doivent être numériques si remplis)
-                $cout_operation = isset($_SESSION['info_operation_construction']['construction_cout_operation']) ? $_SESSION['info_operation_construction']['construction_cout_operation'] : '';
-                $cout_honoraires = isset($_SESSION['info_operation_construction']['construction_cout_honoraires_moe']) ? $_SESSION['info_operation_construction']['construction_cout_honoraires_moe'] : '';
-                
-                if (!empty($cout_operation) && !is_numeric(str_replace(',', '.', $cout_operation))) {
-                    $errors[] = "Le coût de l'opération doit être un nombre valide.";
-                }
-                if (!empty($cout_honoraires) && !is_numeric(str_replace(',', '.', $cout_honoraires))) {
-                    $errors[] = "Les honoraires du maître d'œuvre doivent être un nombre valide.";
-                }
+                // Bloc Dates et Coût de l'opération supprimé (plus de validation ni de stockage)
                 
                 if (count($errors) > 0) {
                     $res = false;
@@ -226,9 +211,11 @@
                 if($currentstep == "step4"){
                     $prefix = 'sol' ;
                     $session_key = "info_situation";
-                }else{
+                }
+                if($currentstep == "step5"){
                     $prefix = 'moe';
                     $session_key = "info_dommage_ouvrage";
+
                 }  
                 $doid = $_SESSION["DOID"];
                 $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
@@ -243,7 +230,9 @@
                     $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_commune'];
                     $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix.'_numero_siret'];
                     $array_entreprise['type']          = $prefix; 
-
+                    echo "<pre>";
+                    var_dump($_SESSION['info_'.$_POST['fields']]);
+                    echo "</pre>";
 
                     if(!empty($array_entreprise['id'])){
                         $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
@@ -256,6 +245,10 @@
                     }      
                 }
             }elseif($currentstep == "step4bis"){
+                    // Adapter la sauvegarde des types de contrôle (checkbox multiples)
+                    if (isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'])) {
+                        $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'] = implode(',', array_filter($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']));
+                    }
                     $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
                     $top = 0;
                     $array_entreprises = array();
@@ -267,6 +260,7 @@
                             ||  $key == 'geo_entreprise_raison_sociale'
                             ||  $key == 'ctt_entreprise_raison_sociale'
                             ||  $key == 'sol_entreprise_raison_sociale'
+
                         ){
                             $prefix =  substr($key, 0, 3);
                             $array_entreprises[$top]['id']            = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_id'];                                          

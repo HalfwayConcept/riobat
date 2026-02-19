@@ -50,6 +50,12 @@
     </fieldset>
     <input type="hidden" name="fields" value="souscripteur">
 
+    <!-- DEV: Vider les tableaux de session (MOA, opération, situation, travaux annexes) -->
+    <div class="flex items-center mb-4">
+        <input id="dev_clear_session" type="checkbox" name="dev_clear_session" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+        <label for="dev_clear_session" class="ml-2 text-sm font-medium text-gray-700">[DEV] Vider les infos MOA, opération, situation, travaux annexes</label>
+    </div>
+
     <!-- Bouton suivant -->
     <div class="text-center">
         <button type="submit" name="page_next" value="step2" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/5 lg:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>

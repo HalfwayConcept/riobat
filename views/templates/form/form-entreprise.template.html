@@ -2,25 +2,25 @@
         <div class="mb-4 relative">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Recherche d'adresse</label>
             <div class="relative">
-                <input type="text" id="search_adresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher une adresse..." autocomplete="off" />
+                <input type="text" id="search_adresse_##type##" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher une adresse..." autocomplete="off" />
                 <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </span>
-                <ul id="search_adresse_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
+                <ul id="search_adresse_##type##_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
             </div>
         </div>
         <script>
         // Recherche d'adresse universelle avec remplissage automatique
-        function fillAdresseFieldsFromSelection(feature) {
+        function fillAdresseFieldsFromSelection(feature, type) {
             // Remplir les champs du formulaire avec les propriétés de l'adresse sélectionnée
             if (feature && feature.properties) {
                 var adresse = feature.properties.name || feature.properties.label || '';
                 var cp = feature.properties.postcode || '';
                 var ville = feature.properties.city || '';
                 // Adapter les IDs/names selon le contexte d'utilisation
-                var adresseInput = document.getElementById('##type##_entreprise_adresse');
-                var cpInput = document.querySelector('input[name="##type##_entreprise_code_postal"]');
-                var villeInput = document.querySelector('input[name="##type##_entreprise_commune"]');
+                var adresseInput = document.getElementById(type + '_entreprise_adresse');
+                var cpInput = document.querySelector('input[name="' + type + '_entreprise_code_postal"]');
+                var villeInput = document.querySelector('input[name="' + type + '_entreprise_commune"]');
                 if (adresseInput) adresseInput.value = adresse;
                 if (cpInput) cpInput.value = cp;
                 if (villeInput) villeInput.value = ville;
@@ -28,8 +28,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            var input = document.getElementById('search_adresse');
-            var ul = document.getElementById('search_adresse_suggestions');
+            var input = document.getElementById('search_adresse_##type##');
+            var ul = document.getElementById('search_adresse_##type##_suggestions');
             let timeoutAdresse;
             if (!input || !ul) return;
             input.addEventListener('input', function() {
@@ -55,7 +55,7 @@
                                 li.onclick = function() {
                                     input.value = feature.properties.label;
                                     ul.classList.add('hidden');
-                                    fillAdresseFieldsFromSelection(feature);
+                                    fillAdresseFieldsFromSelection(feature, '##type##');
                                 };
                                 ul.appendChild(li);
                             });
@@ -103,7 +103,13 @@
             autocomplete="off" />
         <!-- Suggestions d'adresses -->
         <ul id="##type##_adresse_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
-        <script>adresseAutocomplete('##type##_entreprise_adresse', '##type##_adresse_suggestions');</script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof adresseAutocomplete === 'function') {
+                adresseAutocomplete('##type##_entreprise_adresse', '##type##_adresse_suggestions');
+            }
+        });
+        </script>
     </div>    
     <div class="grid gap-6 mb-2 md:grid-cols-2">
         <div>

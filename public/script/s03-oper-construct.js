@@ -1,3 +1,17 @@
+// Fonction générique pour les toggles Oui/Non avec label coloré
+function handleToggleYN(checkbox, spanId) {
+    const spanValue = document.getElementById(spanId);
+    if (!spanValue) return;
+    if (checkbox.checked) {
+        spanValue.textContent = 'Oui';
+        spanValue.classList.remove('text-red-500');
+        spanValue.classList.add('text-green-600');
+    } else {
+        spanValue.textContent = 'Non';
+        spanValue.classList.remove('text-green-600');
+        spanValue.classList.add('text-red-500');
+    }
+}
 // JS extrait de s03-oper-construct.view.php
 
 
@@ -36,28 +50,24 @@ function handleToggleSurelev(checkbox) {
 function handleToggleSousOeuvre(checkbox) {
     const radioOui = document.getElementById('radio_sous_oeuvre_oui');
     const radioNon = document.getElementById('radio_sous_oeuvre_non');
-    const spanValue = document.getElementById('sous_oeuvre_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'sous_oeuvre_value');
 }
 
 // Gère le toggle pour l'intervention sur la structure existante (hors fondation)
 function handleToggleHorsFond(checkbox) {
     const radioOui = document.getElementById('radio_hors_fond_oui');
     const radioNon = document.getElementById('radio_hors_fond_non');
-    const spanValue = document.getElementById('hors_fond_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'hors_fond_value');
 }
 
 // Gère le toggle pour l'extension horizontale
@@ -98,70 +108,60 @@ function handleToggleRenovation(checkbox) {
 function handleToggleRenovationFond(checkbox) {
     const radioOui = document.getElementById('radio_renovation_fond_oui');
     const radioNon = document.getElementById('radio_renovation_fond_non');
-    const spanValue = document.getElementById('renovation_fond_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'renovation_fond_value');
 }
 
 // Gère le toggle pour l'isolation thermique extérieure en rénovation
 function handleToggleRenovationIsoTherm(checkbox) {
     const radioOui = document.getElementById('radio_renovation_iso_therm_oui');
     const radioNon = document.getElementById('radio_renovation_iso_therm_non');
-    const spanValue = document.getElementById('renovation_iso_therm_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'renovation_iso_therm_value');
 }
 
 // Gère le toggle pour la réfection de toiture en rénovation
 function handleToggleRenovationRefectToit(checkbox) {
     const radioOui = document.getElementById('radio_renovation_refect_toit_oui');
     const radioNon = document.getElementById('radio_renovation_refect_toit_non');
-    const spanValue = document.getElementById('renovation_refect_toit_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'renovation_refect_toit_value');
 }
 
 // Gère le toggle pour les travaux d'étanchéité en rénovation
 function handleToggleRenovationEtancheite(checkbox) {
     const radioOui = document.getElementById('radio_renovation_etancheite_oui');
     const radioNon = document.getElementById('radio_renovation_etancheite_non');
-    const spanValue = document.getElementById('renovation_etancheite_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'renovation_etancheite_value');
 }
 
 // Gère le toggle pour le ravalement de façade en rénovation
 function handleToggleRenovationRavalement(checkbox) {
     const radioOui = document.getElementById('radio_renovation_ravalement_oui');
     const radioNon = document.getElementById('radio_renovation_ravalement_non');
-    const spanValue = document.getElementById('renovation_ravalement_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'renovation_ravalement_value');
 }
 
 // Gère le toggle pour la réhabilitation
@@ -186,70 +186,60 @@ function handleToggleRehabilitation(checkbox) {
 function handleToggleRehabilitationFond(checkbox) {
     const radioOui = document.getElementById('radio_rehabilitation_fond_oui');
     const radioNon = document.getElementById('radio_rehabilitation_fond_non');
-    const spanValue = document.getElementById('rehabilitation_fond_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'rehabilitation_fond_value');
 }
 
 // Gère le toggle pour l'isolation thermique extérieure en réhabilitation
 function handleToggleRehabIsoTherm(checkbox) {
     const radioOui = document.getElementById('radio_rehab_iso_therm_oui');
     const radioNon = document.getElementById('radio_rehab_iso_therm_non');
-    const spanValue = document.getElementById('rehab_iso_therm_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'rehab_iso_therm_value');
 }
 
 // Gère le toggle pour la réfection de toiture en réhabilitation
 function handleToggleRehabRefectToit(checkbox) {
     const radioOui = document.getElementById('radio_rehab_refect_toit_oui');
     const radioNon = document.getElementById('radio_rehab_refect_toit_non');
-    const spanValue = document.getElementById('rehab_refect_toit_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'rehab_refect_toit_value');
 }
 
 // Gère le toggle pour les travaux d'étanchéité en réhabilitation
 function handleToggleRehabEtancheite(checkbox) {
     const radioOui = document.getElementById('radio_rehab_etancheite_oui');
     const radioNon = document.getElementById('radio_rehab_etancheite_non');
-    const spanValue = document.getElementById('rehab_etancheite_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'rehab_etancheite_value');
 }
 
 // Gère le toggle pour le ravalement de façade en réhabilitation
 function handleToggleRehabRavalement(checkbox) {
     const radioOui = document.getElementById('radio_rehab_ravalement_oui');
     const radioNon = document.getElementById('radio_rehab_ravalement_non');
-    const spanValue = document.getElementById('rehab_ravalement_value');
     if (checkbox.checked) {
         radioOui.checked = true;
-        spanValue.textContent = 'Oui';
     } else {
         radioNon.checked = true;
-        spanValue.textContent = 'Non';
     }
+    handleToggleYN(checkbox, 'rehab_ravalement_value');
 }
 
 // Gère le toggle pour la question sinistre
