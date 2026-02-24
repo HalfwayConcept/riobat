@@ -3,7 +3,7 @@
 
 
 
-require_once 'connect.db.php';
+// ...existing code...
 
 
 define('UPLOAD_FOLDER', "/public/uploads" );

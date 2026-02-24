@@ -1,19 +1,13 @@
 <?php
 // models/moa_qualite.model.php
-require_once 'connect.db.php';
+// ...existing code...
 
 function getAllMoaQualites() {
     $pdo = $GLOBALS['pdo'] ?? null;
-    if (!$pdo) {
-        $sql = "SELECT * FROM moa_qualite ORDER BY label";
-        $res = mysqli_query($GLOBALS['conn'], $sql);
-        $result = [];
-        while ($row = mysqli_fetch_assoc($res)) {
-            $result[] = $row;
-        }
-        return $result;
-    }
     $sql = "SELECT * FROM moa_qualite ORDER BY label";
     $stmt = $pdo->query($sql);
-    return $stmt->fetchAll();
+    require_once __DIR__ . '/../controllers/LogController.php';
+    $user_id = $_SESSION['user_id'] ?? null;
+    logQuery(null, 'moa_qualite', $stmt->queryString, [], $user_id, 'réussi');
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

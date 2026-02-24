@@ -106,65 +106,60 @@
 
         function loadEntreprise($entreprise_id){
             $pdo = $GLOBALS['pdo'] ?? null;
-            if ($pdo) {
-                $stmt = $pdo->prepare('SELECT * FROM entreprise WHERE ID = :id LIMIT 1');
-                $stmt->execute([':id' => $entreprise_id]);
-                return $stmt->fetch();
-            }
-            // mysqli fallback
-            $sql = "SELECT * FROM entreprise WHERE ID = $entreprise_id";
-            $resquery = mysqli_query($GLOBALS['conn'], $sql);
-            return mysqli_fetch_array($resquery, MYSQLI_ASSOC);
+            $stmt = $pdo->prepare('SELECT * FROM entreprise WHERE ID = :id LIMIT 1');
+            $stmt->execute([':id' => $entreprise_id]);
+            require_once __DIR__ . '/../controllers/LogController.php';
+            $user_id = $_SESSION['user_id'] ?? null;
+            logQuery($entreprise_id, 'entreprise', $stmt->queryString, [':id' => $entreprise_id], $user_id, 'réussi');
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         function getEntreprises($doid){
             $pdo = $GLOBALS['pdo'] ?? null;
-            if ($pdo) {
-                $stmt = $pdo->prepare("SELECT TA.DOID, boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, cnr_entreprise_id, ctt_entreprise_id, sol_entreprise_id, moe_entreprise_id
-                                       FROM travaux_annexes TA
-                                       JOIN situation S ON TA.DOID = S.DOID
-                                       JOIN dommage_ouvrage DO ON TA.DOID = DO.DOID
-                                       WHERE TA.DOID = :doid LIMIT 1");
-                $stmt->execute([':doid' => $doid]);
-                return $stmt->fetch();
-            }
-            // mysqli fallback
-            $sql = "SELECT TA.DOID, boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, cnr_entreprise_id, ctt_entreprise_id, sol_entreprise_id, moe_entreprise_id
-                    FROM travaux_annexes TA, situation S, dommage_ouvrage DO
-                    WHERE TA.DOID = S.DOID AND TA.DOID = DO.DOID AND TA.DOID = $doid";
-            $resquery = mysqli_query($GLOBALS['conn'], $sql);
-            return mysqli_fetch_array($resquery, MYSQLI_ASSOC);
+            $stmt = $pdo->prepare("SELECT TA.DOID, boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, cnr_entreprise_id, ctt_entreprise_id, sol_entreprise_id, moe_entreprise_id
+                                   FROM travaux_annexes TA
+                                   JOIN situation S ON TA.DOID = S.DOID
+                                   JOIN dommage_ouvrage DO ON TA.DOID = DO.DOID
+                                   WHERE TA.DOID = :doid LIMIT 1");
+            $stmt->execute([':doid' => $doid]);
+            require_once __DIR__ . '/../controllers/LogController.php';
+            $user_id = $_SESSION['user_id'] ?? null;
+            logQuery($doid, 'travaux_annexes', $stmt->queryString, [':doid' => $doid], $user_id, 'réussi');
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
     
     
         function insertEntreprise($array_entreprise){
             $pdo = $GLOBALS['pdo'] ?? null;
             $type = $array_entreprise['type'] ?? '';
-
-            if ($pdo) {
-                $stmt = $pdo->prepare('INSERT INTO entreprise (raison_sociale, nom, prenom, adresse, code_postal, commune, numero_siret, type, nat_juri, num_contrat) VALUES (:raison_sociale, :nom, :prenom, :adresse, :code_postal, :commune, :numero_siret, :type, "", "")');
-                try {
-                    $stmt->execute([
-                        ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
-                        ':nom' => $array_entreprise['nom'] ?? null,
-                        ':prenom' => $array_entreprise['prenom'] ?? null,
-                        ':adresse' => $array_entreprise['adresse'] ?? null,
-                        ':code_postal' => $array_entreprise['code_postal'] ?? null,
-                        ':commune' => $array_entreprise['commune'] ?? null,
-                        ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
-                        ':type' => $type,
-                    ]);
-                    return (int)$pdo->lastInsertId();
-                } catch (PDOException $e) {
-                    if (defined('DEBUG') && DEBUG) throw $e;
-                    return false;
-                }
-            } else {
-                // mysqli fallback
-                $sqlInsert = "INSERT INTO entreprise (raison_sociale, nom, prenom, adresse, code_postal, commune, numero_siret, type, nat_juri, num_contrat)
-                              VALUES ('".$array_entreprise['raison_sociale']."', '".$array_entreprise['nom']."', '".$array_entreprise['prenom']."', '".$array_entreprise['adresse']."', '".$array_entreprise['code_postal']."', '".$array_entreprise['commune']."', '".$array_entreprise['numero_siret']."', '$type', '', '')";
-                $query = mysqli_query($GLOBALS['conn'], $sqlInsert);
-                return mysqli_insert_id($GLOBALS['conn']);
+            $stmt = $pdo->prepare('INSERT INTO entreprise (raison_sociale, nom, prenom, adresse, code_postal, commune, numero_siret, type, nat_juri, num_contrat) VALUES (:raison_sociale, :nom, :prenom, :adresse, :code_postal, :commune, :numero_siret, :type, "", "")');
+            try {
+                $stmt->execute([
+                    ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
+                    ':nom' => $array_entreprise['nom'] ?? null,
+                    ':prenom' => $array_entreprise['prenom'] ?? null,
+                    ':adresse' => $array_entreprise['adresse'] ?? null,
+                    ':code_postal' => $array_entreprise['code_postal'] ?? null,
+                    ':commune' => $array_entreprise['commune'] ?? null,
+                    ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
+                    ':type' => $type,
+                ]);
+                require_once __DIR__ . '/../controllers/LogController.php';
+                $user_id = $_SESSION['user_id'] ?? null;
+                logQuery(null, 'entreprise', $stmt->queryString, [
+                    ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
+                    ':nom' => $array_entreprise['nom'] ?? null,
+                    ':prenom' => $array_entreprise['prenom'] ?? null,
+                    ':adresse' => $array_entreprise['adresse'] ?? null,
+                    ':code_postal' => $array_entreprise['code_postal'] ?? null,
+                    ':commune' => $array_entreprise['commune'] ?? null,
+                    ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
+                    ':type' => $type,
+                ], $user_id, 'réussi');
+                return (int)$pdo->lastInsertId();
+            } catch (PDOException $e) {
+                if (defined('DEBUG') && DEBUG) throw $e;
+                return false;
             }
         };
 
@@ -180,42 +175,48 @@
                 default => 'travaux_annexes',
             };
 
-            if ($pdo) {
-                $sql = "UPDATE $table SET $type_entreprise_id = :entreprise_id WHERE DOID = :doid";
-                $stmt = $pdo->prepare($sql);
-                return $stmt->execute([':entreprise_id' => $entreprise_id, ':doid' => $DOID]);
-            } else {
-                $sqlUpdate = "UPDATE $table SET $type_entreprise_id = '$entreprise_id' WHERE DOID = $DOID";
-                return mysqli_query($GLOBALS['conn'], $sqlUpdate);
-            }
+            $pdo = $GLOBALS['pdo'] ?? null;
+            $sql = "UPDATE $table SET $type_entreprise_id = :entreprise_id WHERE DOID = :doid";
+            $stmt = $pdo->prepare($sql);
+            $res = $stmt->execute([':entreprise_id' => $entreprise_id, ':doid' => $DOID]);
+            require_once __DIR__ . '/../controllers/LogController.php';
+            $user_id = $_SESSION['user_id'] ?? null;
+            logQuery($DOID, $table, $stmt->queryString, [':entreprise_id' => $entreprise_id, ':doid' => $DOID], $user_id, $res ? 'réussi' : 'échec');
+            return $res;
         }
 
         function updateEntreprise($entreprise_id, $array_entreprise){
             $pdo = $GLOBALS['pdo'] ?? null;
             $type = $array_entreprise['type'] ?? '';
 
-            if ($pdo) {
-                $stmt = $pdo->prepare('UPDATE entreprise SET raison_sociale = :raison_sociale, nom = :nom, prenom = :prenom, adresse = :adresse, code_postal = :code_postal, commune = :commune, numero_siret = :numero_siret WHERE ID = :id');
-                try {
-                    $stmt->execute([
-                        ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
-                        ':nom' => $array_entreprise['nom'] ?? null,
-                        ':prenom' => $array_entreprise['prenom'] ?? null,
-                        ':adresse' => $array_entreprise['adresse'] ?? null,
-                        ':code_postal' => $array_entreprise['code_postal'] ?? null,
-                        ':commune' => $array_entreprise['commune'] ?? null,
-                        ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
-                        ':id' => $entreprise_id,
-                    ]);
-                    return $entreprise_id;
-                } catch (PDOException $e) {
-                    if (defined('DEBUG') && DEBUG) throw $e;
-                    return false;
-                }
-            } else {
-                // mysqli fallback
-                $sqlUpdate = "UPDATE entreprise SET raison_sociale = '".$array_entreprise['raison_sociale']."', nom = '".$array_entreprise['nom']."', prenom = '".$array_entreprise['prenom']."', adresse = '".$array_entreprise['adresse']."', code_postal = '".$array_entreprise['code_postal']."', commune = '".$array_entreprise['commune']."', numero_siret = '".$array_entreprise['numero_siret']."' WHERE ID = $entreprise_id";
-                mysqli_query($GLOBALS['conn'], $sqlUpdate);
+            $pdo = $GLOBALS['pdo'] ?? null;
+            $stmt = $pdo->prepare('UPDATE entreprise SET raison_sociale = :raison_sociale, nom = :nom, prenom = :prenom, adresse = :adresse, code_postal = :code_postal, commune = :commune, numero_siret = :numero_siret WHERE ID = :id');
+            try {
+                $stmt->execute([
+                    ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
+                    ':nom' => $array_entreprise['nom'] ?? null,
+                    ':prenom' => $array_entreprise['prenom'] ?? null,
+                    ':adresse' => $array_entreprise['adresse'] ?? null,
+                    ':code_postal' => $array_entreprise['code_postal'] ?? null,
+                    ':commune' => $array_entreprise['commune'] ?? null,
+                    ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
+                    ':id' => $entreprise_id,
+                ]);
+                require_once __DIR__ . '/../controllers/LogController.php';
+                $user_id = $_SESSION['user_id'] ?? null;
+                logQuery($entreprise_id, 'entreprise', $stmt->queryString, [
+                    ':raison_sociale' => $array_entreprise['raison_sociale'] ?? null,
+                    ':nom' => $array_entreprise['nom'] ?? null,
+                    ':prenom' => $array_entreprise['prenom'] ?? null,
+                    ':adresse' => $array_entreprise['adresse'] ?? null,
+                    ':code_postal' => $array_entreprise['code_postal'] ?? null,
+                    ':commune' => $array_entreprise['commune'] ?? null,
+                    ':numero_siret' => $array_entreprise['numero_siret'] ?? null,
+                    ':id' => $entreprise_id,
+                ], $user_id, 'réussi');
                 return $entreprise_id;
+            } catch (PDOException $e) {
+                if (defined('DEBUG') && DEBUG) throw $e;
+                return false;
             }
         };

@@ -1,6 +1,7 @@
 <section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
     <div class="flex justify-end mb-4 gap-4">
         <a href="index.php?page=admin&run_tests=1" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Tests automatiques DO</a>
+        <a href="index.php?page=logs" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded">Voir les logs SQL</a>
         <form method="post" action="index.php?page=admin" onsubmit="return confirm('Confirmer le nettoyage de toutes les tables du formulaire ? Cette action est irréversible.');">
             <button type="submit" name="truncate_form_tables" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Vider toutes les tables DO</button>
         </form>

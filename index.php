@@ -50,7 +50,20 @@
             case 'admin':
                 require 'controllers/admin.controller.php';
                 adminDisplay();
-                break; 
+                break;
+            case 'logs':
+                require 'controllers/LogController.php';
+                $filters = [];
+                if (!empty($_GET['DOID'])) $filters['DOID'] = $_GET['DOID'];
+                if (!empty($_GET['user_id'])) $filters['user_id'] = $_GET['user_id'];
+                if (!empty($_GET['date'])) $filters['date'] = $_GET['date'];
+                if (!empty($_GET['table'])) $filters['table'] = $_GET['table'];
+                $logs = getLogs($filters);
+                $title = 'Logs des échanges BDD';
+                require 'views/header.view.php';
+                require 'views/admin/admin_logs.view.php';
+                require 'views/footer.view.php';
+                break;
             case 'fiche':
                 require 'controllers/admin.controller.php';
                 singleDoDisplay();

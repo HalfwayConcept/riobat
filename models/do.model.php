@@ -1,5 +1,5 @@
 <?php
-require_once 'connect.db.php';
+// ...existing code...
 
 function getDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
@@ -28,7 +28,11 @@ function getDo($doid){
             LIMIT 1";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':doid' => $doid]);
-    return $stmt->fetch();
+        // Log requête
+        require_once __DIR__ . '/../controllers/LogController.php';
+        $user_id = $_SESSION['user_id'] ?? null;
+        logQuery($doid, 'dommage_ouvrage', $stmt->queryString, [':doid' => $doid], $user_id, 'réussi');
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function getListDo($user_id = null){
@@ -65,6 +69,10 @@ function getListDo($user_id = null){
     }
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
+        // Log requête
+        require_once __DIR__ . '/../controllers/LogController.php';
+        $uid = $_SESSION['user_id'] ?? null;
+        logQuery(null, 'dommage_ouvrage', $stmt->queryString, $params, $uid, 'réussi');
     return $stmt->fetchAll();
 }
 
@@ -82,28 +90,42 @@ function insert($array_SESSION){
                         VALUES (:nom, :siret, :adresse, :cp, :commune, :profession, :telephone, :email, :ancien_date, :ancien_num)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                    ':nom' => $s['souscripteur_nom_raison'] ?? null,
-                    ':siret' => !empty($s['souscripteur_siret']) ? $s['souscripteur_siret'] : null,
-                    ':adresse' => !empty($s['souscripteur_adresse']) ? $s['souscripteur_adresse'] : null,
-                    ':cp' => !empty($s['souscripteur_code_postal']) ? $s['souscripteur_code_postal'] : null,
-                    ':commune' => !empty($s['souscripteur_commune']) ? $s['souscripteur_commune'] : null,
-                    ':profession' => !empty($s['souscripteur_profession']) ? $s['souscripteur_profession'] : null,
-                    ':telephone' => !empty($s['souscripteur_telephone']) ? $s['souscripteur_telephone'] : null,
-                    ':email' => !empty($s['souscripteur_email']) ? $s['souscripteur_email'] : null,
-                    ':ancien_date' => !empty($s['souscripteur_ancien_client_date']) ? $s['souscripteur_ancien_client_date'] : null,
-                    ':ancien_num' => !empty($s['souscripteur_ancien_client_num']) ? $s['souscripteur_ancien_client_num'] : null,
+                    ':nom' =>           $s['souscripteur_nom_raison'] ?? null,
+                    ':siret' =>         !empty($s['souscripteur_siret']) ? $s['souscripteur_siret'] : null,
+                    ':adresse' =>       !empty($s['souscripteur_adresse']) ? $s['souscripteur_adresse'] : null,
+                    ':cp' =>            !empty($s['souscripteur_code_postal']) ? $s['souscripteur_code_postal'] : null,
+                    ':commune' =>       !empty($s['souscripteur_commune']) ? $s['souscripteur_commune'] : null,
+                    ':profession' =>    !empty($s['souscripteur_profession']) ? $s['souscripteur_profession'] : null,
+                    ':telephone' =>     !empty($s['souscripteur_telephone']) ? $s['souscripteur_telephone'] : null,
+                    ':email' =>         !empty($s['souscripteur_email']) ? $s['souscripteur_email'] : null,
+                    ':ancien_date' =>   !empty($s['souscripteur_ancien_client_date']) ? $s['souscripteur_ancien_client_date'] : null,
+                    ':ancien_num' =>    !empty($s['souscripteur_ancien_client_num']) ? $s['souscripteur_ancien_client_num'] : null,
                 ]);
+                // Log requête souscripteur
+                require_once __DIR__ . '/../controllers/LogController.php';
+                $uid = $_SESSION['user_id'] ?? null;
+
                 $souscripteur_id = (int)$pdo->lastInsertId();
+                
+                logQuery(null, 'souscripteur', $stmt->queryString, $stmt->debugDumpParams(), $uid, 'réussi');
+
 
                 $sql_do = "INSERT INTO dommage_ouvrage (souscripteur_id,repertoire) VALUES (:souscripteur_id, LEFT(MD5(RAND()), 12))";
                 $stmt = $pdo->prepare($sql_do);
                 $stmt->execute([':souscripteur_id' => $souscripteur_id]);
+                    // Log requête dommage_ouvrage
+                
+
                 $DOID = (int)$pdo->lastInsertId();
 
+
+                logQuery($DOID, 'dommage_ouvrage', $stmt->queryString, [':souscripteur_id' => $souscripteur_id], $uid, 'réussi');
                 $tables = ['moa','operation_construction','situation','travaux_annexes'];
                 foreach ($tables as $t) {
                     $stmt = $pdo->prepare("INSERT INTO $t (DOID) VALUES (:doid)");
                     $stmt->execute([':doid' => $DOID]);
+                        // Log requête pour chaque table
+                        logQuery($DOID, $t, $stmt->queryString, [':doid' => $DOID], $uid, 'réussi');
                 }
 
                 $pdo->commit();
@@ -188,6 +210,10 @@ function update($array_SESSION, $table, $DOID){
         try {
             $stmt = $pdo->prepare($sqlupdate);
             $res = $stmt->execute($params);
+                // Log requête update
+                require_once __DIR__ . '/../controllers/LogController.php';
+                $uid = $_SESSION['user_id'] ?? null;
+                logQuery($DOID, $table, $stmt->queryString, $params, $uid, $res ? 'réussi' : 'échec');
             $_SESSION["SQL"][$table] = debugQuery($sqlupdate, array_values($params));
             return $res;
         } catch (PDOException $e) {
@@ -203,6 +229,8 @@ function update($array_SESSION, $table, $DOID){
         // naive interpolation for debug only
         $_SESSION["SQL"][$table] = debugQuery($sqlupdate_mysqli, $array_values);
         // attempt to prepare using mysqli (not binding named params)
+
+        
         $res = false;
         if ($stmt = mysqli_prepare($GLOBALS['conn'], $sqlupdate_mysqli)) {
             $res = mysqli_stmt_execute($stmt);
@@ -252,47 +280,27 @@ function boxDisplay($checked, $name, $mode = "write"){
 
 function deleteDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
-    if ($pdo) {
-        try {
-            $pdo->beginTransaction();
-            $tables = ['dommage_ouvrage','moa','operation_construction','situation','travaux_annexes'];
-            foreach ($tables as $t) {
-                $stmt = $pdo->prepare("DELETE FROM $t WHERE DOID = :doid");
-                $stmt->execute([':doid' => $doid]);
-            }
-            $pdo->commit();
-        } catch (PDOException $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
-            if (defined('DEBUG') && DEBUG) throw $e;
-            return false;
+    try {
+        $pdo->beginTransaction();
+        $tables = ['dommage_ouvrage','moa','operation_construction','situation','travaux_annexes'];
+        foreach ($tables as $t) {
+            $stmt = $pdo->prepare("DELETE FROM $t WHERE DOID = :doid");
+            $stmt->execute([':doid' => $doid]);
         }
-    } else {
-        $deletesql = "DELETE FROM dommage_ouvrage WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS['conn'], $deletesql);
-        $deletesql = "DELETE FROM moa WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS['conn'], $deletesql);
-        $deletesql = "DELETE FROM operation_construction WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS['conn'], $deletesql);
-        $deletesql = "DELETE FROM situation WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS['conn'], $deletesql);
-        $deletesql = "DELETE FROM travaux_annexes WHERE DOID = '$doid'";
-        mysqli_query($GLOBALS['conn'], $deletesql);
+        $pdo->commit();
+    } catch (PDOException $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        if (defined('DEBUG') && DEBUG) throw $e;
+        return false;
     }
-
     header( "Location: index.php?page=admin" );
-
     return true;
 }
 
 function validDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
-    if ($pdo) {
-        $stmt = $pdo->prepare('UPDATE dommage_ouvrage SET status = 1 WHERE DOID = :doid');
-        $stmt->execute([':doid' => $doid]);
-    } else {
-        $updatestatusSql = "UPDATE `dommage_ouvrage` SET `status` = '1' WHERE `dommage_ouvrage`.`DOID` = $doid;";
-        mysqli_query($GLOBALS['conn'], $updatestatusSql);
-    }
+    $stmt = $pdo->prepare('UPDATE dommage_ouvrage SET status = 1 WHERE DOID = :doid');
+    $stmt->execute([':doid' => $doid]);
     return true;
 }
 
@@ -324,19 +332,9 @@ function getColumnNames($table) {
     if (!in_array($table, $allowed_tables)) return [];
 
     $pdo = $GLOBALS['pdo'] ?? null;
-    if ($pdo) {
-        $sql = 'DESCRIBE ' . $table;
-        $stmt = $pdo->query($sql);
-        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-        return $rows;
-    }
-
-    $sql = 'DESCRIBE '.$table;
-    $result = mysqli_query($GLOBALS['conn'], $sql);
-    $rows = array();
-    while($row = mysqli_fetch_assoc($result)) {
-        $rows[] = $row['Field'];
-    }    
+    $sql = 'DESCRIBE ' . $table;
+    $stmt = $pdo->query($sql);
+    $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     return $rows;
 }
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'connect.db.php';
+// ...existing code...
 
 // Vérifie les identifiants utilisateur.
 // Retourne un tableau associatif contenant l'ID si OK, sinon false.
@@ -10,7 +10,11 @@ function check_login($email, $password){
 
     $stmt = $pdo->prepare('SELECT ID, pass FROM utilisateur WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
-    $user = $stmt->fetch();
+        // Log requête login
+        require_once __DIR__ . '/../controllers/LogController.php';
+        $user_id = null;
+        logQuery(null, 'utilisateur', $stmt->queryString, [':email' => $email], $user_id, 'réussi');
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$user) return false;
 
     $stored = $user['pass'];
@@ -21,6 +25,8 @@ function check_login($email, $password){
         $newHash = password_hash($password, PASSWORD_DEFAULT);
         $upd = $pdo->prepare('UPDATE utilisateur SET pass = :pass WHERE ID = :id');
         $upd->execute([':pass' => $newHash, ':id' => $user['ID']]);
+            // Log requête update password
+            logQuery($user['ID'], 'utilisateur', $upd->queryString, [':pass' => $newHash, ':id' => $user['ID']], $user['ID'], 'réussi');
         return ['ID' => $user['ID']];
     }
 
@@ -36,7 +42,10 @@ function check_email($email){
     if (!$pdo) return false;
     $stmt = $pdo->prepare('SELECT ID FROM utilisateur WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
-    $data = $stmt->fetch();
+        // Log requête check email
+        require_once __DIR__ . '/../controllers/LogController.php';
+        logQuery(null, 'utilisateur', $stmt->queryString, [':email' => $email], null, 'réussi');
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     return ($data != false);
 }
 
@@ -45,7 +54,10 @@ function get_infos($user_id){
     if (!$pdo) return false;
     $stmt = $pdo->prepare('SELECT ID, nom, prenom, email, siret, adresse, code_postal, commune, profession, telephone FROM utilisateur WHERE ID = :id LIMIT 1');
     $stmt->execute([':id' => $user_id]);
-    $data = $stmt->fetch();
+        // Log requête infos user
+        require_once __DIR__ . '/../controllers/LogController.php';
+        logQuery($user_id, 'utilisateur', $stmt->queryString, [':id' => $user_id], $user_id, 'réussi');
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     return $data ?: false;
 }
 
@@ -57,6 +69,9 @@ function insert_utilisateur_session($DOID, $user_id){
     if (!$pdo) return false;
     $stmt = $pdo->prepare('INSERT INTO utilisateur_session (utilisateur_id, DOID, session_debut, session_maj, session_fin) VALUES (:user_id, :doid, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL)');
     if ($stmt->execute([':user_id' => $user_id, ':doid' => $DOID])){
+            // Log requête insert session
+            require_once __DIR__ . '/../controllers/LogController.php';
+            logQuery($DOID, 'utilisateur_session', $stmt->queryString, [':user_id' => $user_id, ':doid' => $DOID], $user_id, 'réussi');
         return (int)$pdo->lastInsertId();
     } else {
         return false;
@@ -89,6 +104,9 @@ function register_user($array_post){
     $stmt = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, pass) VALUES (:nom, :prenom, :email, :pass)');
     try {
         $stmt->execute([':nom' => $first_name, ':prenom' => $last_name, ':email' => $email, ':pass' => $hash]);
+            // Log requête register
+            require_once __DIR__ . '/../controllers/LogController.php';
+            logQuery(null, 'utilisateur', $stmt->queryString, [':nom' => $first_name, ':prenom' => $last_name, ':email' => $email, ':pass' => $hash], null, 'réussi');
         $last_id = (int)$pdo->lastInsertId();
         send_email_new_user($last_id, $first_name, $last_name, $email );
         return $last_id;
@@ -168,6 +186,20 @@ function update_user_profile($user_id, $array_post){
             ':telephone' => $telephone,
             ':id' => $user_id,
         ]);
+            // Log requête update profil
+            require_once __DIR__ . '/../controllers/LogController.php';
+            logQuery($user_id, 'utilisateur', $stmt->queryString, [
+                ':nom' => $first_name,
+                ':prenom' => $last_name,
+                ':email' => $email,
+                ':siret' => $siret,
+                ':adresse' => $adresse,
+                ':code_postal' => $code_postal,
+                ':commune' => $commune,
+                ':profession' => $profession,
+                ':telephone' => $telephone,
+                ':id' => $user_id,
+            ], $user_id, 'réussi');
         return true;
     } catch (PDOException $e) {
         if (defined('DEBUG') && DEBUG) {

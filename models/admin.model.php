@@ -1,5 +1,5 @@
 <?php
-require_once 'connect.db.php';
+// ...existing code...
 
 function getListDOBoard($user_id = null){
     $pdo = $GLOBALS['pdo'] ?? null;

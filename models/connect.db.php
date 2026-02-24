@@ -1,18 +1,8 @@
 <?php
 
 // Backwards-compatible mysqli connection (kept for legacy code).
-$mysqli_conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-if (!$mysqli_conn) {
-    if (defined('DEBUG') && DEBUG) {
-        echo "Erreur de connexion à MySQL: (" . mysqli_connect_errno() . ") " . mysqli_connect_error();
-    }
-    exit();
-}
-mysqli_set_charset($mysqli_conn, "utf8mb4");
-$GLOBALS['mysqli_conn'] = $mysqli_conn;
-$GLOBALS['conn'] = $mysqli_conn; // legacy alias expected by older code
 
-// PDO connection for new code (use prepared statements, exceptions)
+// PDO connection for all code (use prepared statements, exceptions)
 $dsn = sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8mb4', DB_HOST, DB_NAME, DB_PORT);
 try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, [

@@ -1,5 +1,9 @@
+
 <?php
 
+// Mode de log SQL :
+// 0 = aucun log, 1 = insert/update/delete uniquement, 2 = tout (insert/update/delete/select)
+define('LOG_MODE', getenv('LOG_MODE') !== false ? intval(getenv('LOG_MODE')) : 1); // 2 par défaut
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
