@@ -50,6 +50,9 @@ function get_infos($user_id){
 }
 
 function insert_utilisateur_session($DOID, $user_id){
+    if ($user_id <= 0 && $_SESSION['env'] === 'dev') {
+        $user_id = 1; // Pour les tests en dev, on force à 1
+    }
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return false;
     $stmt = $pdo->prepare('INSERT INTO utilisateur_session (utilisateur_id, DOID, session_debut, session_maj, session_fin) VALUES (:user_id, :doid, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL)');

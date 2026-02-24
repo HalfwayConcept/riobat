@@ -1,4 +1,20 @@
-<form action="" method="post" class="max-w-lg mx-auto mt-8">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- HEADER HARMONISÉ -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <h1 class="text-2xl font-extrabold text-blue-800">Étape 1 : Coordonnées du souscripteur</h1>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <span>Formulaire Dommages Ouvrage</span>
+            <span class="mx-2">|</span>
+            <span>Projet de construction</span>
+        </div>
+        <hr class="border-blue-200 mb-4">
+    </div>
+    <form action="" method="post" class="max-w-lg mx-auto mt-8">
     
     <!-- Informations souscripteur -->
     <div class="relative z-0 w-full mb-5 group">

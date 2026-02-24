@@ -1,6 +1,24 @@
+
+
+
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- HEADER AMÉLIORÉ -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            <h1 class="text-2xl font-extrabold text-blue-800">Étape 4 : Opération de construction</h1>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <span>Situation de l'ouvrage </span>
+            <span class="mx-2">|</span>
+            <span>Travaux annexes</span>
+        </div>
+        <hr class="border-blue-200 mb-4">
+    </div>
     <!-- Situation de l'ouvrage -->
-    <h2 class="text-lg font-bold text-gray-900 mb-4">Situation de l'ouvrage <span class="text-red-600">*</span></h2>
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Situation de l'ouvrage </h2>
     <form action="" method="post">
             <!-- Zone inondable -->
         <div class="flex flex-col lg:flex-row mt-4">
@@ -195,10 +213,11 @@
                 </div>
             </div>
         </div>
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Travaux annexes </h2>
             <!-- Etude de sol -->
-        <div class="mt-20">
+        <div>
             <h3 class="text-gray-500 font-medium">Etude de sol <span class="text-red-600">*</span></h3>
-            <div class="flex flex-col lg:flex-row ml-10 mt-6 gap-4">
+            <div class="flex flex-col lg:flex-row mt-6 gap-4">
                 <span class="font-normal flex-1">Intervention d'un bureau spécialisé ?</span>
                 <div class="flex justify-end items-center">
                     <label class="inline-flex items-center cursor-pointer">
@@ -258,8 +277,7 @@
         </div>
         <!-- Section Garanties demandées supprimée à la demande -->
         <!-- Travaux annexes -->
-        <div class="flex-column mt-4">
-            <span class="text-gray-500 font-medium">Travaux annexes :</span>
+        <div class="flex-column mt-4">            
             <div class="ml-10 mt-2">
                 <div class="flex justify-end items-center">
                     <span class="font-normal text-left flex-1">S'agit-il d'une construction en bois ?</span>
@@ -350,6 +368,8 @@
 
         <input type="hidden" name="fields" value="situation">
 
+
         <!-- SECTION: Etude de sol (step4) supprimée à la demande -->
     </form>
 </section>
+<?php // Correction : s'assurer que tous les blocs PHP sont bien fermés ?>

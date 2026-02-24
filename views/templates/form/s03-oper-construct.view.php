@@ -1,17 +1,28 @@
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- HEADER HARMONISÉ -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <h1 class="text-2xl font-extrabold text-blue-800">Étape 3 : Nature de l'opération</h1>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <span>Formulaire Dommages Ouvrage</span>
+            <span class="mx-2">|</span>
+            <span>Projet de construction</span>
+        </div>
+        <hr class="border-blue-200 mb-4">
+    </div>
     <script src="public/script/s03-oper-construct.js"></script>
     <script src="public/script/adresse-autocomplete.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initAdresseAutocomplete === 'function') {
-            var input = document.getElementById('construction_adresse_autocomplete');
-            if (input) {
-                initAdresseAutocomplete(input);
-            }
+        if (typeof adresseAutocomplete === 'function') {
+            adresseAutocomplete('construction_adresse_autocomplete', 'suggestions_construction_adresse');
         }
     });
     </script>
-    <script src="public/script/adresse-autocomplete.js"></script>
     <script>
     // Initialisation dynamique des blocs dépendants des toggles au chargement
     document.addEventListener('DOMContentLoaded', function() {
@@ -612,11 +623,67 @@
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Escalier, résidence, bâtiment</label>
                 <input type="text" name="construction_adresse_esc_res_bat" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_esc_res_bat']) ? $_SESSION['info_operation_construction']['construction_adresse_esc_res_bat'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
             </div>
-            <div class="mx-8 my-2">
-                <label for="construction_adresse_autocomplete" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse de la construction</label>
-                <input type="text" id="construction_adresse_autocomplete" name="construction_adresse" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse']) ? htmlspecialchars($_SESSION['info_operation_construction']['construction_adresse']) : '' ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Commencez à taper l'adresse..." autocomplete="off"  />
-                <small class="text-gray-500">Saisissez l'adresse puis sélectionnez dans la liste proposée.</small>
+            <div class="mx-8 my-2 relative">
+                <label for="search_construction_adresse" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Recherche d'adresse</label>
+                <input type="text" id="search_construction_adresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher une adresse..." autocomplete="off" />
+                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <ul id="search_construction_adresse_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
+                <small class="text-gray-500">Recherchez puis sélectionnez une adresse pour remplir automatiquement les champs ci-dessous.</small>
             </div>
+            <script>
+            // Remplit les champs adresse, code postal, commune à partir d'une suggestion
+            function fillAdresseFieldsFromSelection(feature) {
+                if (feature && feature.properties) {
+                    document.querySelector('input[name="construction_adresse"]').value = feature.properties.name || feature.properties.label || '';
+                    document.querySelector('input[name="construction_adresse_code_postal"]').value = feature.properties.postcode || '';
+                    document.querySelector('input[name="construction_adresse_commune"]').value = feature.properties.city || '';
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                var input = document.getElementById('search_construction_adresse');
+                var ul = document.getElementById('search_construction_adresse_suggestions');
+                let timeoutAdresse;
+                if (!input || !ul) return;
+                input.addEventListener('input', function() {
+                    const query = input.value;
+                    clearTimeout(timeoutAdresse);
+                    if (query.length < 3) {
+                        ul.classList.add('hidden');
+                        return;
+                    }
+                    timeoutAdresse = setTimeout(() => {
+                        fetch('https://api-adresse.data.gouv.fr/search/?q=' + encodeURIComponent(query) + '&limit=7')
+                            .then(response => response.json())
+                            .then(data => {
+                                ul.innerHTML = '';
+                                if (!data.features || data.features.length === 0) {
+                                    ul.classList.add('hidden');
+                                    return;
+                                }
+                                data.features.forEach(feature => {
+                                    const li = document.createElement('li');
+                                    li.textContent = feature.properties.label;
+                                    li.className = 'px-4 py-2 cursor-pointer hover:bg-blue-100';
+                                    li.onclick = function() {
+                                        input.value = feature.properties.label;
+                                        ul.classList.add('hidden');
+                                        fillAdresseFieldsFromSelection(feature);
+                                    };
+                                    ul.appendChild(li);
+                                });
+                                ul.classList.remove('hidden');
+                            });
+                    }, 300);
+                });
+                document.addEventListener('click', function(e) {
+                    if (!input.contains(e.target) && !ul.contains(e.target)) {
+                        ul.classList.add('hidden');
+                    }
+                });
+            });
+            </script>
             <div class="grid gap-6 mb-2 mx-8 md:grid-cols-2">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lieu-dit</label>

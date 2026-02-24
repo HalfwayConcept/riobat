@@ -1,4 +1,19 @@
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- HEADER HARMONISÉ -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <h1 class="text-2xl font-extrabold text-blue-800">Étape 2 : Maître d'Ouvrage</h1>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <span>Formulaire Dommages Ouvrage</span>
+            <span class="mx-2">|</span>
+            <span>Projet de construction</span>
+        </div>
+        <hr class="border-blue-200 mb-4">
+    </div>
     <!-- Affichage des erreurs de validation -->
     <?php if (!empty($_SESSION['validation_errors'])): ?>
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -19,6 +34,7 @@
                 <div class="lg:w-2/3">
                     <span class="text-gray-500 font-medium">Le Maitre d'Ouvrage est-il le souscripteur ?</span>
                 </div>
+                
                 <div class="lg:w-1/3">
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="toggle_moa_souscripteur" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_souscripteur']) ? ($_SESSION['info_moa']['moa_souscripteur']==1 ? "checked=checked" : "") : "checked=checked"; ?> onchange="handleToggleSouscripteur(this)"/>
@@ -45,6 +61,8 @@
                 }
             }
             </script>  
+            <!-- Champ hidden pour stocker le JSON du tableau Nature des travaux -->
+            
             <div id="moa_form" class="<?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "" : "hidden"; ?> px-8 py-4">
                 <div class="mb-6 md:grid-cols-2">
                     <div class="flex flex-row py-4 items-center gap-4">
@@ -160,6 +178,7 @@
                 }
             }
             </script>
+            
             <div id="moa_construction_form" class="<?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "" : "hidden"; ?> py-4">
                 <div class="flex flex-row p-2 mb-6">
                     <div class="flex items-center">
@@ -170,6 +189,7 @@
                 </div>
                 <div class="mb-6">
                     <div class="flex flex-row items-center gap-4">
+                        
                         <span class="text-gray-500 font-medium">Le Maitre d'Ouvrage est-il un professionnel de la construction ? &ensp;&ensp; </span>
                         <div> <!-- Infobulle -->
                             <button data-popover-target="popover-description" data-popover-placement="bottom-end" type="button" class="mr-2"><svg class="w-4 h-4 ms-2 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
@@ -210,91 +230,105 @@
                     </div>
                 </div>
                 <div id="moa_construction_pro_tableau" class="<?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "" : "hidden"; ?> mt-10">
+                    
                     <span class="text-gray-500 font-medium">Complétez le tableau ci-dessous en cochant les cases correspondantes :</span>
-                    <table class="text-sm font-light ml-6 mt-4">
-                        <tr>
-                            <td></td>
-                            <td class="bg-gray-50 border-t-2 border-b-2 border-l-2 border-gray-300 p-2"></td>
-                            <td class="bg-gray-50 border-t-2 border-b-2 border-gray-300 p-2">Nature des travaux</td>
-                            <td class="bg-gray-50 border-t-2 border-b-2 border-r-2 border-gray-300 p-2"></td>
-                        </tr>
-                        <tr class="bg-gray-50 border-b-2 border-l-2 border-r-2 border-gray-300">
-                            <td class="border-t-2 border-r-2 border-gray-300 text-center p-2">Activité ou mission exercée</td>
-                            <td class="border-r-2 border-gray-300 text-center p-2">Papiers peints<br>et/ou Peintures intérieures</td>
-                            <td class="border-r-2 border-gray-300 text-center p-2">Gros oeuvre fondations,<br>Charpente - Couverture, Etanchéité</td>
-                            <td class="p-2">Autres travaux</td>
-                            <td class="border-2 border-gray-300 text-center p-2">(autres travaux: précisez)</td>
-                        </tr>
-                        <tr>
-                            <td class="border-r-2 border-l-2 border-b border-gray-300 p-2 pl-4">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_conception'])==1 ? "checked=checked" : ""; ?> name="moa_conception"/>
-                                <label>&ensp; Conception</label>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_conception_1'])==1 ? "checked=checked" : ""; ?> name="moa_conception_1"/></td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_conception_2'])==1 ? "checked=checked" : ""; ?> name="moa_conception_2"/></td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_conception_3'])==1 ? "checked=checked" : ""; ?> name="moa_conception_3"/></td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" name="moa_conception_4" value="<?= isset($_SESSION['info_moa']['moa_conception_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_conception_4']) : ''?>"/></td>
-                        </tr>
-                        <tr>
-                            <td class="border-r-2 border-b border-l-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_direction'])==1 ? "checked=checked" : ""; ?> name="moa_direction"/>
-                                <label>&ensp; Direction</label>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1"  <?= isset($_SESSION['info_moa']['moa_direction_1'])==1 ? "checked=checked" : ""; ?> name="moa_direction_1"/>
-
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_direction_2'])==1 ? "checked=checked" : ""; ?> name="moa_direction_2"/>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_direction_3'])==1 ? "checked=checked" : ""; ?> name="moa_direction_3"/>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" value="<?= isset($_SESSION['info_moa']['moa_direction_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_direction_4']) : ''?>" name="moa_direction_4"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="border-r-2 border-b border-l-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_surveillance'])==1 ? "checked=checked" : ""; ?>  name="moa_surveillance"/>
-                                <label>&ensp; Surveillance</label>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_surveillance_1'])==1 ? "checked=checked" : ""; ?>  name="moa_surveillance_1"/>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_surveillance_2'])==1 ? "checked=checked" : ""; ?>  name="moa_surveillance_2"/>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_surveillance_3'])==1 ? "checked=checked" : ""; ?> name="moa_surveillance_3"/>
-                            </td>
-                            <td class="border-r-2 border-b border-gray-300 text-center p-2">
-                                <input type="text" name="moa_surveillance_4" value="<?= isset($_SESSION['info_moa']['moa_surveillance_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_surveillance_4']) : ''?>"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="border-r-2 border-l-2 border-b-2 border-gray-300 p-2 pl-4">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_execution'])==1 ? "checked=checked" : ""; ?> name="moa_execution"/>
-                                <label>&ensp; Exécution</label>
-                            </td>
-                            <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_execution_1'])==1 ? "checked=checked" : ""; ?> name="moa_execution_1"/>
-                            </td>
-                            <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_execution_2'])==1 ? "checked=checked" : ""; ?> name="moa_execution_2"/>
-                            </td>
-                            <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="checkbox" value="1" <?= isset($_SESSION['info_moa']['moa_execution_3'])==1 ? "checked=checked" : ""; ?> name="moa_execution_3"/>
-                            </td>
-                            <td class="border-b-2 border-r-2 border-gray-300 text-center p-2">
-                                <input type="text" name="moa_execution_4" value="<?= isset($_SESSION['info_moa']['moa_execution_4']) ? htmlspecialchars($_SESSION['info_moa']['moa_execution_4']) : ''?>"/>
-                            </td>
-                        </tr>
+                    <input type="hidden" name="moa_nature_travaux_json" id="moa_nature_travaux_json" value='<?= isset($_SESSION['info_moa']['moa_nature_travaux_json']) ? htmlspecialchars($_SESSION['info_moa']['moa_nature_travaux_json']) : '' ?>'>
+                    <div class="overflow-x-auto">
+                    <table class="text-sm font-light ml-6 mt-4 min-w-[600px] w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border-t-2 border-b-2 border-l-2 border-gray-300 p-2 text-center">Activité ou mission exercée</th>
+                                <th class="border-t-2 border-b-2 border-gray-300 p-2 text-center">Papiers peints<br>et/ou Peintures intérieures</th>
+                                <th class="border-t-2 border-b-2 border-gray-300 p-2 text-center">Gros oeuvre fondations,<br>Charpente - Couverture, Etanchéité</th>
+                                <th class="border-t-2 border-b-2 border-gray-300 p-2 text-center">Autres travaux</th>
+                                <th class="border-t-2 border-b-2 border-r-2 border-gray-300 p-2 text-center">(autres travaux: précisez)</th>
+                            </tr>
+                        </thead>
+                        <!-- Lignes dynamiques générées par JS -->
                     </table>
+                    </div>
+                    <script>
+                    // Structure du tableau
+                    const moaNatureTravauxRows = [
+                        { key: 'conception', label: 'Conception' },
+                        { key: 'direction', label: 'Direction' },
+                        { key: 'surveillance', label: 'Surveillance' },
+                        { key: 'execution', label: 'Exécution' }
+                    ];
+                    const moaNatureTravauxCols = [
+                        { key: '1', label: 'Papiers peints/Peintures intérieures' },
+                        { key: '2', label: 'Gros oeuvre/Charpente/Couverture/Etanchéité' },
+                        { key: '3', label: 'Autres travaux' }
+                    ];
+                    function getInitialNatureTravaux() {
+                        let val = document.getElementById('moa_nature_travaux_json').value;
+                        if (!val) return {};
+                        try { return JSON.parse(val); } catch { return {}; }
+                    }
+                    function updateNatureTravauxJSON(obj) {
+                        document.getElementById('moa_nature_travaux_json').value = JSON.stringify(obj);
+                    }
+                    function renderNatureTravauxTable() {
+                        const tbody = document.createElement('tbody');
+                        let data = getInitialNatureTravaux();
+                        moaNatureTravauxRows.forEach(row => {
+                            const tr = document.createElement('tr');
+                            // Libellé ligne
+                            const tdLabel = document.createElement('td');
+                            tdLabel.className = 'border-r-2 border-l-2 border-b border-gray-300 p-2 pl-4';
+                            tdLabel.innerHTML = `<label>${row.label}</label>`;
+                            tr.appendChild(tdLabel);
+                            // Colonnes cases à cocher
+                            moaNatureTravauxCols.forEach(col => {
+                                const td = document.createElement('td');
+                                td.className = 'border-r-2 border-b border-gray-300 text-center p-2';
+                                const id = `moa_${row.key}_${col.key}`;
+                                const checked = data[row.key] && data[row.key][col.key];
+                                td.innerHTML = `<input type=\"checkbox\" id=\"${id}\" ${checked ? 'checked' : ''} />`;
+                                tr.appendChild(td);
+                            });
+                            // Colonne "autres travaux: précisez"
+                            const tdAutre = document.createElement('td');
+                            tdAutre.className = 'border-r-2 border-b border-gray-300 text-center p-2';
+                            const inputId = `moa_${row.key}_autre`;
+                            const val = data[row.key] && data[row.key]['autre'] ? data[row.key]['autre'] : '';
+                            tdAutre.innerHTML = `<input type=\"text\" id=\"${inputId}\" value=\"${val.replace(/"/g,'&quot;')}\" class=\"w-full px-2 py-1 border rounded\" placeholder=\"Précisez...\" />`;
+                            tr.appendChild(tdAutre);
+                            tbody.appendChild(tr);
+                        });
+                        // Remplace le tbody existant
+                        const table = document.querySelector('#moa_construction_pro_tableau table');
+                        const oldTbody = table.querySelector('tbody');
+                        if (oldTbody) table.removeChild(oldTbody);
+                        table.appendChild(tbody);
+                    }
+                    function syncNatureTravauxFromUI() {
+                        let obj = {};
+                        moaNatureTravauxRows.forEach(row => {
+                            obj[row.key] = {};
+                            moaNatureTravauxCols.forEach(col => {
+                                const id = `moa_${row.key}_${col.key}`;
+                                obj[row.key][col.key] = document.getElementById(id).checked;
+                            });
+                            // Ajout du champ texte "autre"
+                            const inputId = `moa_${row.key}_autre`;
+                            obj[row.key]['autre'] = document.getElementById(inputId).value;
+                        });
+                        updateNatureTravauxJSON(obj);
+                    }
+                    document.addEventListener('DOMContentLoaded', function() {
+                        renderNatureTravauxTable();
+                        // Ajoute les listeners sur les cases à cocher et champs texte
+                        moaNatureTravauxRows.forEach(row => {
+                            moaNatureTravauxCols.forEach(col => {
+                                const id = `moa_${row.key}_${col.key}`;
+                                document.getElementById(id).addEventListener('change', syncNatureTravauxFromUI);
+                            });
+                            const inputId = `moa_${row.key}_autre`;
+                            document.getElementById(inputId).addEventListener('input', syncNatureTravauxFromUI);
+                        });
+                    });
+                    </script>
                 </div>
             </div>
         </div>

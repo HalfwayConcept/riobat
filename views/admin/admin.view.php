@@ -1,6 +1,9 @@
 <section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
-    <div class="flex justify-end mb-4">
+    <div class="flex justify-end mb-4 gap-4">
         <a href="index.php?page=admin&run_tests=1" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Tests automatiques DO</a>
+        <form method="post" action="index.php?page=admin" onsubmit="return confirm('Confirmer le nettoyage de toutes les tables du formulaire ? Cette action est irréversible.');">
+            <button type="submit" name="truncate_form_tables" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Vider toutes les tables DO</button>
+        </form>
     </div>
 <p class="text-center font-medium text-2xl mt-16">Liste des Dommages Ouvrages</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
