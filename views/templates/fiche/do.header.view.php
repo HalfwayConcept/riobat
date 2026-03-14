@@ -1,5 +1,14 @@
 
 <h1 class="text-xl font-medium"><?=$title;?></h1>
+
+<!-- Informations souscripteur -->
+<div class="flex items-center gap-3 mb-2 mt-6">
+    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
+    </svg>
+    <h2 class="text-xl font-bold text-gray-800">Synthèse</h2>
+</div>
 <div class="grid md:grid-cols-2 grid-cols-1 gap-4">
     <!-- Informations souscripteur -->
     <fieldset class="md:gap-6 border-2 border-gray-400 p-4 m-6">
@@ -13,8 +22,7 @@
             <strong class="pl-4"><?=dateFormat($DATA['date_creation'])?></strong>
         </div>
     </fieldset>
-    <!-- Informations souscripteur -->
-    <fieldset class=" border-2 border-gray-400 p-4 m-6">
+    <fieldset class="md:gap-6 border-2 border-gray-400 p-4 m-6">
         <legend class="mx-2 p-2 text-xl font-medium">Date des travaux</legend>
         <div class="grid grid-cols-3 ">
             <div class="col-span-2"><h3>Date d'ouverture de chantier</h3></div>

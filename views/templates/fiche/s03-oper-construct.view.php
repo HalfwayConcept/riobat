@@ -1,11 +1,19 @@
 
 <div>
     <!-- Operation de construction : nature de l'ouvrage -->
+    <div class="flex items-center gap-3 mb-2 mt-6">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
+        </svg>
+        <h2 class="text-xl font-bold text-gray-800">Opération de construction</h2>
+    </div>
+    <hr class="mb-4 border-blue-200">
     <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : nature et type de l'ouvrage <span class="text-red-600">*</span></legend>
+        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : nature et type de l'ouvrage </legend>
 
         <div class="flex flex-col">
-            <h3>Nature de l'opération : <span class="text-red-600">*</span></h3>
+            <h3>Nature de l'opération : </h3>
             <div class="flex flex-row pl-8">
     <?php 
         if(isset($DATA['nature_neuf_exist']) && $DATA['nature_neuf_exist'] == "neuve"){
@@ -229,7 +237,7 @@
              </div>
 
         <div class="flex flex-col">
-            <h2 class="section-title">Adresse de la construction : <span class="text-red-600">*</span></h2>
+            <h2 class="section-title">Adresse de la construction : </h2>
             <div class="flex flex-col pl-8">
                 <strong class="pl-4">
                 <?php if(isset($DATA['construction_adresse'])){ echo $DATA['construction_adresse']."<br>";}; ?>
@@ -247,7 +255,7 @@
         <div class="flex flex-row">
             <div class="flex flex-col">
                 <div class="flex flex-row">
-                    <h3>Date d'ouverture de chantier : <span class="text-red-600">*</span></h3>
+                    <h3>Date d'ouverture de chantier : </h3>
                     <strong class='pl-6'>
                         <?php if(isset($DATA['construction_date_debut'])){
                                     $datedebut = dateFormat($DATA['construction_date_debut']);
@@ -267,7 +275,7 @@
                     </strong>
                 </div>
                 <div class="flex flex-row">
-                    <h3>Date de réception prévisionnelle : <span class="text-red-600">*</span></h3>
+                    <h3>Date de réception prévisionnelle : </h3>
                     <strong class='pl-6'>
                         <?php if(isset($DATA['construction_date_reception'])){
                                     $datedebut = dateFormat($DATA['construction_date_reception']);
@@ -281,7 +289,7 @@
 
         <div class="flex flex-col mt-2">
 
-            <h3>Coût de l'opération de construction : <span class="text-red-600">*</span></h3>
+            <h3>Coût de l'opération de construction : </h3>
 
             <div class="flex flex-col ml-6">
                 <span>Coût en € : <?php if(isset($DATA['construction_cout_operation'])){

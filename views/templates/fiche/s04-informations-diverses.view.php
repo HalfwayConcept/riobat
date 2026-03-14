@@ -1,7 +1,15 @@
 <div>
     <!-- Operation de construction : situation de l'ouvrage -->
+    <div class="flex items-center gap-3 mb-2 mt-6">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
+        </svg>
+        <h2 class="text-xl font-bold text-gray-800">Informations diverses</h2>
+    </div>
+    <hr class="mb-4 border-blue-200">
     <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : situation de l'ouvrage <span class="text-red-600">*</span></legend>
+        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : situation de l'ouvrage </legend>
 
         <div class="flex flex-col">
             <div class='ml-6'>

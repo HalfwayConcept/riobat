@@ -2,8 +2,19 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 ?>
-    <div class="mt-4">
-        <h2 class="section-title">Travaux annexes</h2>
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+    <!-- HEADER AMÉLIORÉ -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            <h1 class="text-2xl font-extrabold text-blue-800">Étape 4bis : Travaux annexes</h1>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <span>Travaux annexes</span>
+        </div>
+        <hr class="border-blue-200 mb-4">
     </div>
 <form action="" method="post">
     

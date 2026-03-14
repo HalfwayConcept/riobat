@@ -289,9 +289,12 @@
                                     
                                 }else{
                                     $id = insertEntreprise($array_entreprise);
-                                    $_SESSION["info_travaux_annexes"][$array_entreprise['type'].'_entreprise_id'] = $id;
-                                    updateEntrepriseID($id, $array_entreprise['type'], $_SESSION["DOID"]);
-                                }                               
+                                    if ($id && $id > 0) {
+                                        $_SESSION["info_travaux_annexes"][$array_entreprise['type'].'_entreprise_id'] = $id;
+                                        updateEntrepriseID($id, $array_entreprise['type'], $_SESSION["DOID"]);
+                                    }
+                                    // Si l'insertion échoue, ne pas tenter la mise à jour de la clé étrangère
+                                }
                             }
                         }
                     }
@@ -303,11 +306,22 @@
             if($res === false){
                 // echo ERREUR LORS DE L'AJOUT OU MODIFICATION EN BDD
             }else{                
-                if(!empty($_POST['page_next'])){
+                // Détermination dynamique de l'étape suivante après step4
+                if ($currentstep == 'step4') {
+                    $info = $_SESSION['info_situation'];
+                    $has_annexe = (
+                        (isset($info['situation_boi']) && $info['situation_boi'] == '1') ||
+                        (isset($info['situation_phv']) && $info['situation_phv'] == '1') ||
+                        (isset($info['situation_geo']) && $info['situation_geo'] == '1') ||
+                        (isset($info['situation_ctt']) && $info['situation_ctt'] == '1') ||
+                        (isset($info['situation_cnr']) && $info['situation_cnr'] == '1')
+                    );
+                    $nextstep = $has_annexe ? 'step4bis' : 'step5';
+                } else if (!empty($_POST['page_next'])) {
                     $nextstep = $_POST['page_next'];
                 }
                 $doid = $_SESSION["DOID"];
-                header("Location: index.php?page=".$nextstep."&doid=$doid"); 
+                header("Location: index.php?page=".$nextstep."&doid=$doid");
 
             }
             

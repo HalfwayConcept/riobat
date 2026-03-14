@@ -94,7 +94,7 @@
                     }
                     </script>
                     <div class="py-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom <span class="text-red-600">*</span></label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom </label>
                         <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
 
@@ -113,7 +113,7 @@
 
                 <!-- Bloc Dates et Coût de l'opération supprimé -->
         <div class="my-16">
-            <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) : <span class="text-red-600">*</span></h3>
+            <h3 class="mb-2 text-gray-500 font-medium">Qualité du maitre d'ouvrage (choisissez l'option correspondante) : </h3>
             <?php
                 require_once __DIR__ . '/../../../models/moa_qualite.model.php';
                 $moa_qualites = getAllMoaQualites();
@@ -149,7 +149,7 @@
         <!-- Formulaire caché : "Maitre d'ouvrage participe t-il à la construction ?"-->
         <div>
             <div class="flex flex-col lg:flex-row gap-4 items-center text-gray-500 font-medium">
-                <span class="lg:w-2/3">Le Maitre d'Ouvrage participe à la construction ? <span class="text-red-600">*</span></span>
+                <span class="lg:w-2/3">Le Maitre d'Ouvrage participe à la construction ? </span>
                 <div class="lg:w-1/3">
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="toggle_moa_construction" class="sr-only peer" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : ""; ?> onchange="handleToggleConstruction(this)"/>
@@ -234,7 +234,7 @@
                     <span class="text-gray-500 font-medium">Complétez le tableau ci-dessous en cochant les cases correspondantes :</span>
                     <input type="hidden" name="moa_nature_travaux_json" id="moa_nature_travaux_json" value='<?= isset($_SESSION['info_moa']['moa_nature_travaux_json']) ? htmlspecialchars($_SESSION['info_moa']['moa_nature_travaux_json']) : '' ?>'>
                     <div class="overflow-x-auto">
-                    <table class="text-sm font-light ml-6 mt-4 min-w-[600px] w-full">
+                    <table class="text-sm font-light mt-4 min-w-[600px] w-full">
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="border-t-2 border-b-2 border-l-2 border-gray-300 p-2 text-center">Activité ou mission exercée</th>

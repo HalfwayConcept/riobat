@@ -250,7 +250,10 @@ function debugQuery($query, $params = array()){
 
 // changement du format de la date
 function dateFormat($date){
-    return date('d-m-Y', strtotime($date));
+    if (empty($date)) return '';
+    $ts = strtotime($date);
+    if ($ts === false) return '';
+    return date('d-m-Y', $ts);
 }
 
 // Affichage des intitulés des radio et checkbox

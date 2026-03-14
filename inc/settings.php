@@ -41,7 +41,7 @@ define('DB_NAME', getenv('DB_NAME') ?: 'ruki5964_riobat');
 define('DB_PORT', getenv('DB_PORT') ?: 3306);
 
 if (APP_ENV === 'dev') {
-    define('DEBUG', true);
+    define('DEBUG', false);
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);

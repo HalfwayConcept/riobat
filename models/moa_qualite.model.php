@@ -1,5 +1,18 @@
+
 <?php
+
 require_once __DIR__ . '/connect.db.php';
+
+function getMoaQualiteLabelById($id) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    $sql = "SELECT label FROM moa_qualite WHERE id = :id LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? $row['label'] : '';
+}
+
+
 // models/moa_qualite.model.php
 // ...existing code...
 

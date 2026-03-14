@@ -7,9 +7,11 @@
     function validDisplay($currentstep){
         
             $title = "Recueil d'information Dommage ouvrage - synthèse";         
-            $DATA = getDo($_SESSION['DOID']);
-
-            $entreprises = getEntreprises($_SESSION['DOID']);
+            $DOID = $_GET['doid'];
+            $DATA = getDo($DOID);
+            //var_dump($DATA);
+            $DATA['moa_nature_travaux_json'] = json_decode($DATA['moa_nature_travaux_json'], true);
+            $entreprises = getEntreprises($DOID);
             foreach ($entreprises as $key => $entreprise) {
                 if(!empty($entreprise)){
                     $array_entreprises[substr($key,0,3)] = loadEntreprise($entreprise);
