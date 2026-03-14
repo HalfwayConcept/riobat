@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/connect.db.php';
         function coordFormDisplay($type, $entreprise_id){
 
             if(!empty($entreprise_id)){

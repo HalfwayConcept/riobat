@@ -1,3 +1,54 @@
+// Autocomplétion d'adresse pour step3
+function fillAdresseFieldsFromSelection(feature) {
+    if (feature && feature.properties) {
+        document.querySelector('input[name="construction_adresse"]').value = feature.properties.name || feature.properties.label || '';
+        document.querySelector('input[name="construction_adresse_code_postal"]').value = feature.properties.postcode || '';
+        document.querySelector('input[name="construction_adresse_commune"]').value = feature.properties.city || '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('search_construction_adresse');
+    var ul = document.getElementById('search_construction_adresse_suggestions');
+    let timeoutAdresse;
+    if (!input || !ul) return;
+    input.addEventListener('input', function() {
+        const query = input.value;
+        clearTimeout(timeoutAdresse);
+        if (query.length < 3) {
+            ul.classList.add('hidden');
+            return;
+        }
+        timeoutAdresse = setTimeout(() => {
+            fetch('https://api-adresse.data.gouv.fr/search/?q=' + encodeURIComponent(query) + '&limit=7')
+                .then(response => response.json())
+                .then(data => {
+                    ul.innerHTML = '';
+                    if (!data.features || data.features.length === 0) {
+                        ul.classList.add('hidden');
+                        return;
+                    }
+                    data.features.forEach(feature => {
+                        const li = document.createElement('li');
+                        li.textContent = feature.properties.label;
+                        li.className = 'px-4 py-2 cursor-pointer hover:bg-blue-100';
+                        li.onclick = function() {
+                            input.value = feature.properties.label;
+                            ul.classList.add('hidden');
+                            fillAdresseFieldsFromSelection(feature);
+                        };
+                        ul.appendChild(li);
+                    });
+                    ul.classList.remove('hidden');
+                });
+        }, 300);
+    });
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !ul.contains(e.target)) {
+            ul.classList.add('hidden');
+        }
+    });
+});
 // Fonction générique pour les toggles Oui/Non avec label coloré
 function handleToggleYN(checkbox, spanId) {
     const spanValue = document.getElementById(spanId);

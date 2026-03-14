@@ -19,6 +19,15 @@
     </div>
     <!-- Situation de l'ouvrage -->
     <h2 class="text-lg font-bold text-gray-900 mb-4">Situation de l'ouvrage </h2>
+    <?php if (!empty($_SESSION['validation_errors'])): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc pl-5">
+                <?php foreach ($_SESSION['validation_errors'] as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
     <form action="" method="post">
             <!-- Zone inondable -->
         <div class="flex flex-col lg:flex-row mt-4">
@@ -221,7 +230,7 @@
                 <span class="font-normal flex-1">Intervention d'un bureau spécialisé ?</span>
                 <div class="flex justify-end items-center">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle_sol" value="0" class="sr-only peer" onchange="handleToggleYN(this, 'radio_sol_oui', 'radio_sol_non', 'sol_value'); if(this.checked){showElement('sol_form');}else{hideElement('sol_form');}"
+                        <input type="checkbox" id="toggle_sol" value="0" class="sr-only peer" onchange="handleToggleYN(this, 'radio_sol_oui', 'radio_sol_non', 'sol_value'); if(this.checked){showElement('sol_form');}else{hideElement('sol_form');} updateSolRequired(this.checked);"
                             <?= isset($_SESSION['info_situation']['situation_sol']) && $_SESSION['info_situation']['situation_sol']==1 ? "checked=checked" : ""; ?>  />
                         <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
                         <span id="sol_value" class="select-none ms-3 text-sm font-medium text-gray-900">
@@ -234,29 +243,56 @@
             </div>
             <div id="sol_form" class="<?= (isset($_SESSION['info_situation']) && isset($_SESSION['info_situation']['situation_sol']) && $_SESSION['info_situation']['situation_sol']==1) ? "" : "hidden"; ?> px-8 py-4">
                 <div>
-                    <?php echo coordFormDisplay('sol', (isset($_SESSION['info_situation']) && isset($_SESSION['info_situation']['sol_entreprise_id'])) ? $_SESSION['info_situation']['sol_entreprise_id'] : null ); ?>
+                    <?php echo coordFormDisplay('sol', (isset($_SESSION['info_situation']) && isset($_SESSION['info_situation']['sol_entreprise_id'])) ? $_SESSION['info_situation']['sol_entreprise_id'] : null, ["required" => true]); ?>
                 </div>
                 <div class="flex flex-col lg:flex-row ml-24 mt-2">
                     <span class="text-sm font-medium mt-2">Mission : &ensp;&ensp;</span>
                     <div class="flex flex-row ml-8 text-gray-500 font-medium mt-2">
                         <span>
-                            <input type="radio" name="situation_sol_bureau_mission" value="g2_amp" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_amp" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')"/> 
+                            <input type="radio" name="situation_sol_bureau_mission" value="g2_amp" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_amp" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')" required/>
                             G2 AMP
                         </span>
                         <span class="ml-6">
-                            <input type="radio" name="situation_sol_bureau_mission" value="g2_pro" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_pro" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')"/> 
+                            <input type="radio" name="situation_sol_bureau_mission" value="g2_pro" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="g2_pro" ? "checked=checked" : ""; ?> onclick="hideElement('situation_sol_bureau_mission_autre')" required/>
                             G2 Pro
                         </span>
                         <span class="ml-6">
-                            <input type="radio" name="situation_sol_bureau_mission" value="etude_sol_autre" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="etude_sol_autre" ? "checked=checked" : ""; ?> onclick="showElement('situation_sol_bureau_mission_autre')"/> 
-                            Autre 
+                            <input type="radio" name="situation_sol_bureau_mission" value="etude_sol_autre" <?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="etude_sol_autre" ? "checked=checked" : ""; ?> onclick="showElement('situation_sol_bureau_mission_autre')" required/>
+                            Autre
                         </span>
                     </div>
                     <div id="situation_sol_bureau_mission_autre" class="<?= isset($_SESSION['info_situation']['situation_sol_bureau_mission']) && ($_SESSION['info_situation']['situation_sol_bureau_mission'])=="etude_sol_autre" ? "" : "hidden"; ?> ml-4">
-                        <input type="text" name="situation_sol_bureau_mission_champ" value="<?= isset($_SESSION['info_situation']['situation_sol_bureau_mission_champ']) ? $_SESSION['info_situation']['situation_sol_bureau_mission_champ'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez précisez"/>
-                    </div>    
+                        <input type="text" name="situation_sol_bureau_mission_champ" value="<?= isset($_SESSION['info_situation']['situation_sol_bureau_mission_champ']) ? $_SESSION['info_situation']['situation_sol_bureau_mission_champ'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Veuillez précisez" required/>
+                    </div>
                 </div>
             </div>
+                    <script>
+                    // Met à jour le caractère obligatoire des champs Mission et Entreprise selon la case cochée
+                    function updateSolRequired(isChecked) {
+                        // Mission radio
+                        document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
+                            radio.required = isChecked;
+                        });
+                        // Champ "autre mission"
+                        var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
+                        if (autre) autre.required = isChecked && document.querySelector('input[name="situation_sol_bureau_mission"]:checked')?.value === 'etude_sol_autre';
+                        // Champ entreprise/raison sociale (dans coordFormDisplay)
+                        var entreprise = document.querySelector('[name^="sol_entreprise"]');
+                        if (entreprise) entreprise.required = isChecked;
+                    }
+                    // Initialisation au chargement
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var solChecked = document.getElementById('toggle_sol').checked;
+                        updateSolRequired(solChecked);
+                        // Si on change le choix mission, mettre à jour le required du champ autre
+                        document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
+                            radio.addEventListener('change', function() {
+                                var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
+                                if (autre) autre.required = radio.value === 'etude_sol_autre' && solChecked;
+                            });
+                        });
+                    });
+                    </script>
             <div class="flex flex-col lg:flex-row mt-6">
                 <div class="lg:w-2/3">
                     <span class="font-normal">Si présence d'un parking et/ou de voiries, l'étude de sol vise-t-elle également ces ouvrages ?</span>

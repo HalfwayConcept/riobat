@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/connect.db.php';
 // models/moa_qualite.model.php
 // ...existing code...
 

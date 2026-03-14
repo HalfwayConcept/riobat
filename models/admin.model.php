@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/connect.db.php';
 // ...existing code...
 
 function getListDOBoard($user_id = null){

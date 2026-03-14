@@ -68,10 +68,11 @@
                 });
             }
             ?>
-                <table class="bg-slate-50 w-full text-sm text-gray-500 dark:text-gray-400">
+                <table class="bg-slate-50 w-full text-sm text-gray-500 dark:text-gray-400" style="table-layout:fixed;">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php foreach ($sortable as $col => $label): ?>
+                                <?php if ($col === 'parametres') continue; ?>
                                 <th scope="col" class="px-4 py-3">
                                     <a href="<?= sort_url($col, $order, $dir) ?>" class="flex items-center gap-1 <?= $order === $col ? 'text-blue-700 font-bold' : '' ?>">
                                         <?= $label ?>
@@ -89,8 +90,89 @@
                             <td class="px-4 py-2 text-center"><?= $log['date_exec_log'] ?></td>
                             <td class="px-4 py-2 text-center"><?= htmlspecialchars($log['table_cible']) ?></td>
                             <td class="px-4 py-2 text-center"><?= $log['type_requete'] ?></td>
-                            <td class="px-4 py-2 max-w-xs overflow-x-auto"><pre class="whitespace-pre-wrap break-all text-xs"><?= htmlspecialchars($log['requete_sql']) ?></pre></td>
-                            <td class="px-4 py-2 max-w-xs overflow-x-auto"><pre class="whitespace-pre-wrap break-all text-xs"><?= htmlspecialchars($log['parametres']) ?></pre></td>
+                            <td class="px-4 py-2 text-center" style="width:60px;">
+                                <span class="relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="inline w-6 h-6 text-blue-600 cursor-pointer sql-modal-trigger" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-log-id="<?= $log['id_log'] ?>">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6v6a2 2 0 002 2h12a2 2 0 002-2V6M4 6V4a2 2 0 012-2h12a2 2 0 012 2v2M4 6h16" />
+                                    </svg>
+                                </span>
+                                <div id="sql-modal-<?= $log['id_log'] ?>" class="fixed z-50 inset-0 hidden items-center justify-center bg-black bg-opacity-60">
+                                    <div class="bg-gray-900 text-white p-8 rounded-lg shadow-2xl border border-blue-400 max-w-3xl w-[90vw] mx-auto flex flex-col relative">
+                                        <button class="absolute top-2 right-2 text-gray-300 hover:text-white text-2xl font-bold close-sql-modal">&times;</button>
+                                        <div class="mb-4 flex flex-col gap-1">
+                                            <span class="text-sm font-bold text-blue-200">Log #<?= $log['id_log'] ?></span>
+                                            <span class="text-xs text-gray-300">Exécuté le : <?= htmlspecialchars($log['date_exec_log']) ?></span>
+                                        </div>
+                                        <div class="flex justify-end mb-4 gap-2">
+                                            <button class="flex items-center text-body bg-neutral-primary-strong border border-default-strong hover:bg-neutral-secondary-strong/70 hover:text-heading focus:ring-4 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none copy-btn" data-copy="<?= htmlspecialchars($log['requete_sql']) ?>">
+                                                <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 5h6m-6 4h6M10 3v4h4V3h-4Z"/></svg>
+                                                <span class="text-xs font-semibold">Copier SQL</span>
+                                            </button>
+                                            <button class="flex items-center text-body bg-neutral-primary-strong border border-default-strong hover:bg-neutral-secondary-strong/70 hover:text-heading focus:ring-4 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none copy-btn" data-copy="<?= htmlspecialchars($log['parametres']) ?>">
+                                                <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 5h6m-6 4h6M10 3v4h4V3h-4Z"/></svg>
+                                                <span class="text-xs font-semibold">Copier paramètres</span>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <div class="mb-4">
+                                                <span class="text-blue-300 font-bold">SQL :</span>
+                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1" style="max-height:30vh;overflow:auto;"><code class="sql language-sql"><?= htmlspecialchars($log['requete_sql']) ?></code></pre>
+                                            </div>
+                                            <div>
+                                                <span class="text-blue-300 font-bold">Paramètres :</span>
+                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1" style="max-height:20vh;overflow:auto;"><code class="language-json"><?= htmlspecialchars($log['parametres']) ?></code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- Scripts highlight.js et modale SQL -->
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                hljs.highlightAll();
+                                // Copy buttons
+                                document.querySelectorAll('.copy-btn').forEach(function(btn) {
+                                    btn.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        const text = btn.getAttribute('data-copy');
+                                        navigator.clipboard.writeText(text);
+                                        btn.querySelector('span').textContent = 'Copié!';
+                                        setTimeout(() => { btn.querySelector('span').textContent = btn.classList.contains('copy-sql') ? 'Copier SQL' : 'Copier paramètres'; }, 1200);
+                                    });
+                                });
+                                // Modal logic
+                                document.querySelectorAll('.sql-modal-trigger').forEach(function(icon) {
+                                    icon.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        const logId = icon.getAttribute('data-log-id');
+                                        const modal = document.getElementById('sql-modal-' + logId);
+                                        if (modal) {
+                                            modal.classList.remove('hidden');
+                                            modal.classList.add('flex');
+                                        }
+                                    });
+                                });
+                                document.querySelectorAll('.close-sql-modal').forEach(function(btn) {
+                                    btn.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        btn.closest('.fixed').classList.add('hidden');
+                                        btn.closest('.fixed').classList.remove('flex');
+                                    });
+                                });
+                                // Close modal on background click
+                                document.querySelectorAll('.fixed.z-50').forEach(function(modal) {
+                                    modal.addEventListener('click', function(e) {
+                                        if (e.target === modal) {
+                                            modal.classList.add('hidden');
+                                            modal.classList.remove('flex');
+                                        }
+                                    });
+                                });
+                            });
+                            </script>
                             <td class="px-4 py-2 text-center"><?= $log['user_id'] ?></td>
                             <td class="px-4 py-2 text-center">
                                 <?php if ($log['statut'] === 'réussi'): ?>

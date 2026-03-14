@@ -8,6 +8,7 @@ function login(){
     ob_start();
     $title = "Login";
     $check = null;
+    var_dump($_POST);
     if(!empty($_POST)){
         $check = check_login($_POST['email'], $_POST['password']);
         if($check == null){

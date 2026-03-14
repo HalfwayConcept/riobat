@@ -5,7 +5,14 @@
             <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800">Étape 3 : Nature de l'opération</h1>
+            <div>
+                <h1 class="text-2xl font-extrabold text-blue-800">Opération de construction</h1>
+                <div class="flex flex-col gap-0 mt-1 hover:underline text-blue-700 text-sm">
+                    <a   href="index.php?page=step3" >&gt; Nature et type de l'ouvrage</a>
+                    <a   href="index.php?page=step4" >&gt; Situation de l'ouvrage</a>
+                    <a   href="index.php?page=step4bis" >&gt; Travaux annexes</a>
+                </div>
+            </div>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Formulaire Dommages Ouvrage</span>
@@ -619,10 +626,6 @@
         <!-- Adresse de la construction -->
         <div class="mt-10">
             <span class="text-gray-500 font-medium">Adresse de la construction</span>
-            <div class="mx-8 my-2">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Escalier, résidence, bâtiment</label>
-                <input type="text" name="construction_adresse_esc_res_bat" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_esc_res_bat']) ? $_SESSION['info_operation_construction']['construction_adresse_esc_res_bat'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
-            </div>
             <div class="mx-8 my-2 relative">
                 <label for="search_construction_adresse" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Recherche d'adresse</label>
                 <input type="text" id="search_construction_adresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher une adresse..." autocomplete="off" />
@@ -632,66 +635,19 @@
                 <ul id="search_construction_adresse_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
                 <small class="text-gray-500">Recherchez puis sélectionnez une adresse pour remplir automatiquement les champs ci-dessous.</small>
             </div>
-            <script>
-            // Remplit les champs adresse, code postal, commune à partir d'une suggestion
-            function fillAdresseFieldsFromSelection(feature) {
-                if (feature && feature.properties) {
-                    document.querySelector('input[name="construction_adresse"]').value = feature.properties.name || feature.properties.label || '';
-                    document.querySelector('input[name="construction_adresse_code_postal"]').value = feature.properties.postcode || '';
-                    document.querySelector('input[name="construction_adresse_commune"]').value = feature.properties.city || '';
-                }
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                var input = document.getElementById('search_construction_adresse');
-                var ul = document.getElementById('search_construction_adresse_suggestions');
-                let timeoutAdresse;
-                if (!input || !ul) return;
-                input.addEventListener('input', function() {
-                    const query = input.value;
-                    clearTimeout(timeoutAdresse);
-                    if (query.length < 3) {
-                        ul.classList.add('hidden');
-                        return;
-                    }
-                    timeoutAdresse = setTimeout(() => {
-                        fetch('https://api-adresse.data.gouv.fr/search/?q=' + encodeURIComponent(query) + '&limit=7')
-                            .then(response => response.json())
-                            .then(data => {
-                                ul.innerHTML = '';
-                                if (!data.features || data.features.length === 0) {
-                                    ul.classList.add('hidden');
-                                    return;
-                                }
-                                data.features.forEach(feature => {
-                                    const li = document.createElement('li');
-                                    li.textContent = feature.properties.label;
-                                    li.className = 'px-4 py-2 cursor-pointer hover:bg-blue-100';
-                                    li.onclick = function() {
-                                        input.value = feature.properties.label;
-                                        ul.classList.add('hidden');
-                                        fillAdresseFieldsFromSelection(feature);
-                                    };
-                                    ul.appendChild(li);
-                                });
-                                ul.classList.remove('hidden');
-                            });
-                    }, 300);
-                });
-                document.addEventListener('click', function(e) {
-                    if (!input.contains(e.target) && !ul.contains(e.target)) {
-                        ul.classList.add('hidden');
-                    }
-                });
-            });
-            </script>
+            <div class="mx-8 my-2">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Escalier, résidence, bâtiment</label>
+                <input type="text" name="construction_adresse_esc_res_bat" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_esc_res_bat']) ? $_SESSION['info_operation_construction']['construction_adresse_esc_res_bat'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+            </div>
+
             <div class="grid gap-6 mb-2 mx-8 md:grid-cols-2">
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse <span class="text-red-600">*</span></label>
+                    <input type="text" name="construction_adresse" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse']) ? $_SESSION['info_operation_construction']['construction_adresse'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
+                </div>
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lieu-dit</label>
                     <input type="text" name="construction_adresse_lieu_dit" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_lieu_dit']) ? $_SESSION['info_operation_construction']['construction_adresse_lieu_dit'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
-                </div>
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Arrondissement</label>
-                    <input type="text" name="construction_adresse_arrond" value="<?= isset($_SESSION['info_operation_construction']['construction_adresse_arrond']) ? $_SESSION['info_operation_construction']['construction_adresse_arrond'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                 </div>
             </div>
             <div class="grid gap-6 mb-2 mx-8 md:grid-cols-2">

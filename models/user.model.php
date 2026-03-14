@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/connect.db.php';
 // ...existing code...
 
 // Vérifie les identifiants utilisateur.
@@ -6,29 +7,20 @@
 function check_login($email, $password){
     if (empty($email) || empty($password)) return false;
     $pdo = $GLOBALS['pdo'] ?? null;
-    if (!$pdo) return false;
+    var_dump($pdo);
+    //if (!$pdo) return false;
 
     $stmt = $pdo->prepare('SELECT ID, pass FROM utilisateur WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
-        // Log requête login
-        require_once __DIR__ . '/../controllers/LogController.php';
-        $user_id = null;
-        logQuery(null, 'utilisateur', $stmt->queryString, [':email' => $email], $user_id, 'réussi');
+    // Log requête login
+    require_once __DIR__ . '/../controllers/LogController.php';
+    $user_id = null;
+    logQuery(null, 'utilisateur', $stmt->queryString, [':email' => $email], $user_id, 'réussi');
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$user) return false;
+    
+    //if (!$user) return false;
 
     $stored = $user['pass'];
-
-    // Support legacy MD5 hashes: if stored password is 32 chars, compare MD5 and rehash.
-    if (strlen($stored) === 32 && md5($password) === $stored) {
-        // Rehash with password_hash
-        $newHash = password_hash($password, PASSWORD_DEFAULT);
-        $upd = $pdo->prepare('UPDATE utilisateur SET pass = :pass WHERE ID = :id');
-        $upd->execute([':pass' => $newHash, ':id' => $user['ID']]);
-            // Log requête update password
-            logQuery($user['ID'], 'utilisateur', $upd->queryString, [':pass' => $newHash, ':id' => $user['ID']], $user['ID'], 'réussi');
-        return ['ID' => $user['ID']];
-    }
 
     if (password_verify($password, $stored)) {
         return ['ID' => $user['ID']];
