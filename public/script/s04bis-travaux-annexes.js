@@ -41,3 +41,21 @@ document.addEventListener('DOMContentLoaded', function () {
         updateDestLabel();
     }
 });
+
+// Toggle affichage du champ "Autres - Précisez" pour le type de contrôle
+function toggleAutresPrecisez(checkbox) {
+    var champ = document.getElementById('ct_type_controle_autres_precisez');
+    if (checkbox.checked) {
+        champ.classList.remove('hidden');
+        champ.required = true;
+    } else {
+        champ.classList.add('hidden');
+        champ.required = false;
+        champ.value = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var autres = document.getElementById('ct_type_controle_autres');
+    if (autres) toggleAutresPrecisez(autres);
+});

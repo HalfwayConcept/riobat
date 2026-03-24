@@ -2,14 +2,14 @@
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 ?>
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER AMÉLIORÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800">Étape 5 : Maîtrise d'œuvre</h1>
+            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 5 : Maîtrise d'œuvre</h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Maîtrise d'œuvre</span>
@@ -89,7 +89,7 @@
                         <input type="radio" name="intervention_moe_independant_mission" value="autre" <?= isset($_SESSION['info_dommage_ouvrage']['intervention_moe_independant_mission']) && ($_SESSION['info_dommage_ouvrage']['intervention_moe_independant_mission'])=="autre" ? "checked=checked" : ""; ?>>
                         <label class="font-normal">Autre</label>
                         <span class="text-xs">(à décrire : 
-                            <input type="text" name="intervention_moe_independant_mission_autre_descr" value="<?= isset($_SESSION['info_dommage_ouvrage']['intervention_mission_autre_descr']) ? $_SESSION['info_dommage_ouvrage']['intervention_mission_autre_descr'] : ''; ?>" style="height:10px; width: 350px; border-radius:6px; font-size:14px;" class="bg-gray-50"/> )
+                            <input type="text" name="intervention_moe_independant_mission_autre_descr" value="<?= isset($_SESSION['info_dommage_ouvrage']['intervention_mission_autre_descr']) ? $_SESSION['info_dommage_ouvrage']['intervention_mission_autre_descr'] : ''; ?>" class="bg-gray-50 h-2.5 w-[350px] rounded-md text-sm"/> )
                         </span>
                     </div>
                 </div>
@@ -180,5 +180,5 @@
 
 
     <input type="hidden" name="fields" value="dommage_ouvrage">
+    <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 </form>
-<script src="public/script/s04-informations-diverses.js"></script>

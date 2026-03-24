@@ -20,7 +20,10 @@ function login(){
     }else{        
         $_SESSION['user_id'] = $check['ID'];
 
-        if($_SESSION['user_id'] == 1 ){
+        $user_role = $check['role'] ?? 'user';
+        $_SESSION['user_role'] = $user_role;
+
+        if($user_role === 'admin'){
             header("Location: index.php?page=admin");        
         }else{
             header("Location: index.php?page=home");        

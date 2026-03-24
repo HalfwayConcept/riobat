@@ -10,7 +10,7 @@ function check_login($email, $password){
     var_dump($pdo);
     //if (!$pdo) return false;
 
-    $stmt = $pdo->prepare('SELECT ID, pass FROM utilisateur WHERE email = :email LIMIT 1');
+    $stmt = $pdo->prepare('SELECT ID, pass, role FROM utilisateur WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
     // Log requête login
     require_once __DIR__ . '/../controllers/LogController.php';
@@ -23,7 +23,7 @@ function check_login($email, $password){
     $stored = $user['pass'];
 
     if (password_verify($password, $stored)) {
-        return ['ID' => $user['ID']];
+        return ['ID' => $user['ID'], 'role' => $user['role']];
     }
     return false;
 }
@@ -44,7 +44,7 @@ function check_email($email){
 function get_infos($user_id){
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return false;
-    $stmt = $pdo->prepare('SELECT ID, nom, prenom, email, siret, adresse, code_postal, commune, profession, telephone FROM utilisateur WHERE ID = :id LIMIT 1');
+    $stmt = $pdo->prepare('SELECT ID, nom, prenom, email, role, siret, adresse, code_postal, commune, profession, telephone FROM utilisateur WHERE ID = :id LIMIT 1');
     $stmt->execute([':id' => $user_id]);
         // Log requête infos user
         require_once __DIR__ . '/../controllers/LogController.php';
@@ -68,6 +68,14 @@ function insert_utilisateur_session($DOID, $user_id){
     } else {
         return false;
     }
+}
+
+function userOwnsDo($user_id, $doid) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $stmt = $pdo->prepare('SELECT 1 FROM utilisateur_session WHERE utilisateur_id = :uid AND DOID = :doid LIMIT 1');
+    $stmt->execute([':uid' => (int)$user_id, ':doid' => (int)$doid]);
+    return (bool)$stmt->fetch();
 }
 
 function register_user($array_post){
@@ -199,4 +207,70 @@ function update_user_profile($user_id, $array_post){
         }
         return false;
     }
-} 
+}
+
+// ============ Fonctions admin : gestion utilisateurs ============
+
+function getAllUsers(){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return [];
+    $stmt = $pdo->query('SELECT ID, nom, prenom, email, role, utilisateur_date_creation FROM utilisateur ORDER BY ID ASC');
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function adminCreateUser($nom, $prenom, $email, $password, $role = 'user'){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return 'Erreur de connexion';
+
+    if (check_email($email)) {
+        return 'Cet email est déjà utilisé.';
+    }
+
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, pass, role) VALUES (:nom, :prenom, :email, :pass, :role)');
+    try {
+        $stmt->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':pass' => $hash, ':role' => $role]);
+        return (int)$pdo->lastInsertId();
+    } catch (PDOException $e) {
+        return 'Erreur : ' . $e->getMessage();
+    }
+}
+
+function adminUpdateUser($user_id, $nom, $prenom, $email, $role){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+
+    $stmt = $pdo->prepare('UPDATE utilisateur SET nom = :nom, prenom = :prenom, email = :email, role = :role WHERE ID = :id');
+    return $stmt->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':role' => $role, ':id' => $user_id]);
+}
+
+function adminResetPassword($user_id, $new_password){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+
+    $hash = password_hash($new_password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare('UPDATE utilisateur SET pass = :pass WHERE ID = :id');
+    return $stmt->execute([':pass' => $hash, ':id' => $user_id]);
+}
+
+function adminDeleteUser($user_id){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+
+    $stmt = $pdo->prepare('DELETE FROM utilisateur WHERE ID = :id');
+    return $stmt->execute([':id' => $user_id]);
+}
+
+function truncateFormTables(){
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+
+    $tables = ['do_historique', 'utilisateur_session', 'rcd', 'rcd_upload_tokens', 'log', 'travaux_annexes', 'situation', 'operation_construction', 'moa', 'dommage_ouvrage', 'entreprise', 'souscripteur'];
+    $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+    foreach ($tables as $t) {
+        $pdo->exec('TRUNCATE TABLE `' . $t . '`');
+    }
+    $pdo->exec('ALTER TABLE `dommage_ouvrage` AUTO_INCREMENT = 1');
+    $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+    return true;
+}

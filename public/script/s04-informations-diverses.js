@@ -53,3 +53,32 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Met à jour le caractère obligatoire des champs Mission et Entreprise selon la case cochée
+function updateSolRequired(isChecked) {
+    // Mission radio
+    document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
+        radio.required = isChecked;
+    });
+    // Champ "autre mission"
+    var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
+    if (autre) autre.required = isChecked && document.querySelector('input[name="situation_sol_bureau_mission"]:checked')?.value === 'etude_sol_autre';
+    // Champ entreprise/raison sociale (dans coordFormDisplay)
+    var entreprise = document.querySelector('[name^="sol_entreprise"]');
+    if (entreprise) entreprise.required = isChecked;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var solToggle = document.getElementById('toggle_sol');
+    if (solToggle) {
+        var solChecked = solToggle.checked;
+        updateSolRequired(solChecked);
+        // Si on change le choix mission, mettre à jour le required du champ autre
+        document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
+                if (autre) autre.required = radio.value === 'etude_sol_autre' && solToggle.checked;
+            });
+        });
+    }
+});
+

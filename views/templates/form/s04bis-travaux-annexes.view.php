@@ -2,14 +2,14 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 ?>
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER AMÉLIORÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800">Étape 4bis : Travaux annexes</h1>
+            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 4bis : Travaux annexes</h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Travaux annexes</span>
@@ -60,7 +60,7 @@
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Nom de l'entreprise réalisant la construction bois : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('boi', $_SESSION['info_travaux_annexes']["boi_entreprise_id"]); ?></div>
+            <div><?php echo coordFormDisplay('boi', $_SESSION['info_travaux_annexes']["boi_entreprise_id"] ?? ''); ?></div>
         </div>
     </div>
     <?php
@@ -124,12 +124,12 @@
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Quelle est la surface de l'installation ?
-                <input type="text" name="trav_annexes_pv_surface" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_surface']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_surface'] : ''?>" style="height:10px; width: 60px; border-radius:6px;" class="bg-gray-50 ml-4"/> m²
+                <input type="text" name="trav_annexes_pv_surface" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_surface']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_surface'] : ''?>" class="bg-gray-50 ml-4 h-2.5 w-[60px] rounded-md"/> m²
             </span>
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Quelle est la puissance de l'installation ?
-                <input type="text" name="trav_annexes_pv_puissance" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance'] : ''?>" style="height:10px; width: 60px; border-radius:6px;" class="bg-gray-50 ml-4"/> kWc
+                <input type="text" name="trav_annexes_pv_puissance" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance'] : ''?>" class="bg-gray-50 ml-4 h-2.5 w-[60px] rounded-md"/> kWc
             </span>
         </div>
         <div class="ml-10 mt-4">
@@ -166,7 +166,7 @@
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Nom de l'entreprise réalisant l'installation : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('phv', $_SESSION['info_travaux_annexes']["phv_entreprise_id"]); ?></div>
+            <div><?php echo coordFormDisplay('phv', $_SESSION['info_travaux_annexes']["phv_entreprise_id"] ?? ''); ?></div>
         </div>
     </div>
     <?php
@@ -198,7 +198,7 @@
         <h3 class="text-xl text-gray-500 font-medium">Contrôleur technique</h3>
         <div class="ml-10 mt-6">
             <span class="font-normal">Nom du contrôleur technique : &ensp;&ensp;</span>
-            <div><?php echo coordFormDisplay('ctt', $_SESSION['info_travaux_annexes']["ctt_entreprise_id"]); ?></div>
+            <div><?php echo coordFormDisplay('ctt', $_SESSION['info_travaux_annexes']["ctt_entreprise_id"] ?? ''); ?></div>
         </div>
         <div class="ml-10 mt-14">
             <h3 class="font-normal mb-4">Type de contrôle (cochez tout ce qui s'applique) :</h3>
@@ -212,25 +212,8 @@
                 <label class="inline-flex items-center">
                     <input type="checkbox" name="trav_annexes_ct_type_controle[]" value="autres" class="mr-2" id="ct_type_controle_autres" onchange="toggleAutresPrecisez(this)" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && (is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) ? in_array('autres', $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) : $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']=='autres') ? 'checked=checked' : ''; ?> /> Autres
                 </label>
-                <input type="text" name="trav_annexes_ct_type_controle_autres_precisez" id="ct_type_controle_autres_precisez" class="ml-2 bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm" placeholder="Précisez" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle_autres_precisez']) ? htmlspecialchars($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle_autres_precisez']) : '' ?>" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && ((is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && in_array('autres', $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'])) || $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']=='autres') ? '' : 'style="display:none"'; ?> required />
+                <input type="text" name="trav_annexes_ct_type_controle_autres_precisez" id="ct_type_controle_autres_precisez" class="ml-2 bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && ((is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && in_array('autres', $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'])) || $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']=='autres') ? '' : 'hidden'; ?>" placeholder="Précisez" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle_autres_precisez']) ? htmlspecialchars($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle_autres_precisez']) : '' ?>" required />
             </div>
-            <script>
-            function toggleAutresPrecisez(checkbox) {
-                var champ = document.getElementById('ct_type_controle_autres_precisez');
-                if (checkbox.checked) {
-                    champ.style.display = '';
-                    champ.required = true;
-                } else {
-                    champ.style.display = 'none';
-                    champ.required = false;
-                    champ.value = '';
-                }
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                var autres = document.getElementById('ct_type_controle_autres');
-                if (autres) toggleAutresPrecisez(autres);
-            });
-            </script>
         </div>
 
     </div>
@@ -245,7 +228,7 @@
     <div class="mt-4">
         <h3 class="text-xl text-gray-500 font-medium">Désignation du constructeur non réalisateur</h3>
         <div class="ml-10">
-            <?php echo coordFormDisplay('cnr',$_SESSION['info_travaux_annexes']["cnr_entreprise_id"] ); ?>
+            <?php echo coordFormDisplay('cnr', $_SESSION['info_travaux_annexes']["cnr_entreprise_id"] ?? ''); ?>
         </div>
         <div class="my-2 ml-10">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Intervenant en qualité de ?</label>
@@ -270,6 +253,7 @@
 
 
     <input type="hidden" name="fields" value="travaux_annexes">
+    <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 </form>
 <script src="public/script/s04bis-travaux-annexes.js"></script>
 

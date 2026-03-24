@@ -1,14 +1,14 @@
 
+<script src="public/script/s04-informations-diverses.js"></script>
 
-
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER AMÉLIORÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800">Étape 4 : Opération de construction</h1>
+            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 4 : Opération de construction</h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Situation de l'ouvrage </span>
@@ -266,33 +266,6 @@
                     </div>
                 </div>
             </div>
-                    <script>
-                    // Met à jour le caractère obligatoire des champs Mission et Entreprise selon la case cochée
-                    function updateSolRequired(isChecked) {
-                        // Mission radio
-                        document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
-                            radio.required = isChecked;
-                        });
-                        // Champ "autre mission"
-                        var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
-                        if (autre) autre.required = isChecked && document.querySelector('input[name="situation_sol_bureau_mission"]:checked')?.value === 'etude_sol_autre';
-                        // Champ entreprise/raison sociale (dans coordFormDisplay)
-                        var entreprise = document.querySelector('[name^="sol_entreprise"]');
-                        if (entreprise) entreprise.required = isChecked;
-                    }
-                    // Initialisation au chargement
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var solChecked = document.getElementById('toggle_sol').checked;
-                        updateSolRequired(solChecked);
-                        // Si on change le choix mission, mettre à jour le required du champ autre
-                        document.querySelectorAll('input[name="situation_sol_bureau_mission"]').forEach(function(radio) {
-                            radio.addEventListener('change', function() {
-                                var autre = document.querySelector('input[name="situation_sol_bureau_mission_champ"]');
-                                if (autre) autre.required = radio.value === 'etude_sol_autre' && solChecked;
-                            });
-                        });
-                    });
-                    </script>
             <div class="flex flex-col lg:flex-row mt-6">
                 <div class="lg:w-2/3">
                     <span class="font-normal">Si présence d'un parking et/ou de voiries, l'étude de sol vise-t-elle également ces ouvrages ?</span>
@@ -403,6 +376,7 @@
         </div>
 
         <input type="hidden" name="fields" value="situation">
+        <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 
 
         <!-- SECTION: Etude de sol (step4) supprimée à la demande -->

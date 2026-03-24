@@ -6,7 +6,9 @@
 // ...existing code...
 
 
-define('UPLOAD_FOLDER', "/public/uploads" );
+if (!defined('UPLOAD_FOLDER')) {
+    define('UPLOAD_FOLDER', "/public/uploads" );
+}
 
 const ALLOWED_FILES = [
     'image/png' => 'png',
@@ -69,6 +71,7 @@ if ($errors) {
     //redirect_with_message("L'erreur suivante s'est produite","Error");
 }
 
+$folder = $_POST['folder'] ?? '';
 $files_number= $_POST['file_number'];
 // move the files
 for($i = 0; $i < $file_count; $i++) {
@@ -95,7 +98,7 @@ for($i = 0; $i < $file_count; $i++) {
     
         // move the file to the upload dir
         $success = move_uploaded_file($tmp, $filepath);
-        if(!$success) {
+        if($success) {
             $files_ok[$i] = $filepath;
         }
     }
@@ -112,6 +115,17 @@ function get_mime_type(string $filename)
     finfo_close($info);
 
     return $mime_type;
+}
+
+function format_filesize(int $bytes): string
+{
+    $units = ['o', 'Ko', 'Mo', 'Go'];
+    $i = 0;
+    while ($bytes >= 1024 && $i < count($units) - 1) {
+        $bytes /= 1024;
+        $i++;
+    }
+    return round($bytes, 2) . ' ' . $units[$i];
 }
 
 

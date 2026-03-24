@@ -1,95 +1,49 @@
-<div class="flex items-center gap-3 mb-2 mt-6">
-    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
-    </svg>
-    <h2 class="text-xl font-bold text-gray-800">Maitrise d'oeuvre et Garanties</h2>
+<?php $_chk = $_chk ?? '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>'; ?>
+
+<div class="fiche-title">
+    <span class="fiche-title-num">5</span>
+    <h2>Maîtrise d'œuvre et Garanties</h2>
 </div>
-<hr class="mb-4 border-blue-200">
-<fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-    <legend class="mx-2 p-2 text-xl font-medium">Maitrise d'oeuvre et Garanties </legend>
+<hr class="fiche-hr">
 
-    <div class="flex flex-col">
-        <div class='ml-6'>
-    <?php 
-        if(isset($DATA['moe']) && ($DATA['moe'] == 0))
-        {
-            echo "<strong>Aucun architecte ou maitre d'oeuvre n'intervient dans l'opération de construction</strong>";
+<fieldset class="fiche-fieldset">
+    <legend>Architecte / Maître d'œuvre</legend>
+    <?php
+    if(isset($DATA['moe']) && $DATA['moe'] == 0){
+        echo '<div class="fiche-check">'.$_chk.'<span>Aucun architecte ou maître d\'œuvre n\'intervient</span></div>';
+    }
+    elseif(isset($DATA['moe']) && $DATA['moe'] == 1){
+        echo viewEntreprise($DATA['moe_entreprise_id']);
 
+        if(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 1){
+            echo '<div class="fiche-check">'.$_chk.'<span>Indépendant à l\'égard des autres constructeurs et du maître d\'ouvrage</span></div>';
         }
-        elseif(isset($DATA['moe']) && ($DATA['moe'] == 1))
-        {       
-            echo "<strong>Architecte ou maitre d'oeuvre :</strong>";
-            echo viewEntreprise($DATA['moe_entreprise_id']);
-            
-            if(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 1)
-            {
-                $content = boxDisplay($DATA['moe_intervention_independant'],"moe_intervention_independant","read");
-                $content .="L'architecte ou le maitre d'oeuvre est indépendant à l'égard des autres constructeurs et du maitre d'ouvrage";
-                echo $content;
+        elseif(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 0){
+            if(isset($DATA['moe_intervention_independant_qualite'])){
+                echo '<div class="fiche-row"><span class="fiche-label">Qualité et fonction</span><span class="fiche-value">'.$DATA['moe_intervention_independant_qualite'].'</span></div>';
             }
-            elseif(isset($DATA['moe_intervention_independant']) && $DATA['moe_intervention_independant'] == 0)
-            {
-                if(isset($DATA['moe_intervention_independant_qualite']))
-                {
-                    echo "<span class='mr-2'>Qualité et fonction du maitre d'oeuvre :</span><strong>".$DATA['moe_intervention_independant_qualite']."</strong>";
-                }
-                if(isset($DATA['moe_intervention_independant_mission']))
-                {
-                    echo "<h3 class='mr-2'>Mission du maitre d'oeuvre :</h3>";
-                    switch ($DATA['moe_intervention_independant_mission'])
-                    {
-                        case 'conception':
-                            echo"<strong>Conception</strong>";
-                            break;
-                        case 'direction':
-                            echo"<strong>Direction et surveillance des travaux</strong>";
-                            break;
-                        case 'complete':
-                            echo"<strong>Mission complète</strong>";
-                            break;
-                        case 'autre':
-                            echo"<strong>Autre : ".$DATA['moe_intervention_independant_autre_descr']."</strong>";
-                        break;
-                    }
-                }
-                
+            if(isset($DATA['moe_intervention_independant_mission'])){
+                $missionLabels = ['conception'=>'Conception','direction'=>'Direction et surveillance des travaux','complete'=>'Mission complète','autre'=>'Autre : '.($DATA['moe_intervention_independant_autre_descr'] ?? '')];
+                $missionVal = $missionLabels[$DATA['moe_intervention_independant_mission']] ?? '';
+                echo '<div class="fiche-row"><span class="fiche-label">Mission</span><span class="fiche-value">'.$missionVal.'</span></div>';
             }
         }
+    }
     ?>
-        </div>
-    </div>
+</fieldset>
 
-    <div class="flex flex-col">
-        <ul class="max-w-md space-y-1 list-inside ml-6">
-            <li class="flex items-center text-red-800 dark:text-red">
-
-            </li>
-        <?php
-                echo "<h3>Garanties demandées</h3>";
-                if(isset($DATA['garantie_do']) && $DATA['garantie_do'] == 1){
-                    echo "<strong class='pl-4'>Dommage Ouvrage</strong>";
-                    }
-                if(isset($DATA['garantie_cnr']) && $DATA['garantie_cnr'] == 1){
-                    echo "<strong class='pl-4'>Responsabilité du Constructeur Non Réalisateur</strong>";
-                    }
-                if(isset($DATA['garantie_chantier']) && $DATA['garantie_chantier'] == 1){
-                    echo "<strong class='pl-4'>Tous risques chantier</strong>";
-                    }
-                if(isset($DATA['garantie_juridique']) && $DATA['garantie_juridique'] == 1){
-                        ?>
-
-                        <li class="flex items-center text-grey-800 dark:text-grey">
-                            <svg class="w-6 h-6 text-green-800 dark:text-green" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                            </svg> Protection juridique
-                        </li>
-
-                        <?php
-                };
-                ?>
-        </ul>
-      
-    </div>
-            
+<fieldset class="fiche-fieldset">
+    <legend>Garanties demandées</legend>
+    <?php if(isset($DATA['garantie_do']) && $DATA['garantie_do'] == 1): ?>
+        <div class="fiche-check"><?=$_chk?><span>Dommage Ouvrage</span></div>
+    <?php endif; ?>
+    <?php if(isset($DATA['garantie_cnr']) && $DATA['garantie_cnr'] == 1): ?>
+        <div class="fiche-check"><?=$_chk?><span>Responsabilité du Constructeur Non Réalisateur</span></div>
+    <?php endif; ?>
+    <?php if(isset($DATA['garantie_chantier']) && $DATA['garantie_chantier'] == 1): ?>
+        <div class="fiche-check"><?=$_chk?><span>Tous risques chantier</span></div>
+    <?php endif; ?>
+    <?php if(isset($DATA['garantie_juridique']) && $DATA['garantie_juridique'] == 1): ?>
+        <div class="fiche-check"><?=$_chk?><span>Protection juridique</span></div>
+    <?php endif; ?>
 </fieldset>

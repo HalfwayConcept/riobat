@@ -21,13 +21,14 @@
                     $array_values = array();
                     $array_values['doid']           = $_GET['doid'];
                     $array_values['lot_nom']        = $_POST['lot_nom'][$key];
-                    $array_values['lot_montant']    = $_POST['lot_montant'][$key];
+                    $array_values['lot_montant']    = $_POST['lot_montant'][$key] !== '' ? $_POST['lot_montant'][$key] : 0;
                     $array_values['lot_nature']     = $_POST['lot_nature'][$key];
+                    $array_values['lot_nature_autre'] = $_POST['lot_nature_autre'][$key] ?? '';
                     if($lot_id == 'NEW_LOT'){         
                         insert_rdc($array_values);
                     }else{
-                        $array_values['date_debut']    = $_POST['lot_date_debut'][$key];
-                        $array_values['date_fin']      = $_POST['lot_date_fin'][$key];
+                        $array_values['date_debut']    = $_POST['lot_date_debut'][$key] ?? '';
+                        $array_values['date_fin']      = $_POST['lot_date_fin'][$key] ?? '';
                         update_rdc($lot_id, $array_values);
                     }
                 }
@@ -44,7 +45,8 @@
             }            
             if(!empty($files_ok)){
                 foreach ($files_ok as $key => $value) {
-                    updatercdupload($_POST['fields'], $value, $_POST['doid']);
+                    $file_ref = $_POST['file_number'][$key] ?? '';
+                    updatercdupload($file_ref, $value, $_GET['doid']);
                 }
             }
         }
@@ -56,7 +58,9 @@
             $DATA = getDo($DOID);
 
         }        
+        syncRcdFromAnnexes($_GET['doid']);
         $array_datas = getRcdByDoid($_GET['doid']);
+        $locked_rcd_ids = getLockedRcdIds($_GET['doid']);
         $array_natures = getListNature();
         // Remplissage de la variable $content
         ob_start();

@@ -28,8 +28,8 @@ function detectQueryType($sql) {
     return 'AUTRE';
 }
 
-// Récupère les logs avec filtres et tri
-function getLogs($filters = [], $order = 'date_exec_log DESC, DOID DESC') {
+// Récupère les logs avec filtres, tri et pagination
+function getLogs($filters = [], $order = 'date_exec_log DESC, DOID DESC', $limit = 50, $offset = 0) {
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return [];
     $where = [];
@@ -55,7 +55,39 @@ function getLogs($filters = [], $order = 'date_exec_log DESC, DOID DESC') {
         $sql .= ' WHERE ' . implode(' AND ', $where);
     }
     $sql .= ' ORDER BY ' . $order;
+    $sql .= ' LIMIT ' . (int)$limit . ' OFFSET ' . (int)$offset;
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Compte le nombre total de logs correspondant aux filtres
+function countLogs($filters = []) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return 0;
+    $where = [];
+    $params = [];
+    if (!empty($filters['DOID'])) {
+        $where[] = 'DOID = ?';
+        $params[] = $filters['DOID'];
+    }
+    if (!empty($filters['user_id'])) {
+        $where[] = 'user_id = ?';
+        $params[] = $filters['user_id'];
+    }
+    if (!empty($filters['date'])) {
+        $where[] = 'DATE(date_exec_log) = ?';
+        $params[] = $filters['date'];
+    }
+    if (!empty($filters['table'])) {
+        $where[] = 'table_cible = ?';
+        $params[] = $filters['table'];
+    }
+    $sql = 'SELECT COUNT(*) FROM log';
+    if ($where) {
+        $sql .= ' WHERE ' . implode(' AND ', $where);
+    }
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return (int)$stmt->fetchColumn();
 }

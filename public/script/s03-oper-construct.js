@@ -326,14 +326,73 @@ function handleTogglePiscine(checkbox) {
     }
 }
 
-// Fonctions utilitaires
-// Affiche un élément par son id
-function showElement(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('hidden');
+// Gère le toggle pour l'existence dans l'extension horizontale
+function handleToggleExtHorizontExist(checkbox) {
+    const radioOui = document.getElementById('radio_ext_horizont_exist_oui');
+    const radioNon = document.getElementById('radio_ext_horizont_exist_non');
+    const spanValue = document.getElementById('ext_horizont_exist_value');
+    if (checkbox.checked) {
+        radioOui.checked = true;
+        spanValue.textContent = 'Oui';
+    } else {
+        radioNon.checked = true;
+        spanValue.textContent = 'Non';
+    }
 }
-// Masque un élément par son id
-function hideElement(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
+
+// Gère le toggle pour la TVA
+function handleToggleTva(checkbox) {
+    const radioOui = document.getElementById('radio_tva_oui');
+    const radioNon = document.getElementById('radio_tva_non');
+    const spanValue = document.getElementById('tva_value');
+    if (checkbox.checked) {
+        radioOui.checked = true;
+        if (spanValue) spanValue.textContent = 'Oui';
+    } else {
+        radioNon.checked = true;
+        if (spanValue) spanValue.textContent = 'Non';
+    }
 }
+
+// Initialisation dynamique des blocs dépendants des toggles au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Autocomplétion adresse
+    if (typeof adresseAutocomplete === 'function') {
+        adresseAutocomplete('construction_adresse_autocomplete', 'suggestions_construction_adresse');
+    }
+    // Nature de l'opération
+    var toggleNature = document.getElementById('toggle_nature_neuf_exist');
+    if (toggleNature && typeof handleToggleNatureNeufExist === 'function') {
+        handleToggleNatureNeufExist(toggleNature);
+    }
+    // Surélévation
+    var toggleSurelev = document.getElementById('toggle_surelev');
+    if (toggleSurelev && typeof handleToggleSurelev === 'function') {
+        handleToggleSurelev(toggleSurelev);
+    }
+    // Extension horizontale
+    var toggleExtHorizont = document.getElementById('toggle_ext_horizont');
+    if (toggleExtHorizont && typeof handleToggleExtHorizont === 'function') {
+        handleToggleExtHorizont(toggleExtHorizont);
+    }
+    // Rénovation
+    var toggleRenovation = document.getElementById('toggle_renovation');
+    if (toggleRenovation && typeof handleToggleRenovation === 'function') {
+        handleToggleRenovation(toggleRenovation);
+    }
+    // Réhabilitation
+    var toggleRehabilitation = document.getElementById('toggle_rehabilitation');
+    if (toggleRehabilitation && typeof handleToggleRehabilitation === 'function') {
+        handleToggleRehabilitation(toggleRehabilitation);
+    }
+    // Sinistre
+    var toggleSinistre = document.getElementById('toggle_operation_sinistre');
+    if (toggleSinistre && typeof handleToggleSinistre === 'function') {
+        handleToggleSinistre(toggleSinistre);
+    }
+    // Piscine
+    var togglePiscine = document.getElementById('toggle_piscine');
+    if (togglePiscine && typeof handleTogglePiscine === 'function') {
+        handleTogglePiscine(togglePiscine);
+    }
+});

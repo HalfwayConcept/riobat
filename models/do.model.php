@@ -55,14 +55,16 @@ function getListDo($user_id = null){
         return $DATA;
     }
 
-    $sql = "SELECT dommage_ouvrage.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*
+    $sql = "SELECT dommage_ouvrage.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*,
+                   assurance.nom AS assurance_nom, assurance.logo AS assurance_logo
             FROM souscripteur
             JOIN dommage_ouvrage ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
             JOIN moa ON moa.DOID = dommage_ouvrage.DOID
             JOIN utilisateur_session ON utilisateur_session.DOID = dommage_ouvrage.DOID
             JOIN operation_construction ON operation_construction.DOID = dommage_ouvrage.DOID
             JOIN travaux_annexes ON travaux_annexes.DOID = dommage_ouvrage.DOID
-            JOIN situation ON situation.DOID = dommage_ouvrage.DOID";
+            JOIN situation ON situation.DOID = dommage_ouvrage.DOID
+            LEFT JOIN assurance ON assurance.assurance_id = dommage_ouvrage.assurance_id";
     $params = [];
     if($user_id != null){
         $sql .= " WHERE utilisateur_session.utilisateur_id = :user_id";
@@ -108,7 +110,7 @@ function insert($array_SESSION){
 
                 $souscripteur_id = (int)$pdo->lastInsertId();
                 
-                logQuery(null, 'souscripteur', $stmt->queryString, $stmt->debugDumpParams(), $uid, 'réussi');
+                logQuery(null, 'souscripteur', $stmt->queryString, [':nom' => $s['souscripteur_nom_raison'] ?? null], $uid, 'réussi');
 
 
                 $sql_do = "INSERT INTO dommage_ouvrage (souscripteur_id,repertoire) VALUES (:souscripteur_id, LEFT(MD5(RAND()), 12))";
@@ -182,8 +184,12 @@ function update($array_SESSION, $table, $DOID){
     $fields = [];
     $params = [];
 
+    // Validate session keys against actual DB columns to prevent "Unknown column" errors
+    $valid_columns = getColumnNames($table);
+
     foreach ($array_SESSION as $field => $value) {
         if($field != "fields" &&  $field != "page_next"
+            && $field != "DOID"
             && !str_starts_with($field, "sol_")
             && !str_starts_with($field, "boi_")
             && !str_starts_with($field, "phv_")
@@ -195,7 +201,7 @@ function update($array_SESSION, $table, $DOID){
             && !str_starts_with($field, "moa_direction")
             && !str_starts_with($field, "moa_surveillance")
             && !str_starts_with($field, "moa_execution")
-            
+            && in_array($field, $valid_columns)
         ){
             $fields[] = "$field = :$field";
             $params[":$field"] = ($value === '' ? null : $value);
@@ -218,6 +224,8 @@ function update($array_SESSION, $table, $DOID){
             $_SESSION["SQL"][$table] = debugQuery($sqlupdate, array_values($params));
             return $res;
         } catch (PDOException $e) {
+            error_log("[riobat] UPDATE $table DOID=$DOID failed: " . $e->getMessage());
+            $_SESSION['update_error'] = $e->getMessage();
             if (defined('DEBUG') && DEBUG) {
                 throw $e;
             }
@@ -282,6 +290,57 @@ function boxDisplay($checked, $name, $mode = "write"){
 };
 
 
+function deleteAllTestDos() {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return 0;
+
+    // Récupérer tous les DOID de test
+    $stmt = $pdo->query('SELECT DOID FROM dommage_ouvrage WHERE is_test = 1');
+    $doids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    if (empty($doids)) return 0;
+
+    $count = 0;
+    foreach ($doids as $doid) {
+        try {
+            $pdo->beginTransaction();
+            // Récupérer les IDs d'entreprises liées
+            $entStmt = $pdo->prepare('SELECT boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, ctt_entreprise_id, cnr_entreprise_id FROM travaux_annexes WHERE DOID = :d');
+            $entStmt->execute([':d' => $doid]);
+            $entRow = $entStmt->fetch(PDO::FETCH_ASSOC);
+            $solStmt = $pdo->prepare('SELECT sol_entreprise_id FROM situation WHERE DOID = :d');
+            $solStmt->execute([':d' => $doid]);
+            $solRow = $solStmt->fetch(PDO::FETCH_ASSOC);
+            $moeStmt = $pdo->prepare('SELECT moe_entreprise_id FROM dommage_ouvrage WHERE DOID = :d');
+            $moeStmt->execute([':d' => $doid]);
+            $moeRow = $moeStmt->fetch(PDO::FETCH_ASSOC);
+
+            foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'situation', 'operation_construction', 'moa'] as $t) {
+                $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $doid]);
+            }
+            $sStmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_ouvrage WHERE DOID = :d');
+            $sStmt->execute([':d' => $doid]);
+            $sid = $sStmt->fetchColumn();
+            $pdo->prepare('DELETE FROM dommage_ouvrage WHERE DOID = :d')->execute([':d' => $doid]);
+            if ($sid) {
+                $pdo->prepare('DELETE FROM souscripteur WHERE souscripteur_id = :s')->execute([':s' => $sid]);
+            }
+            // Supprimer les entreprises liées
+            $entIds = [];
+            if ($entRow) { foreach ($entRow as $eid) { if ($eid) $entIds[] = (int)$eid; } }
+            if ($solRow && !empty($solRow['sol_entreprise_id'])) $entIds[] = (int)$solRow['sol_entreprise_id'];
+            if ($moeRow && !empty($moeRow['moe_entreprise_id'])) $entIds[] = (int)$moeRow['moe_entreprise_id'];
+            foreach (array_unique($entIds) as $eid) {
+                $pdo->prepare('DELETE FROM entreprise WHERE ID = :id')->execute([':id' => $eid]);
+            }
+            $pdo->commit();
+            $count++;
+        } catch (PDOException $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+        }
+    }
+    return $count;
+}
+
 function deleteDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
     try {
@@ -310,11 +369,16 @@ function validDo($doid){
 
 
 function loadDo($doid){
-    $user_id =  $_SESSION['user_id'] ?? null;
-    $_SESSION = [];
+    // Préserver les données d'authentification
+    $preserve = [
+        'user_id'   => $_SESSION['user_id'] ?? null,
+        'user_role' => $_SESSION['user_role'] ?? null,
+        'env'       => $_SESSION['env'] ?? null,
+        'action'    => $_SESSION['action'] ?? null,
+    ];
+    $_SESSION = $preserve;
 
     $_SESSION['DOID']       = $doid;
-    $_SESSION['user_id']    = $user_id;
     $do = getDo($doid);
 
     $_SESSION["info_souscripteur"]["souscripteur_id"] = $do["souscripteur_id"];
@@ -323,9 +387,43 @@ function loadDo($doid){
     foreach ($array_tables as $table) {
         $col_names =  getColumnNames($table);
         foreach ($col_names as $key => $col) {
+            if ($col === 'DOID') continue; // DOID is managed separately, skip to avoid polluting UPDATE queries
             $_SESSION["info_".$table][$col] = $do[$col] ?? null;                    
         }
     }
+}
+
+// Ajoute une entrée dans l'historique d'un dommage ouvrage
+function addDoHistorique($doid, $action, $user_id = null, $details = null) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo || !$doid) return false;
+
+    $user_nom = null;
+    if ($user_id) {
+        $stmt = $pdo->prepare('SELECT CONCAT(prenom, " ", nom) AS fullname FROM utilisateur WHERE ID = :id LIMIT 1');
+        $stmt->execute([':id' => $user_id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) $user_nom = $row['fullname'];
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO do_historique (DOID, action, user_id, user_nom, date_action, details) VALUES (:doid, :action, :user_id, :user_nom, NOW(), :details)');
+    return $stmt->execute([
+        ':doid' => $doid,
+        ':action' => $action,
+        ':user_id' => $user_id,
+        ':user_nom' => $user_nom,
+        ':details' => $details,
+    ]);
+}
+
+// Récupère l'historique d'un dommage ouvrage
+function getDoHistorique($doid) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return [];
+
+    $stmt = $pdo->prepare('SELECT * FROM do_historique WHERE DOID = :doid ORDER BY date_action ASC');
+    $stmt->execute([':doid' => $doid]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 /**
@@ -342,8 +440,69 @@ function getColumnNames($table) {
     return $rows;
 }
 
-  
+function getListAssurances() {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return [];
+    $stmt = $pdo->query('SELECT * FROM assurance WHERE active = 1 ORDER BY nom ASC');
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
+function updateDoStatus($doid, $status) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $allowed = [0, 1, 2, 3];
+    if (!in_array((int)$status, $allowed, true)) return false;
+    $stmt = $pdo->prepare('UPDATE dommage_ouvrage SET status = :status WHERE DOID = :doid');
+    return $stmt->execute([':status' => (int)$status, ':doid' => $doid]);
+}
 
+function updateDoAssurance($doid, $assurance_id) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $val = $assurance_id === '' || $assurance_id === null ? null : (int)$assurance_id;
+    $stmt = $pdo->prepare('UPDATE dommage_ouvrage SET assurance_id = :assurance_id WHERE DOID = :doid');
+    return $stmt->execute([':assurance_id' => $val, ':doid' => $doid]);
+}
 
+// --- Assurance CRUD ---
+
+function getAllAssurances() {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return [];
+    $stmt = $pdo->query('SELECT * FROM assurance ORDER BY nom ASC');
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getAssurance($id) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return null;
+    $stmt = $pdo->prepare('SELECT * FROM assurance WHERE assurance_id = :id');
+    $stmt->execute([':id' => (int)$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function insertAssurance($nom, $logo, $active = 1) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $stmt = $pdo->prepare('INSERT INTO assurance (nom, logo, active) VALUES (:nom, :logo, :active)');
+    return $stmt->execute([':nom' => $nom, ':logo' => $logo, ':active' => (int)$active]);
+}
+
+function updateAssurance($id, $nom, $logo, $active) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $stmt = $pdo->prepare('UPDATE assurance SET nom = :nom, logo = :logo, active = :active WHERE assurance_id = :id');
+    return $stmt->execute([':nom' => $nom, ':logo' => $logo, ':active' => (int)$active, ':id' => (int)$id]);
+}
+
+function deleteAssurance($id) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    // Vérifier qu'aucune DO n'utilise cette assurance
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM dommage_ouvrage WHERE assurance_id = :id');
+    $stmt->execute([':id' => (int)$id]);
+    if ($stmt->fetchColumn() > 0) return 'used';
+    $stmt = $pdo->prepare('DELETE FROM assurance WHERE assurance_id = :id');
+    return $stmt->execute([':id' => (int)$id]);
+}
 

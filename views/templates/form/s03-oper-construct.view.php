@@ -1,12 +1,12 @@
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER HARMONISÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
             </svg>
             <div>
-                <h1 class="text-2xl font-extrabold text-blue-800">Opération de construction</h1>
+                <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Opération de construction</h1>
                 <div class="flex flex-col gap-0 mt-1 hover:underline text-blue-700 text-sm">
                     <a   href="index.php?page=step3" >&gt; Nature et type de l'ouvrage</a>
                     <a   href="index.php?page=step4" >&gt; Situation de l'ouvrage</a>
@@ -23,53 +23,6 @@
     </div>
     <script src="public/script/s03-oper-construct.js"></script>
     <script src="public/script/adresse-autocomplete.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof adresseAutocomplete === 'function') {
-            adresseAutocomplete('construction_adresse_autocomplete', 'suggestions_construction_adresse');
-        }
-    });
-    </script>
-    <script>
-    // Initialisation dynamique des blocs dépendants des toggles au chargement
-    document.addEventListener('DOMContentLoaded', function() {
-        // Nature de l'opération
-        var toggleNature = document.getElementById('toggle_nature_neuf_exist');
-        if (toggleNature && typeof handleToggleNatureNeufExist === 'function') {
-            handleToggleNatureNeufExist(toggleNature);
-        }
-        // Surélévation
-        var toggleSurelev = document.getElementById('toggle_surelev');
-        if (toggleSurelev && typeof handleToggleSurelev === 'function') {
-            handleToggleSurelev(toggleSurelev);
-        }
-        // Extension horizontale
-        var toggleExtHorizont = document.getElementById('toggle_ext_horizont');
-        if (toggleExtHorizont && typeof handleToggleExtHorizont === 'function') {
-            handleToggleExtHorizont(toggleExtHorizont);
-        }
-        // Rénovation
-        var toggleRenovation = document.getElementById('toggle_renovation');
-        if (toggleRenovation && typeof handleToggleRenovation === 'function') {
-            handleToggleRenovation(toggleRenovation);
-        }
-        // Réhabilitation
-        var toggleRehabilitation = document.getElementById('toggle_rehabilitation');
-        if (toggleRehabilitation && typeof handleToggleRehabilitation === 'function') {
-            handleToggleRehabilitation(toggleRehabilitation);
-        }
-        // Sinistre
-        var toggleSinistre = document.getElementById('toggle_operation_sinistre');
-        if (toggleSinistre && typeof handleToggleSinistre === 'function') {
-            handleToggleSinistre(toggleSinistre);
-        }
-        // Piscine
-        var togglePiscine = document.getElementById('toggle_piscine');
-        if (togglePiscine && typeof handleTogglePiscine === 'function') {
-            handleTogglePiscine(togglePiscine);
-        }
-    });
-    </script>
     <!-- Affichage des erreurs de validation -->
     <?php if (!empty($_SESSION['validation_errors'])): ?>
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -276,20 +229,6 @@
                                 <input type="radio" name="nature_operation_ext_horizont_exist" value="1" id="radio_ext_horizont_exist_oui" class="hidden" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==1 ? "checked=checked" : ""; ?> />
                                 <input type="radio" name="nature_operation_ext_horizont_exist" value="0" id="radio_ext_horizont_exist_non" class="hidden" <?= isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) && $_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']==0 ? "checked=checked" : (!isset($_SESSION['info_operation_construction']['nature_operation_ext_horizont_exist']) ? "checked=checked" : ""); ?> />
                             </div>
-                            <script>
-                            function handleToggleExtHorizontExist(checkbox) {
-                                const radioOui = document.getElementById('radio_ext_horizont_exist_oui');
-                                const radioNon = document.getElementById('radio_ext_horizont_exist_non');
-                                const spanValue = document.getElementById('ext_horizont_exist_value');
-                                if (checkbox.checked) {
-                                    radioOui.checked = true;
-                                    spanValue.textContent = 'Oui';
-                                } else {
-                                    radioNon.checked = true;
-                                    spanValue.textContent = 'Non';
-                                }
-                            }
-                            </script>
                         </div>
                     </div>
                 </div>
@@ -567,7 +506,7 @@
                 </div>
                 <div class="flex items-center">
                     <span class="text-xs mr-2">nombre de maisons :</span>
-                    <input type="text" name="type_ouvrage_ope_pavill_nombre" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_ope_pavill_nombre']) ? $_SESSION['info_operation_construction']['type_ouvrage_ope_pavill_nombre'] : ''?>" style="height:10px; width: 60px; border-radius:6px;" class="bg-gray-50 text-xs"/>
+                    <input type="text" name="type_ouvrage_ope_pavill_nombre" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_ope_pavill_nombre']) ? $_SESSION['info_operation_construction']['type_ouvrage_ope_pavill_nombre'] : ''?>" class="bg-gray-50 text-xs h-2.5 w-[60px] rounded-md"/>
                 </div>
                 <!-- Collectif d'habitation -->
                 <div class="flex items-center col-span-2">
@@ -576,7 +515,7 @@
                 </div>
                 <div class="flex items-center">
                     <span class="text-xs mr-2">nombre d'appartements :</span>
-                    <input type="text" name="type_ouvrage_coll_habit_nombre" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_coll_habit_nombre']) ? $_SESSION['info_operation_construction']['type_ouvrage_coll_habit_nombre'] : ''?>" style="height:10px; width: 60px; border-radius:6px;" class="bg-gray-50 text-xs"/>
+                    <input type="text" name="type_ouvrage_coll_habit_nombre" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_coll_habit_nombre']) ? $_SESSION['info_operation_construction']['type_ouvrage_coll_habit_nombre'] : ''?>" class="bg-gray-50 text-xs h-2.5 w-[60px] rounded-md"/>
                 </div>
                 <!-- Bâtiment à usage industriel ou agricole -->
                 <div class="flex items-center col-span-2">
@@ -591,7 +530,7 @@
                 </div>
                 <div class="flex items-center">
                     <span class="text-xs mr-2">superficie hors oeuvre nette (SHON) :</span>
-                    <input type="text" name="type_ouvrage_centre_com_surf" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_centre_com_surf']) ? $_SESSION['info_operation_construction']['type_ouvrage_centre_com_surf'] : ''?>" style="height:10px; width:60px; border-radius:6px;" class="bg-gray-50 text-xs"/> m²
+                    <input type="text" name="type_ouvrage_centre_com_surf" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_centre_com_surf']) ? $_SESSION['info_operation_construction']['type_ouvrage_centre_com_surf'] : ''?>" class="bg-gray-50 text-xs h-2.5 w-[60px] rounded-md"/> m²
                 </div>
                 <!-- Bâtiment à usage de bureau -->
                 <div class="flex items-center col-span-2">
@@ -618,7 +557,7 @@
                 </div>
                 <div class="flex items-center">
                     <span class="text-xs mr-2">son usage :</span>
-                    <input type="text" name="type_ouvrage_autre_const_usage" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_autre_const_usage']) ? $_SESSION['info_operation_construction']['type_ouvrage_autre_const_usage'] : ''?>" style="height:10px; width:200px; border-radius:6px;" class="bg-gray-50 text-xs"/>
+                    <input type="text" name="type_ouvrage_autre_const_usage" value="<?= isset($_SESSION['info_operation_construction']['type_ouvrage_autre_const_usage']) ? $_SESSION['info_operation_construction']['type_ouvrage_autre_const_usage'] : ''?>" class="bg-gray-50 text-xs h-2.5 w-[200px] rounded-md"/>
                 </div>
             </div>
         </fieldset>
@@ -701,11 +640,11 @@
                     </span>
                     <div class="mx-2 my-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Coût en € <span class="text-red-600">*</span></label>
-                        <input type="text" name="construction_cout_operation" value="<?= isset($_SESSION['info_operation_construction']['construction_cout_operation']) ? $_SESSION['info_operation_construction']['construction_cout_operation'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
+                        <input type="number" step="1" min="0" name="construction_cout_operation" value="<?= isset($_SESSION['info_operation_construction']['construction_cout_operation']) ? htmlspecialchars($_SESSION['info_operation_construction']['construction_cout_operation']) : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
                     </div>
                     <div class="mx-2 my-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Honoraires du maitre d'oeuvre en € <span class="text-red-600">*</span></label>
-                        <input type="text" name="construction_cout_honoraires_moe" value="<?= isset($_SESSION['info_operation_construction']['construction_cout_honoraires_moe']) ? $_SESSION['info_operation_construction']['construction_cout_honoraires_moe'] : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
+                        <input type="number" step="1" min="0" name="construction_cout_honoraires_moe" value="<?= isset($_SESSION['info_operation_construction']['construction_cout_honoraires_moe']) ? htmlspecialchars($_SESSION['info_operation_construction']['construction_cout_honoraires_moe']) : ''?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
                     </div>
                     <div class="mx-2 mt-4">
                         <div class="flex flex-row items-center gap-4">
@@ -742,6 +681,7 @@
         </div>
 
         <input type="hidden" name="fields" value="operation_construction">
+        <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 
         <!-- SECTION: Etude de sol (step4) supprimée à la demande -->
     </form>

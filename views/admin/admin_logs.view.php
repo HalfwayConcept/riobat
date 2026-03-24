@@ -90,7 +90,7 @@
                             <td class="px-4 py-2 text-center"><?= $log['date_exec_log'] ?></td>
                             <td class="px-4 py-2 text-center"><?= htmlspecialchars($log['table_cible']) ?></td>
                             <td class="px-4 py-2 text-center"><?= $log['type_requete'] ?></td>
-                            <td class="px-4 py-2 text-center" style="width:60px;">
+                            <td class="px-4 py-2 text-center w-[60px]">
                                 <span class="relative">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="inline w-6 h-6 text-blue-600 cursor-pointer sql-modal-trigger" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-log-id="<?= $log['id_log'] ?>">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6v6a2 2 0 002 2h12a2 2 0 002-2V6M4 6V4a2 2 0 012-2h12a2 2 0 012 2v2M4 6h16" />
@@ -116,11 +116,11 @@
                                         <div>
                                             <div class="mb-4">
                                                 <span class="text-blue-300 font-bold">SQL :</span>
-                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1" style="max-height:30vh;overflow:auto;"><code class="sql language-sql"><?= htmlspecialchars($log['requete_sql']) ?></code></pre>
+                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1 max-h-[30vh] overflow-auto"><code class="sql language-sql"><?= htmlspecialchars($log['requete_sql']) ?></code></pre>
                                             </div>
                                             <div>
                                                 <span class="text-blue-300 font-bold">Paramètres :</span>
-                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1" style="max-height:20vh;overflow:auto;"><code class="language-json"><?= htmlspecialchars($log['parametres']) ?></code></pre>
+                                                <pre class="whitespace-pre-wrap break-all text-xs mt-1 max-h-[20vh] overflow-auto"><code class="language-json"><?= htmlspecialchars($log['parametres']) ?></code></pre>
                                             </div>
                                         </div>
                                     </div>
@@ -130,49 +130,7 @@
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
-                            <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                hljs.highlightAll();
-                                // Copy buttons
-                                document.querySelectorAll('.copy-btn').forEach(function(btn) {
-                                    btn.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        const text = btn.getAttribute('data-copy');
-                                        navigator.clipboard.writeText(text);
-                                        btn.querySelector('span').textContent = 'Copié!';
-                                        setTimeout(() => { btn.querySelector('span').textContent = btn.classList.contains('copy-sql') ? 'Copier SQL' : 'Copier paramètres'; }, 1200);
-                                    });
-                                });
-                                // Modal logic
-                                document.querySelectorAll('.sql-modal-trigger').forEach(function(icon) {
-                                    icon.addEventListener('click', function(e) {
-                                        e.stopPropagation();
-                                        const logId = icon.getAttribute('data-log-id');
-                                        const modal = document.getElementById('sql-modal-' + logId);
-                                        if (modal) {
-                                            modal.classList.remove('hidden');
-                                            modal.classList.add('flex');
-                                        }
-                                    });
-                                });
-                                document.querySelectorAll('.close-sql-modal').forEach(function(btn) {
-                                    btn.addEventListener('click', function(e) {
-                                        e.stopPropagation();
-                                        btn.closest('.fixed').classList.add('hidden');
-                                        btn.closest('.fixed').classList.remove('flex');
-                                    });
-                                });
-                                // Close modal on background click
-                                document.querySelectorAll('.fixed.z-50').forEach(function(modal) {
-                                    modal.addEventListener('click', function(e) {
-                                        if (e.target === modal) {
-                                            modal.classList.add('hidden');
-                                            modal.classList.remove('flex');
-                                        }
-                                    });
-                                });
-                            });
-                            </script>
+                            <script src="public/script/admin-logs.js"></script>
                             <td class="px-4 py-2 text-center"><?= $log['user_id'] ?></td>
                             <td class="px-4 py-2 text-center">
                                 <?php if ($log['statut'] === 'réussi'): ?>
@@ -185,6 +143,77 @@
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <!-- Pagination -->
+                <?php if(isset($logs_total_pages) && $logs_total_pages > 1): ?>
+                <?php
+                    // Construire l'URL de base sans le paramètre p
+                    $paginationParams = $_GET;
+                    unset($paginationParams['p']);
+                    $baseUrl = 'index.php?' . http_build_query($paginationParams);
+                ?>
+                <nav class="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 p-4" aria-label="Pagination des logs">
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                        Affichage 
+                        <span class="font-semibold text-gray-900 dark:text-white"><?= ($logs_offset + 1) ?>–<?= min($logs_offset + $logs_per_page, $logs_total) ?></span>
+                        sur
+                        <span class="font-semibold text-gray-900 dark:text-white"><?= $logs_total ?></span>
+                        résultats
+                    </span>
+                    <ul class="inline-flex items-stretch -space-x-px">
+                        <!-- Précédent -->
+                        <li>
+                            <?php if($current_page > 1): ?>
+                            <a href="<?= $baseUrl ?>&p=<?= $current_page - 1 ?>" class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            </a>
+                            <?php else: ?>
+                            <span class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-300 bg-white rounded-l-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <?php endif; ?>
+                        </li>
+                        <!-- Pages -->
+                        <?php
+                        $startPage = max(1, $current_page - 2);
+                        $endPage = min($logs_total_pages, $current_page + 2);
+                        if ($startPage > 1): ?>
+                            <li><a href="<?= $baseUrl ?>&p=1" class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a></li>
+                            <?php if ($startPage > 2): ?>
+                            <li><span class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-400 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700">&hellip;</span></li>
+                            <?php endif; ?>
+                        <?php endif;
+                        for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <li>
+                                <?php if ($i == $current_page): ?>
+                                <span class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-blue-600 bg-blue-50 border border-blue-300 font-bold dark:bg-gray-700 dark:border-gray-700 dark:text-blue-400"><?= $i ?></span>
+                                <?php else: ?>
+                                <a href="<?= $baseUrl ?>&p=<?= $i ?>" class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><?= $i ?></a>
+                                <?php endif; ?>
+                            </li>
+                        <?php endfor;
+                        if ($endPage < $logs_total_pages): ?>
+                            <?php if ($endPage < $logs_total_pages - 1): ?>
+                            <li><span class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-400 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700">&hellip;</span></li>
+                            <?php endif; ?>
+                            <li><a href="<?= $baseUrl ?>&p=<?= $logs_total_pages ?>" class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><?= $logs_total_pages ?></a></li>
+                        <?php endif; ?>
+                        <!-- Suivant -->
+                        <li>
+                            <?php if($current_page < $logs_total_pages): ?>
+                            <a href="<?= $baseUrl ?>&p=<?= $current_page + 1 ?>" class="flex items-center justify-center h-full py-1.5 px-3 text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                            </a>
+                            <?php else: ?>
+                            <span class="flex items-center justify-center h-full py-1.5 px-3 text-gray-300 bg-white rounded-r-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <?php endif; ?>
+                        </li>
+                    </ul>
+                </nav>
+                <?php endif; ?>
+
             </div>
         </div>
     </div>

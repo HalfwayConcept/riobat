@@ -1,151 +1,90 @@
+<?php $_chk = $_chk ?? '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>'; ?>
 <div>
-    <!-- Operation de construction : situation de l'ouvrage -->
-    <div class="flex items-center gap-3 mb-2 mt-6">
-        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
-        </svg>
-        <h2 class="text-xl font-bold text-gray-800">Informations diverses</h2>
+    <div class="fiche-title">
+        <span class="fiche-title-num">4</span>
+        <h2>Informations diverses</h2>
     </div>
-    <hr class="mb-4 border-blue-200">
-    <fieldset class="grid md:gap-6 border-2 border-gray-400 p-4 m-6">
-        <legend class="mx-2 p-2 text-xl font-medium">Opération de construction : situation de l'ouvrage </legend>
+    <hr class="fiche-hr">
 
-        <div class="flex flex-col">
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_zone_inond']) && $DATA['situation_zone_inond'] == 1){
-                        echo "<strong>L'ouvrage est situé en zone innondable</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php
-                    if(isset($DATA['situation_sismique'])){
-                        switch ($DATA['situation_sismique']){
-                            case '1':
-                                echo "<strong>L'ouvrage est situé dans une zone de sismicité très faible</strong>";
-                                break;
-                            case '2':
-                                echo "<strong>L'ouvrage est situé dans une zone de sismicité faible</strong>";
-                                break;
-                            case '3':
-                                echo "<strong>L'ouvrage est situé dans une zone de sismicité modérée</strong>";
-                                break;
-                            case '4':
-                                echo "<strong>L'ouvrage est situé dans une zone de sismicité moyenne</strong>";
-                                break;
-                            case '5':
-                                echo "<strong>L'ouvrage est situé dans une zone de sismicité forte</strong>";
-                                break;
-                            }
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_insectes']) && $DATA['situation_insectes'] == 1){
-                        echo "<strong>L'ouvrage est situé dans une zone contaminée par les termites ou autres insectes xylophages</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_proc_tech']) && $DATA['situation_proc_tech'] == 1){
-                        echo "<strong>Les travaux sont réalisés avec des matériaux traditionnels ou selon des procédés de technique courante</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_parking']) && $DATA['situation_parking'] == 1){
-                        echo "<strong>Un parking (accessoire de l'ouvrage) dessert l'ouvrage</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_do_10ans']) && $DATA['situation_do_10ans'] == 1){
-                        echo "<strong>Les existants datent de moins de 10 ans, et ils ont fait l'objet d'un contrat d'assurance \"dommages ouvrage\"</strong>";
-                        }
-                ?>
-                    <div class="ml-6">
-                        <?php 
-                            if(isset($DATA['situation_do_10ans_contrat_assureur'])){
-                                echo "<span class='mr-2'>Nom de l'assureur :</span><strong>".$DATA['situation_do_10ans_contrat_assureur']."</strong>";
-                                }
-                            if(isset($DATA['situation_do_10ans_contrat_numero'])){
-                                echo "<span class='mr-2'>Numéro de contrat :</span><strong>".$DATA['situation_do_10ans_contrat_numero']."</strong>";
-                                }
-                        ?>
-                    </div>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_mon_hist']) && $DATA['situation_mon_hist'] == 1){
-                        echo "<strong>Les existants sont classés monuments historiques ou font l'objet d'une protection du patrimoine</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_label_energie']) && $DATA['situation_label_energie'] == 1){
-                        echo "<strong>L'opération de construction bénéficie d'un label de performance énergétique</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['situation_label_qualite']) && $DATA['situation_label_qualite'] == 1){
-                        echo "<strong>L'opération de construction bénéficie d'un label de qualité environnementale</strong>";
-                        }
-                ?>
-            </div>
-            <div class='ml-6'>
-                <?php 
-                    if(isset($DATA['sol']) && $DATA['sol'] == 1){
+    <fieldset class="fiche-fieldset">
+        <legend>Situation de l'ouvrage</legend>
 
-                        echo "<div class='ml-6'>";
-                            echo viewEntreprise($DATA['sol_entreprise_id']);
-                        echo "</div>";
-                        switch ($DATA['sol_bureau_mission']){
-                            case 'g2_amp':
-                                echo "Mission : AMP";
-                                break;
-                            case 'g2_pro':
-                                echo "Mission :G2 PRO";
-                                break;
-                            case 'etude_sol_autre':
-                                echo "Mission :".$DATA['sol_bureau_mission_champ'];
-                                break;
-                        }
-                    }
-                ?>
-                <div class='ml-6'>
-                    <?php 
-                        if(isset($DATA['sol_parking']) && $DATA['sol_parking'] == 1){
-                            echo "<strong>L'étude de sol vise également le parking et/ou les voiries</strong>";
-                            }
-                    ?>
-                </div>
-            </div>
-            <?php
-                if((isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1) || (isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1)){
-                    echo "<h3 class=\"section-title\">Garanties demandées</h3>";
-                    echo "<div class='flex flex-row mt-10'>";
-                        if(isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1){
-                            echo boxDisplay($DATA['situation_garanties_completes'],"situation_garanties_completes","read");
-                            echo "<strong class='ml-6'>Garanties complètes (CS n°811)</strong>";
-                        }
+        <?php if(isset($DATA['situation_zone_inond']) && $DATA['situation_zone_inond'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>L'ouvrage est situé en zone inondable</span></div>
+        <?php endif; ?>
 
-                    
-                        if(isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1){
-                            echo boxDisplay($DATA['situation_garanties_dommages_existants'],"situation_garanties_dommages_existants","read");
-                            echo "<strong class='ml-6'>Dommages matériels subits par les existants (CS n°811)</strong>";
-                        }
-                    echo "</div>";
+        <?php
+            if(isset($DATA['situation_sismique'])){
+                $sismLabels = ['1'=>'très faible','2'=>'faible','3'=>'modérée','4'=>'moyenne','5'=>'forte'];
+                $sismVal = $sismLabels[$DATA['situation_sismique']] ?? null;
+                if($sismVal){
+                    echo '<div class="fiche-row"><span class="fiche-label">Zone de sismicité</span><span class="fiche-value">'.ucfirst($sismVal).'</span></div>';
                 }
-            ?>
-        </div>
+            }
+        ?>
+
+        <?php if(isset($DATA['situation_insectes']) && $DATA['situation_insectes'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Zone contaminée par les termites ou insectes xylophages</span></div>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_proc_tech']) && $DATA['situation_proc_tech'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Matériaux traditionnels ou procédés de technique courante</span></div>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_parking']) && $DATA['situation_parking'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Un parking dessert l'ouvrage</span></div>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_do_10ans']) && $DATA['situation_do_10ans'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Existants &lt; 10 ans avec contrat d'assurance dommages ouvrage</span></div>
+            <?php if(!empty($DATA['situation_do_10ans_contrat_assureur'])): ?>
+                <div class="fiche-row ml-6"><span class="fiche-label">Assureur</span><span class="fiche-value"><?=$DATA['situation_do_10ans_contrat_assureur']?></span></div>
+            <?php endif; ?>
+            <?php if(!empty($DATA['situation_do_10ans_contrat_numero'])): ?>
+                <div class="fiche-row ml-6"><span class="fiche-label">N° de contrat</span><span class="fiche-value"><?=$DATA['situation_do_10ans_contrat_numero']?></span></div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_mon_hist']) && $DATA['situation_mon_hist'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Existants classés monuments historiques ou protection du patrimoine</span></div>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_label_energie']) && $DATA['situation_label_energie'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Label de performance énergétique</span></div>
+        <?php endif; ?>
+
+        <?php if(isset($DATA['situation_label_qualite']) && $DATA['situation_label_qualite'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Label de qualité environnementale</span></div>
+        <?php endif; ?>
     </fieldset>
+
+    <?php if(isset($DATA['sol']) && $DATA['sol'] == 1): ?>
+    <fieldset class="fiche-fieldset">
+        <legend>Étude de sol</legend>
+        <?php echo viewEntreprise($DATA['sol_entreprise_id']); ?>
+        <?php
+            $missions = ['g2_amp'=>'AMP','g2_pro'=>'G2 PRO','etude_sol_autre'=>$DATA['sol_bureau_mission_champ'] ?? ''];
+            if(isset($DATA['sol_bureau_mission']) && isset($missions[$DATA['sol_bureau_mission']])){
+                echo '<div class="fiche-row"><span class="fiche-label">Mission</span><span class="fiche-value">'.$missions[$DATA['sol_bureau_mission']].'</span></div>';
+            }
+        ?>
+        <?php if(isset($DATA['sol_parking']) && $DATA['sol_parking'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>L'étude de sol vise également le parking et/ou les voiries</span></div>
+        <?php endif; ?>
+    </fieldset>
+    <?php endif; ?>
+
+    <?php
+    if((isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1) || (isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1)):
+    ?>
+    <fieldset class="fiche-fieldset">
+        <legend>Garanties demandées</legend>
+        <?php if(isset($DATA['situation_garanties_completes']) && $DATA['situation_garanties_completes'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Garanties complètes (CS n°811)</span></div>
+        <?php endif; ?>
+        <?php if(isset($DATA['situation_garanties_dommages_existants']) && $DATA['situation_garanties_dommages_existants'] == 1): ?>
+            <div class="fiche-check"><?=$_chk?><span>Dommages matériels subis par les existants (CS n°811)</span></div>
+        <?php endif; ?>
+    </fieldset>
+    <?php endif; ?>
 </div>

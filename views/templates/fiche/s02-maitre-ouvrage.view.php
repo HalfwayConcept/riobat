@@ -1,46 +1,34 @@
 </script>
 <script src="/public/script/s02-maitre-ouvrage.js"></script>
 
-<div class="">
-    <!-- Informations Maitre d'ouvrage -->
-    <div class="flex items-center gap-3 mb-2 mt-6">
-        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8M12 8v8" />
-        </svg>
-        <h2 class="text-xl font-bold text-gray-800">Maitre d'ouvrage</h2>
+<div>
+    <div class="fiche-title">
+        <span class="fiche-title-num">2</span>
+        <h2>Maître d'ouvrage</h2>
     </div>
-    <hr class="mb-4 border-blue-200">
+    <hr class="fiche-hr">
 
-        <div class="grid md:gap-6  border-gray-400 p-4 m-6">
+    <fieldset class="fiche-fieldset">
+        <legend>Identité du maître d'ouvrage</legend>
         <?php 
             if(isset($DATA['moa_souscripteur']) && ($DATA['moa_souscripteur']) == 1){
-                echo "<strong>Le maitre d'ouvrage est le souscripteur</strong>";
+                echo '<div class="fiche-check"><svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg><span>Le maître d\'ouvrage est le souscripteur</span></div>';
             }else{
-                echo "<div class='flex flex-row'>
-                        <h3>Nom, Prénom</h3>
-                        <strong class='pl-4'>".$DATA['moa_souscripteur_form_nom_prenom']."</strong><br />
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Adresse</h3>
-                        <strong class='pl-4'>".$DATA['moa_souscripteur_form_adresse']."</strong><br />
-                    </div>";
-                if($DATA['moa_souscripteur_form_civilite'] == "entreprise"){
-                    echo "<div class='flex flex-row'>
-                        <h3>Raison sociale</h3>
-                        <strong class='pl-4'>".$DATA['moa_souscripteur_form_raison_sociale']."</strong><br />
-                    </div>
-                    <div class='flex flex-row'>
-                        <h3>Siret n°</h3>
-                        <strong class='pl-4'>".$DATA['moa_souscripteur_form_siret']."</strong><br />
-                    </div>";
-                }               
+                $civilite = $DATA['moa_souscripteur_form_civilite'] ?? '';
+                $civiliteLabel = ($civilite == 'entreprise') ? 'Entreprise' : 'Particulier';
+                echo '<div class="fiche-row"><span class="fiche-label">Civilité</span><span class="fiche-value">'.$civiliteLabel.'</span></div>';
+                if($civilite == 'entreprise'){
+                    echo '<div class="fiche-row"><span class="fiche-label">Raison sociale</span><span class="fiche-value">'.htmlspecialchars($DATA['moa_souscripteur_form_raison_sociale'] ?? '').'</span></div>';
+                    echo '<div class="fiche-row"><span class="fiche-label">Siret n°</span><span class="fiche-value">'.htmlspecialchars($DATA['moa_souscripteur_form_siret'] ?? '').'</span></div>';
+                }
+                echo '<div class="fiche-row"><span class="fiche-label">Nom, Prénom</span><span class="fiche-value">'.htmlspecialchars($DATA['moa_souscripteur_form_nom_prenom'] ?? '').'</span></div>';
+                echo '<div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value">'.htmlspecialchars($DATA['moa_souscripteur_form_adresse'] ?? '').'</span></div>';
             }
         ?>
         
-        <div class="flex flex-row">
-            <h3>Qualité du maitre d'ouvrage </h3>
-            <strong class="pl-4">
+        <div class="fiche-row">
+            <span class="fiche-label">Qualité du maître d'ouvrage</span>
+            <span class="fiche-value">
                 <?php
                 require_once 'models/moa_qualite.model.php';
                 if (!empty($DATA['moa_qualite'])) {
@@ -49,48 +37,36 @@
                     echo '<span class="text-gray-400">Non renseigné</span>';
                 }
                 ?>
-            </strong>
+            </span>
         </div>
 
-        <div class="flex flex-col ">
-            <?php
-                if(isset($DATA['moa_construction']) && ($DATA['moa_construction']) == 1){
-                    echo "<div class='flex flex-row'>
-                            <strong>Le maitre d'ouvrage participe à la construction</strong>";
-                            if(isset($DATA['moa_construction_pro']) && ($DATA['moa_construction_pro']) == 1){                        
-                                echo ".<h3>en tant que professionel de : </h3><strong class='pl-4'>".$DATA['moa_construction_pro']."</strong>";
-                            }else{
-                                echo "<strong>et n'est pas un professionnel de la construction</strong>";
-                            };
-                    echo "</div>";
-                
-                    
-                }else{
-                    echo "<strong>Le maitre d'ouvrage ne participe pas à la construction</strong>";
-                }
-            ?>
-
-        
         <?php
-            require_once __DIR__ . '/../../components/renderMissionsTableReadOnly.php';
-            if (!empty($DATA['moa_nature_travaux_json'])) {
-                echo '<div class="overflow-x-auto w-full">';
-                // Patch la largeur du tableau généré
-                $table = renderMissionsTableReadOnly($DATA['moa_nature_travaux_json']);
-                $table = str_replace('w-full', 'w-[95%]', $table);
-                echo $table;
-                echo '</div>';
-            } else {
-                echo '<em class="text-gray-400">Aucune mission renseignée</em>';
+            if(isset($DATA['moa_construction']) && ($DATA['moa_construction']) == 1){
+                echo '<div class="fiche-check"><svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg><span>Le maître d\'ouvrage participe à la construction</span></div>';
+                if(isset($DATA['moa_construction_pro']) && ($DATA['moa_construction_pro']) == 1){                        
+                    echo '<div class="fiche-row ml-6"><span class="fiche-label">En tant que professionnel de</span><span class="fiche-value">'.$DATA['moa_construction_pro'].'</span></div>';
+                }else{
+                    echo '<div class="fiche-check ml-6"><svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg><span>N\'est pas un professionnel de la construction</span></div>';
+                }
+            }else{
+                echo '<div class="fiche-check"><svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg><span>Le maître d\'ouvrage ne participe pas à la construction</span></div>';
             }
-        ?> 
-        </div>   
+        ?>
+    </fieldset>
+
+    <?php
+        require_once __DIR__ . '/../../components/renderMissionsTableReadOnly.php';
+        if (!empty($DATA['moa_nature_travaux_json'])) {
+            echo '<div class="overflow-x-auto w-full mt-2">';
+            $table = renderMissionsTableReadOnly($DATA['moa_nature_travaux_json']);
+            $table = str_replace('w-full', 'w-[95%]', $table);
+            echo $table;
+            echo '</div>';
+        } else {
+            echo '<em class="text-gray-400 ml-4">Aucune mission renseignée</em>';
+        }
+    ?>
 </div>
-
-
-
-
-
 
 
 

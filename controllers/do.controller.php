@@ -2,7 +2,36 @@
     
     require_once 'models/do.model.php';
     require_once 'models/entreprise.model.php'; 
-    
+    require_once 'models/user.model.php';
+
+    /**
+     * Résout le DOID de manière sécurisée :
+     * 1. Priorité au POST (champ hidden dans le formulaire)
+     * 2. Fallback sur la session
+     * 3. Vérifie la cohérence POST vs session (si les deux existent)
+     * 4. Vérifie que l'utilisateur est bien propriétaire du DO
+     */
+    function resolveDoid() {
+        $post_doid = !empty($_POST['doid']) ? (int)$_POST['doid'] : 0;
+        $session_doid = !empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : 0;
+
+        $doid = $post_doid > 0 ? $post_doid : $session_doid;
+
+        // Vérification de propriété (sauf admin/collab)
+        if ($doid > 0 && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'user') {
+            if (!userOwnsDo($_SESSION['user_id'] ?? 0, $doid)) {
+                $_SESSION['validation_errors'] = ["Accès non autorisé à ce dossier."];
+                header("Location: index.php?page=home");
+                exit;
+            }
+        }
+
+        if ($post_doid > 0 && $session_doid > 0 && $session_doid !== $post_doid) {
+            // Recharger les données de cette DO en session
+            loadDo($post_doid);
+        }
+        return $doid;
+    }
 
     function clearSessionDO(){
         $_SESSION["info_debut"]=[];
@@ -85,6 +114,9 @@
                 $_SESSION['info_'.$_POST['fields']][$key] = $value;
             }
             $keys = array_keys($_SESSION['info_'.$_POST['fields']]);
+
+            // Résoudre le DOID depuis POST (prioritaire) ou session (fallback)
+            $doid = resolveDoid();
             // DEV: Vider les tableaux de session si demandé
             if ($currentstep == "step1" && isset($_POST['dev_clear_session']) && $_POST['dev_clear_session'] == '1') {
                 $_SESSION['info_moa'] = [];
@@ -107,6 +139,7 @@
                 }else{
                     $new_DOID = insert($_SESSION["info_souscripteur"]);
                     $new_user_session = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
+                    addDoHistorique($new_DOID, 'Création', $_SESSION['user_id'] ?? null, 'Création de la demande DO');
                 }
                 $_SESSION["DOID"] = $new_DOID;
                 $res=true;
@@ -158,7 +191,7 @@
                     if (isset($_SESSION['info_moa']['moa_qualite_champ'])) {
                         unset($_SESSION['info_moa']['moa_qualite_champ']);
                     }
-                    $res = update($_SESSION['info_moa'], 'moa', $_SESSION["DOID"]);
+                    $res = update($_SESSION['info_moa'], 'moa', $doid);
                     $_SESSION['validation_errors'] = [];
                 }
             }elseif($currentstep == "step3"){
@@ -202,8 +235,15 @@
                     $res = false;
                     $_SESSION['validation_errors'] = $errors;
                 } else {
+                    // Nettoyer les champs numériques avant sauvegarde
+                    foreach (['construction_cout_operation', 'construction_cout_honoraires_moe'] as $numField) {
+                        if (isset($_SESSION['info_operation_construction'][$numField])) {
+                            $val = preg_replace('/[^0-9]/', '', $_SESSION['info_operation_construction'][$numField]);
+                            $_SESSION['info_operation_construction'][$numField] = $val === '' ? null : $val;
+                        }
+                    }
                     // Validation réussie - sauvegarder en BDD
-                    $res = update($_SESSION['info_operation_construction'], 'operation_construction', $_SESSION["DOID"]);
+                    $res = update($_SESSION['info_operation_construction'], 'operation_construction', $doid);
                     $_SESSION['validation_errors'] = [];
                 }
             }elseif($currentstep == "step4" || $currentstep == "step5"){  
@@ -217,8 +257,7 @@
                     $session_key = "info_dommage_ouvrage";
 
                 }  
-                $doid = $_SESSION["DOID"];
-                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
+                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
                 if($_SESSION['info_'.$_POST['fields']][$prefix] == 1){
                     $array_entreprise = array();
                     $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'];                                          
@@ -241,7 +280,7 @@
                         
                         $id = insertEntreprise($array_entreprise);
                         $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
-                        updateEntrepriseID($id, $prefix, $_SESSION["DOID"]);
+                        updateEntrepriseID($id, $prefix, $doid);
                     }      
                 }
             }elseif($currentstep == "step4bis"){
@@ -249,7 +288,7 @@
                     if (isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'])) {
                         $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'] = implode(',', array_filter($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']));
                     }
-                    $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
+                    $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
                     $top = 0;
                     $array_entreprises = array();
                   
@@ -291,7 +330,7 @@
                                     $id = insertEntreprise($array_entreprise);
                                     if ($id && $id > 0) {
                                         $_SESSION["info_travaux_annexes"][$array_entreprise['type'].'_entreprise_id'] = $id;
-                                        updateEntrepriseID($id, $array_entreprise['type'], $_SESSION["DOID"]);
+                                        updateEntrepriseID($id, $array_entreprise['type'], $doid);
                                     }
                                     // Si l'insertion échoue, ne pas tenter la mise à jour de la clé étrangère
                                 }
@@ -299,12 +338,17 @@
                         }
                     }
             }else{
-                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $_SESSION["DOID"] );
-                $doid = $_SESSION["DOID"];
+                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
             }
 
             if($res === false){
-                // echo ERREUR LORS DE L'AJOUT OU MODIFICATION EN BDD
+                // Only set DB error if no validation errors already set
+                if (empty($_SESSION['validation_errors']) && !empty($_SESSION['update_error'])) {
+                    $_SESSION['validation_errors'] = ["Erreur lors de la sauvegarde en base de données. (" . $_SESSION['update_error'] . ")"];
+                } elseif (empty($_SESSION['validation_errors'])) {
+                    $_SESSION['validation_errors'] = ["Erreur lors de la sauvegarde en base de données."];
+                }
+                unset($_SESSION['update_error']);
             }else{                
                 // Détermination dynamique de l'étape suivante après step4
                 if ($currentstep == 'step4') {
@@ -320,7 +364,6 @@
                 } else if (!empty($_POST['page_next'])) {
                     $nextstep = $_POST['page_next'];
                 }
-                $doid = $_SESSION["DOID"];
                 header("Location: index.php?page=".$nextstep."&doid=$doid");
 
             }
@@ -333,7 +376,8 @@
             && $_SESSION["info_situation"]['situation_geo'] =="0" 
             && $_SESSION["info_situation"]['situation_ctt'] =="0"
             && $_SESSION["info_situation"]['situation_cnr'] =="0") {
-                header("Location: index.php?page=step5");
+                $doid = !empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '';
+                header("Location: index.php?page=step5&doid=$doid");
             }  
         }
 

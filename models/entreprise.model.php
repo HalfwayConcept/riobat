@@ -60,7 +60,8 @@ require_once __DIR__ . '/../controllers/LogController.php';
 
         function viewEntreprise($entreprise_id){
             $array_entreprise = loadEntreprise($entreprise_id);
-            $type = $array_entreprise["type"];    
+            if (!$array_entreprise) return '';
+            $type = $array_entreprise["type"];
 
             $arrType = [
                 'sol' => 'Société de sol',
@@ -69,53 +70,22 @@ require_once __DIR__ . '/../controllers/LogController.php';
                 'boi' => 'Construction bois',
                 'phv' => 'Pose de photovoltaïque',
                 'geo' => 'Entreprise de géothermie',
+                'moe' => 'Architecte / Maître d\'œuvre',
             ];
-            $title_type = $arrType;
-            $label_type = isset($title_type[$type]) ? $title_type[$type] : htmlspecialchars($type);
-            $echo = '<fieldset class="grid md:grid-cols-2 md:gap-6 border-2 border-gray-400 p-4">
-                            <legend class="mx-2 p-2 text-sm">
-                                <img class="h-6" src="public/pictures/icons/'.$type.'.png">&nbsp; <h4 class="text-l font-bold text-gray-800">'.$label_type.' #'.$entreprise_id.'</h4>
-                            </legend>';
-                        
-                        $echo .= '<div class="relative z-0 w-full mb-5 group">
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Nom entreprise ou raison sociale
-                                        <strong class="pl-4">'.$array_entreprise["raison_sociale"].'</strong>
-                                    </label>
-                                </div>
-                                <div class="relative z-0 w-full mb-5 group">                                
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Siret n°
-                                        <strong class="pl-4">'.$array_entreprise["numero_siret"].'</strong>
-                                    </label>
-                                </div>';
+            $label_type = isset($arrType[$type]) ? $arrType[$type] : htmlspecialchars($type);
+            $iconSrc = in_array($type, ['sol','cnr','ctt','boi','phv','geo']) ? 'public/pictures/icons/'.$type.'.png' : '';
+            $iconHtml = $iconSrc ? '<img src="'.$iconSrc.'" alt="">&nbsp;' : '';
 
-                                $echo .= '<div class="relative z-0 w-full mb-5 group">
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Nom
-                                        <strong class="pl-4">'.$array_entreprise["nom"].'</strong>
-                                    </label>
-                                </div>
-                                <div class="relative z-0 w-full mb-5 group">                                
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Prénom 
-                                        <strong class="pl-4">'.$array_entreprise["prenom"].'</strong>
-                                    </label>
-                                </div>';
+            $echo  = '<div class="fiche-entreprise">';
+            $echo .=   '<div class="fiche-entreprise-header">'.$iconHtml.$label_type.'</div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Raison sociale</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["raison_sociale"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">N° Siret</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["numero_siret"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Nom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["nom"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Prénom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["prenom"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["adresse"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Code postal / Ville</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["code_postal"]).' '.htmlspecialchars($array_entreprise["commune"]).'</span></div>';
+            $echo .= '</div>';
 
-                                $echo .= '<div class="relative z-0 w-full mb-5 group">
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Adresse
-                                        <strong class="pl-4">'.$array_entreprise["adresse"].'</strong>
-                                    </label>
-                                </div>
-                                <div class="relative z-0 w-full mb-5 group">                                
-                                    <label class="peer-focus:font-medium absolute text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                        Code Postal Ville 
-                                        <strong class="pl-4">'.$array_entreprise["code_postal"]."&nbsp;".$array_entreprise["commune"].'</strong>
-                                    </label>
-                                </div>';
-               
             return $echo;
         }
 

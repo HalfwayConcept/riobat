@@ -24,7 +24,7 @@ if (file_exists($envFile)) {
     }
 }
 
-define('ROOT_PATH', dirname(__FILE__) );
+define('ROOT_PATH', dirname(__FILE__, 2) );
 define('UPLOAD_FOLDER', "/public/uploads" );
 
 // Load configuration from environment where possible. Keep sane defaults for local setups.

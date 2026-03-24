@@ -1,113 +1,368 @@
 <?php
+/**
+ * test_runner.php : Script CLI pour tests de non-régression formulaire DO
+ * Usage : php test_runner.php [--cleanup]
+ * 
+ * Sans --cleanup : exécute les scénarios et conserve les données (affiche les DOID)
+ * Avec --cleanup : exécute les scénarios puis nettoie automatiquement
+ */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// test_runner.php : Script CLI pour tests de non-régression formulaire DO
-// Usage : php test_runner.php
 
-function randomString($length = 8) {
-    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    $str = '';
-    for ($i = 0; $i < $length; $i++) {
-        $str .= $chars[random_int(0, strlen($chars) - 1)];
-    }
-    return $str;
+$autoCleanup = in_array('--cleanup', $argv ?? []);
+
+// Bootstrap minimal
+session_start();
+$_SESSION['user_id'] = 1;
+$_SESSION['env'] = 'dev';
+require_once __DIR__ . '/inc/settings.php';
+require_once __DIR__ . '/models/do.model.php';
+require_once __DIR__ . '/models/user.model.php';
+require_once __DIR__ . '/models/entreprise.model.php';
+require_once __DIR__ . '/controllers/LogController.php';
+
+function _cliRandomStr($len = 8) {
+    $c = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    $s = '';
+    for ($i = 0; $i < $len; $i++) $s .= $c[random_int(0, strlen($c) - 1)];
+    return $s;
 }
 
-function postStep($url, $fields, &$cookieFile, &$output) {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
-    $response = curl_exec($ch);
-    $err = curl_error($ch);
-    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    $output[] = [
-        'url' => $url,
-        'fields' => $fields,
-        'http' => $http,
-        'error' => $err,
-        'response' => $response
+function _cliRandomEntreprise($type) {
+    return [
+        'raison_sociale' => 'CLI_ENT_' . strtoupper($type) . '_' . _cliRandomStr(5),
+        'nom'            => 'Nom_' . _cliRandomStr(4),
+        'prenom'         => 'Pren_' . _cliRandomStr(4),
+        'adresse'        => _cliRandomStr(10),
+        'code_postal'    => (string)rand(10000, 99999),
+        'commune'        => _cliRandomStr(6),
+        'numero_siret'   => (string)rand(10000000000000, 99999999999999),
+        'type'           => $type,
     ];
-    return $response;
 }
 
-function runTests() {
-    $baseUrl = 'http://localhost/riobat/index.php?page=';
-    $cookieFile = tempnam(sys_get_temp_dir(), 'riobat_test_cookie');
-    $output = [];
+function _cliCleanupDoid($doid, $entrepriseIds = []) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo || !$doid) return false;
+    try {
+        $pdo->beginTransaction();
+        // Récupérer les IDs d'entreprises liées avant suppression
+        $entStmt = $pdo->prepare("SELECT boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, ctt_entreprise_id, cnr_entreprise_id FROM travaux_annexes WHERE DOID = :d");
+        $entStmt->execute([':d' => $doid]);
+        $entRow = $entStmt->fetch(PDO::FETCH_ASSOC);
+
+        foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'situation', 'operation_construction', 'moa'] as $t) {
+            $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $doid]);
+        }
+        $stmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_ouvrage WHERE DOID = :d');
+        $stmt->execute([':d' => $doid]);
+        $sid = $stmt->fetchColumn();
+        $pdo->prepare('DELETE FROM dommage_ouvrage WHERE DOID = :d')->execute([':d' => $doid]);
+        if ($sid) $pdo->prepare('DELETE FROM souscripteur WHERE souscripteur_id = :s')->execute([':s' => $sid]);
+
+        // Supprimer les entreprises
+        $allEntIds = $entrepriseIds;
+        if ($entRow) {
+            foreach ($entRow as $eid) { if ($eid) $allEntIds[] = (int)$eid; }
+        }
+        foreach (array_unique($allEntIds) as $eid) {
+            $pdo->prepare('DELETE FROM entreprise WHERE ID = :id')->execute([':id' => $eid]);
+        }
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        echo "  NETTOYAGE ECHEC: " . $e->getMessage() . "\n";
+        return false;
+    }
+}
+
+/**
+ * Exécute un scénario complet steps 1→5
+ */
+function _cliRunScenario($label, $userId, $withAnnexes = false, $moaOverride = []) {
     $success = true;
+    $doid = null;
+    $entrepriseIds = [];
 
-    // Step 1 : Souscripteur
-    $fields1 = [
-        'fields' => 'souscripteur',
-        'souscripteur_nom_raison' => randomString(10),
-        'souscripteur_siret' => rand(10000000000000, 99999999999999),
-        'souscripteur_adresse' => randomString(12),
-        'souscripteur_code_postal' => rand(10000, 99999),
-        'souscripteur_commune' => randomString(8),
-        'souscripteur_profession' => randomString(6),
-        'souscripteur_telephone' => '06'.rand(10000000,99999999),
-        'souscripteur_email' => randomString(6).'@test.fr',
-        'page_next' => 'step2'
-    ];
-    $resp1 = postStep($baseUrl.'step1', $fields1, $cookieFile, $output);
-    if (strpos($resp1, 'Formulaire DO-02') === false) $success = false;
+    echo "--- $label ---\n";
 
-    // Step 2 : MOA
-    $fields2 = [
-        'fields' => 'moa',
-        'moa_qualite' => 'proprietaire',
-        'moa_construction' => '1',
-        'moa_construction_pro' => '0',
-        'page_next' => 'step3'
-    ];
-    $resp2 = postStep($baseUrl.'step2', $fields2, $cookieFile, $output);
-    if (strpos($resp2, 'Formulaire DO-03') === false) $success = false;
+    try {
+        // Step 1
+        $nom = 'CLI_TEST_' . _cliRandomStr(6);
+        $doid = insert([
+            'fields' => 'souscripteur',
+            'souscripteur_nom_raison' => $nom,
+            'souscripteur_siret' => (string)rand(10000000000000, 99999999999999),
+            'souscripteur_adresse' => _cliRandomStr(12),
+            'souscripteur_code_postal' => (string)rand(10000, 99999),
+            'souscripteur_commune' => _cliRandomStr(8),
+            'souscripteur_profession' => _cliRandomStr(6),
+            'souscripteur_telephone' => '06' . rand(10000000, 99999999),
+            'souscripteur_email' => _cliRandomStr(6) . '@test.local',
+            'page_next' => 'step2',
+        ]);
+        if ($doid) {
+            // Flaguer comme DO de test
+            $pdo = $GLOBALS['pdo'] ?? null;
+            if ($pdo) {
+                $pdo->prepare('UPDATE dommage_ouvrage SET is_test = 1 WHERE DOID = :d')->execute([':d' => $doid]);
+            }
+            $_SESSION['DOID'] = $doid;
+            insert_utilisateur_session($doid, $userId);
+            addDoHistorique($doid, 'Test auto', $userId, "Création DO — $label");
+            echo "  Step 1  OK  DOID=$doid  nom=$nom\n";
+        } else {
+            echo "  Step 1  ECHEC\n";
+            return ['ok' => false, 'doid' => null, 'entreprises' => []];
+        }
 
-    // Step 3 : Opération
-    $fields3 = [
-        'fields' => 'operation_construction',
-        'nature_neuf_exist' => 'neuve',
-        'construction_adresse' => randomString(10),
-        'construction_adresse_code_postal' => rand(10000,99999),
-        'construction_adresse_commune' => randomString(8),
-        'page_next' => 'step4'
-    ];
-    $resp3 = postStep($baseUrl.'step3', $fields3, $cookieFile, $output);
-    if (strpos($resp3, 'Formulaire DO-04') === false) $success = false;
+        // Step 2
+        $moaData = ['fields' => 'moa', 'moa_souscripteur' => '1', 'moa_qualite' => '1', 'moa_construction' => '0', 'page_next' => 'step3'];
+        if (!empty($moaOverride)) {
+            $moaData = array_merge($moaData, $moaOverride);
+        }
+        $r = update($moaData, 'moa', $doid);
+        $moaLabel = ($moaData['moa_souscripteur'] == '1') ? 'MOA=souscripteur' : 'MOA≠souscripteur (' . ($moaData['moa_souscripteur_form_civilite'] ?? '?') . ')';
+        echo "  Step 2  " . ($r ? 'OK' : 'ECHEC') . "  $moaLabel\n";
+        if (!$r) $success = false;
 
-    // Step 4 : Situation
-    $fields4 = [
-        'fields' => 'situation',
-        'page_next' => 'step4bis'
-    ];
-    $resp4 = postStep($baseUrl.'step4', $fields4, $cookieFile, $output);
-    if (strpos($resp4, 'Formulaire DO-04bis') === false) $success = false;
+        // Step 3
+        $r = update(['fields' => 'operation_construction', 'nature_neuf_exist' => 'neuve', 'construction_adresse' => _cliRandomStr(12), 'construction_adresse_code_postal' => (string)rand(10000, 99999), 'construction_adresse_commune' => _cliRandomStr(8), 'type_ouvrage_mais_indiv' => '1', 'construction_date_debut' => date('Y-m-d', strtotime('+'.rand(1,30).' days')), 'construction_date_debut_prevue' => date('Y-m-d', strtotime('+'.rand(31,60).' days')), 'construction_date_reception' => date('Y-m-d', strtotime('+'.rand(180,365).' days')), 'page_next' => 'step4'], 'operation_construction', $doid);
+        echo "  Step 3  " . ($r ? 'OK' : 'ECHEC') . "\n";
+        if (!$r) $success = false;
 
-    // Step 4bis : Travaux annexes
-    $fields5 = [
-        'fields' => 'travaux_annexes',
-        'page_next' => 'step5'
-    ];
-    $resp5 = postStep($baseUrl.'step4bis', $fields5, $cookieFile, $output);
-    if (strpos($resp5, 'Formulaire DO-05') === false) $success = false;
+        // Step 4 — Situation
+        $annexeTypes = ['boi', 'phv', 'geo', 'ctt', 'cnr'];
+        $enabledAnnexes = [];
+        if ($withAnnexes) {
+            shuffle($annexeTypes);
+            $enabledAnnexes = array_slice($annexeTypes, 0, rand(2, 4));
+        }
 
-    unlink($cookieFile);
-    return ['success' => $success, 'log' => $output];
+        $situationData = [
+            'fields' => 'situation',
+            'situation_zone_inond' => '0', 'situation_sismique' => '1',
+            'situation_insectes' => '0', 'situation_proc_techniques' => '0',
+            'situation_parking' => '0', 'situation_do_10ans' => '0',
+            'situation_mon_hist' => '0', 'situation_label_energie' => '0',
+            'situation_label_qualite' => '0', 'situation_sol' => '0',
+            'situation_boi' => in_array('boi', $enabledAnnexes) ? '1' : '0',
+            'situation_phv' => in_array('phv', $enabledAnnexes) ? '1' : '0',
+            'situation_geo' => in_array('geo', $enabledAnnexes) ? '1' : '0',
+            'situation_ctt' => in_array('ctt', $enabledAnnexes) ? '1' : '0',
+            'situation_cnr' => in_array('cnr', $enabledAnnexes) ? '1' : '0',
+            'page_next' => empty($enabledAnnexes) ? 'step5' : 'step4bis',
+        ];
+        $r = update($situationData, 'situation', $doid);
+        $annexeLabel = empty($enabledAnnexes) ? 'aucune' : implode(',', $enabledAnnexes);
+        echo "  Step 4  " . ($r ? 'OK' : 'ECHEC') . "  annexes=$annexeLabel\n";
+        if (!$r) $success = false;
+
+        // Step 4bis
+        if (!empty($enabledAnnexes)) {
+            $travauxData = ['fields' => 'travaux_annexes', 'page_next' => 'step5'];
+            foreach ($enabledAnnexes as $type) {
+                switch ($type) {
+                    case 'boi':
+                        $travauxData['trav_annexes_constr_bois'] = '1';
+                        $travauxData['trav_annexes_constr_bois_enveloppe'] = '1';
+                        break;
+                    case 'phv':
+                        $travauxData['trav_annexes_pv_montage'] = 'integre';
+                        $travauxData['trav_annexes_pv_etn'] = '1';
+                        $travauxData['trav_annexes_pv_liste_c2p'] = '0';
+                        $travauxData['trav_annexes_pv_surface'] = rand(10, 200);
+                        $travauxData['trav_annexes_pv_proc_tech'] = '1';
+                        $travauxData['trav_annexes_pv_puissance'] = rand(3, 50);
+                        $travauxData['trav_annexes_pv_destination'] = 'revente';
+                        break;
+                    case 'geo':
+                        $travauxData['trav_annexes_constr_produits_ce'] = '1';
+                        break;
+                    case 'ctt':
+                        $travauxData['trav_annexes_ct_type_controle'] = 'L,LE';
+                        break;
+                    case 'cnr':
+                        $travauxData['cnr_qualite'] = 'Maitre d\'ouvrage delegue';
+                        break;
+                }
+                $entId = insertEntreprise(_cliRandomEntreprise($type));
+                if ($entId) {
+                    updateEntrepriseID($entId, $type, $doid);
+                    $entrepriseIds[] = $entId;
+                    echo "    Entreprise $type=#$entId\n";
+                } else {
+                    echo "    Entreprise $type=ECHEC\n";
+                    $success = false;
+                }
+            }
+            $r = update($travauxData, 'travaux_annexes', $doid);
+            echo "  Step 4b " . ($r ? 'OK' : 'ECHEC') . "\n";
+            if (!$r) $success = false;
+            addDoHistorique($doid, 'Test auto', $userId, 'Travaux annexes : ' . implode(', ', $enabledAnnexes));
+        } else {
+            echo "  Step 4b SKIP\n";
+        }
+
+        // Step 5
+        $r = update(['fields' => 'dommage_ouvrage', 'moe' => '0', 'garantie_do' => '1', 'garantie_chantier' => '0', 'garantie_juridique' => '0', 'page_next' => 'validation'], 'dommage_ouvrage', $doid);
+        echo "  Step 5  " . ($r ? 'OK' : 'ECHEC') . "\n";
+        if (!$r) $success = false;
+
+        addDoHistorique($doid, 'Test auto', $userId, 'Fin du formulaire');
+
+        // Vérification BDD
+        $data = getDo($doid);
+        if ($data && $data['souscripteur_nom_raison'] === $nom && $data['nature_neuf_exist'] === 'neuve') {
+            echo "  Verif   OK\n";
+        } else {
+            echo "  Verif   ECHEC\n";
+            $success = false;
+        }
+
+        // Vérification dates
+        if (!empty($data['construction_date_debut']) && !empty($data['construction_date_debut_prevue']) && !empty($data['construction_date_reception'])) {
+            echo "  Dates   OK  debut=" . $data['construction_date_debut'] . " prevue=" . $data['construction_date_debut_prevue'] . " recept=" . $data['construction_date_reception'] . "\n";
+        } else {
+            echo "  Dates   ECHEC (valeurs vides)\n";
+            $success = false;
+        }
+
+        // Vérification MOA
+        if (!empty($moaOverride) && isset($moaOverride['moa_souscripteur']) && $moaOverride['moa_souscripteur'] == '0') {
+            $moaCivOk = ($data['moa_souscripteur_form_civilite'] ?? '') === ($moaOverride['moa_souscripteur_form_civilite'] ?? '');
+            $moaNomOk = ($data['moa_souscripteur_form_nom_prenom'] ?? '') === ($moaOverride['moa_souscripteur_form_nom_prenom'] ?? '');
+            if ($moaCivOk && $moaNomOk) {
+                echo "  MOA     OK  civilite=" . $data['moa_souscripteur_form_civilite'] . " nom=" . $data['moa_souscripteur_form_nom_prenom'] . "\n";
+                if ($moaOverride['moa_souscripteur_form_civilite'] === 'entreprise') {
+                    $rsOk = ($data['moa_souscripteur_form_raison_sociale'] ?? '') === ($moaOverride['moa_souscripteur_form_raison_sociale'] ?? '');
+                    $siretOk = ($data['moa_souscripteur_form_siret'] ?? '') === ($moaOverride['moa_souscripteur_form_siret'] ?? '');
+                    echo "  MOAent  " . (($rsOk && $siretOk) ? 'OK' : 'ECHEC') . "  rs=" . ($data['moa_souscripteur_form_raison_sociale'] ?? '') . " siret=" . ($data['moa_souscripteur_form_siret'] ?? '') . "\n";
+                    if (!$rsOk || !$siretOk) $success = false;
+                }
+            } else {
+                echo "  MOA     ECHEC  civilite=" . ($data['moa_souscripteur_form_civilite'] ?? 'null') . " nom=" . ($data['moa_souscripteur_form_nom_prenom'] ?? 'null') . "\n";
+                $success = false;
+            }
+        }
+
+        // Vérification Historique
+        $hist = getDoHistorique($doid);
+        $nbHist = count($hist);
+        if ($nbHist >= 2) {
+            echo "  Histor  OK ($nbHist entrees)\n";
+        } else {
+            echo "  Histor  ECHEC ($nbHist entrees, min 2)\n";
+            $success = false;
+        }
+
+        // Vérification entreprises liées
+        if (!empty($enabledAnnexes)) {
+            $ent = getEntreprises($doid);
+            $entOk = true;
+            foreach ($enabledAnnexes as $at) {
+                if (empty($ent[$at . '_entreprise_id'])) {
+                    echo "  EntLnk  ECHEC ($at non liée)\n";
+                    $entOk = false;
+                    $success = false;
+                }
+            }
+            if ($entOk) echo "  EntLnk  OK\n";
+        }
+
+    } catch (Exception $e) {
+        echo "  ERREUR: " . $e->getMessage() . "\n";
+        $success = false;
+    }
+
+    return ['ok' => $success, 'doid' => $doid, 'entreprises' => $entrepriseIds];
 }
 
-if (php_sapi_name() === 'cli') {
-    $result = runTests();
-    echo $result['success'] ? "\033[32mTOUS LES TESTS PASSÉS\033[0m\n" : "\033[31mECHEC TESTS\033[0m\n";
-    foreach ($result['log'] as $step => $info) {
-        echo "\n--- Etape ".($step+1)." ---\n";
-        echo "URL: ".$info['url']."\n";
-        echo "HTTP: ".$info['http']."\n";
-        if ($info['error']) echo "Erreur cURL: ".$info['error']."\n";
-        echo "Champs envoyés: ".json_encode($info['fields'])."\n";
-        echo "---\n";
+// ============================================================
+echo "=== Tests de non-régression DO ===\n\n";
+$overall = true;
+$doidsToClean = [];
+
+// --- SCÉNARIO A : Admin sans annexes ---
+$_SESSION['user_id'] = 1;
+$scenA = _cliRunScenario('Scenario A — Admin sans annexes', 1, false);
+if (!$scenA['ok']) $overall = false;
+if ($scenA['doid']) $doidsToClean[] = $scenA;
+echo "\n";
+
+// --- SCÉNARIO B : MOA ≠ souscripteur (Particulier) ---
+$_SESSION['user_id'] = 1;
+$scenMoaP = _cliRunScenario('Scenario B — MOA particulier (pas souscripteur)', 1, false, [
+    'moa_souscripteur' => '0',
+    'moa_souscripteur_form_civilite' => 'particulier',
+    'moa_souscripteur_form_nom_prenom' => 'Dupont Jean-Pierre',
+    'moa_souscripteur_form_adresse' => '12 rue des Lilas 43000 Le Puy',
+]);
+if (!$scenMoaP['ok']) $overall = false;
+if ($scenMoaP['doid']) $doidsToClean[] = $scenMoaP;
+echo "\n";
+
+// --- SCÉNARIO C : MOA ≠ souscripteur (Entreprise) ---
+$_SESSION['user_id'] = 1;
+$scenMoaE = _cliRunScenario('Scenario C — MOA entreprise (pas souscripteur)', 1, false, [
+    'moa_souscripteur' => '0',
+    'moa_souscripteur_form_civilite' => 'entreprise',
+    'moa_souscripteur_form_nom_prenom' => 'Martin Sophie',
+    'moa_souscripteur_form_adresse' => '45 avenue Victor Hugo 69003 Lyon',
+    'moa_souscripteur_form_raison_sociale' => 'SARL Bâti-Concept',
+    'moa_souscripteur_form_siret' => '98765432100012',
+]);
+if (!$scenMoaE['ok']) $overall = false;
+if ($scenMoaE['doid']) $doidsToClean[] = $scenMoaE;
+echo "\n";
+
+// --- SCÉNARIO D : Nouvel utilisateur + annexes ---
+$testEmail = 'cli_test_' . _cliRandomStr(8) . '@test.local';
+$testPassword = 'Test1234!';
+$newUserId = register_user([
+    'nom' => 'CLI_NOM_' . _cliRandomStr(4),
+    'prenom' => 'CLI_PRE_' . _cliRandomStr(4),
+    'email' => $testEmail,
+    'password' => $testPassword,
+    'confirm_password' => $testPassword,
+]);
+if (is_int($newUserId) && $newUserId > 0) {
+    echo "  User cree ID=$newUserId email=$testEmail\n";
+    $_SESSION['user_id'] = $newUserId;
+    $scenD = _cliRunScenario('Scenario D — Nouvel utilisateur + annexes', $newUserId, true);
+    if (!$scenD['ok']) $overall = false;
+    if ($scenD['doid']) $doidsToClean[] = $scenD;
+} else {
+    echo "  User creation ECHEC: " . (is_string($newUserId) ? $newUserId : 'erreur inconnue') . "\n";
+    $overall = false;
+}
+echo "\n";
+
+// ============================================================
+// Résultat final
+echo "===========================================\n";
+echo $overall ? "TOUS LES SCENARIOS PASSES\n" : "DES SCENARIOS ONT ECHOUE\n";
+echo "===========================================\n";
+
+// Nettoyage ou affichage des liens
+if ($autoCleanup) {
+    echo "\nNettoyage automatique...\n";
+    foreach ($doidsToClean as $sc) {
+        $ok = _cliCleanupDoid($sc['doid'], $sc['entreprises']);
+        echo "  DOID " . $sc['doid'] . " : " . ($ok ? 'supprimé' : 'échec') . "\n";
     }
+    if (isset($newUserId) && is_int($newUserId) && $newUserId > 0) {
+        $pdo = $GLOBALS['pdo'] ?? null;
+        if ($pdo) {
+            $pdo->prepare('DELETE FROM utilisateur WHERE ID = :id')->execute([':id' => $newUserId]);
+            echo "  Utilisateur $newUserId supprimé\n";
+        }
+    }
+} else {
+    echo "\nDonnées conservées. Pour chaque DOID, voir :\n";
+    foreach ($doidsToClean as $sc) {
+        echo "  https://localhost/riobat/index.php?page=validation&doid=" . $sc['doid'] . "\n";
+    }
+    echo "\nRelancer avec --cleanup pour nettoyer : php test_runner.php --cleanup\n";
 }

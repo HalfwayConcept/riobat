@@ -1,11 +1,12 @@
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50">
+<script src="public/script/s02-maitre-ouvrage.js"></script>
+<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER HARMONISÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800">Étape 2 : Maître d'Ouvrage</h1>
+            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 2 : Maître d'Ouvrage</h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Formulaire Dommages Ouvrage</span>
@@ -45,22 +46,6 @@
                 <input type="radio" name="moa_souscripteur" value="1" id="radio_moa_souscripteur_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur']) ? ($_SESSION['info_moa']['moa_souscripteur']==1 ? "checked=checked" : "") : "checked=checked"; ?> onclick="hideElement('moa_form','moa')"/>
                 <input type="radio" name="moa_souscripteur" value="0" id="radio_moa_souscripteur_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "checked=checked" : ""; ?> onclick="showElement('moa_form','moa')"/>
             </div>
-            <script>
-            function handleToggleSouscripteur(checkbox) {
-                const radioOui = document.getElementById('radio_moa_souscripteur_oui');
-                const radioNon = document.getElementById('radio_moa_souscripteur_non');
-                const spanValue = document.getElementById('moa_souscripteur_value');
-                if (checkbox.checked) {
-                    radioOui.checked = true;
-                    spanValue.textContent = 'Oui';
-                    hideElement('moa_form','moa');
-                } else {
-                    radioNon.checked = true;
-                    spanValue.textContent = 'Non';
-                    showElement('moa_form','moa');
-                }
-            }
-            </script>  
             <!-- Champ hidden pour stocker le JSON du tableau Nature des travaux -->
             
             <div id="moa_form" class="<?= isset($_SESSION['info_moa']['moa_souscripteur']) && ($_SESSION['info_moa']['moa_souscripteur'])==0 ? "" : "hidden"; ?> px-8 py-4">
@@ -78,21 +63,6 @@
                         <input type="radio" name="moa_souscripteur_form_civilite" value="particulier" id="radio_moa_civilite_particulier" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="particulier" ? "checked=checked" : ""; ?>/>
                         <input type="radio" name="moa_souscripteur_form_civilite" value="entreprise" id="radio_moa_civilite_entreprise" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="entreprise" ? "checked=checked" : ""; ?>/>
                     </div>
-                    <script>
-                    function handleToggleCivilite(checkbox) {
-                        const radioParticulier = document.getElementById('radio_moa_civilite_particulier');
-                        const radioEntreprise = document.getElementById('radio_moa_civilite_entreprise');
-                        if (checkbox.checked) {
-                            radioEntreprise.checked = true;
-                            showElement('siret_champ');
-                            showElement('raison_champ');
-                        } else {
-                            radioParticulier.checked = true;
-                            hideElement('siret_champ');
-                            hideElement('raison_champ');
-                        }
-                    }
-                    </script>
                     <div class="py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom </label>
                         <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
@@ -133,16 +103,6 @@
                     </div>
                 </div>
             </div>
-            <script>
-            function toggleMoaQualiteAutre(select) {
-                var autre = document.getElementById('moa_qualite_autre_div');
-                if (select.value === '999') {
-                    autre.classList.remove('hidden');
-                } else {
-                    autre.classList.add('hidden');
-                }
-            }
-            </script>
         </div>
 
 
@@ -160,24 +120,6 @@
                 <input type="radio" name="moa_construction" value="1" id="radio_moa_construction_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==1 ? "checked=checked" : "") : ""; ?> />
                 <input type="radio" name="moa_construction" value="0" id="radio_moa_construction_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction']) ? ($_SESSION['info_moa']['moa_construction']==0 ? "checked=checked" : "") : "checked=checked"; ?> />
             </div>
-            <script>
-            function handleToggleConstruction(checkbox) {
-                const radioOui = document.getElementById('radio_moa_construction_oui');
-                const radioNon = document.getElementById('radio_moa_construction_non');
-                const spanValue = document.getElementById('moa_construction_value');
-                if (checkbox.checked) {
-                    radioOui.checked = true;
-                    spanValue.textContent = 'Oui';
-                    showElement('moa_construction_form');
-                    showElement('moa_construction_pro_tableau');
-                } else {
-                    radioNon.checked = true;
-                    spanValue.textContent = 'Non';
-                    hideElement('moa_construction_form');
-                    hideElement('moa_construction_pro_tableau');
-                }
-            }
-            </script>
             
             <div id="moa_construction_form" class="<?= isset($_SESSION['info_moa']['moa_construction']) && ($_SESSION['info_moa']['moa_construction'])==1 ? "" : "hidden"; ?> py-4">
                 <div class="flex flex-row p-2 mb-6">
@@ -208,22 +150,6 @@
                         <input type="radio" name="moa_construction_pro" value="1" id="radio_moa_construction_pro_oui" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "checked=checked" : ""; ?> required/>
                         <input type="radio" name="moa_construction_pro" value="0" id="radio_moa_construction_pro_non" class="hidden" <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==0 ? "checked=checked" : "checked=checked"; ?> required/>
                     </div>
-                    <script>
-                    function handleToggleConstructionPro(checkbox) {
-                        const radioOui = document.getElementById('radio_moa_construction_pro_oui');
-                        const radioNon = document.getElementById('radio_moa_construction_pro_non');
-                        const spanValue = document.getElementById('moa_construction_pro_value');
-                        if (checkbox.checked) {
-                            radioOui.checked = true;
-                            spanValue.textContent = 'Oui';
-                            showElement('moa_construction_pro_form');
-                        } else {
-                            radioNon.checked = true;
-                            spanValue.textContent = 'Non';
-                            hideElement('moa_construction_pro_form');
-                        }
-                    }
-                    </script>
                     <div id="moa_construction_pro_form" class="py-4 <?= isset($_SESSION['info_moa']['moa_construction_pro']) && ($_SESSION['info_moa']['moa_construction_pro'])==1 ? "" : "hidden"; ?> mx-6">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Veuillez indiquer sa profession :</label>
                         <input type="text" name="moa_construction_pro_champ" value="<?= isset($_SESSION['info_moa']['moa_construction_pro_champ']) ? htmlspecialchars($_SESSION['info_moa']['moa_construction_pro_champ']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
@@ -247,88 +173,6 @@
                         <!-- Lignes dynamiques générées par JS -->
                     </table>
                     </div>
-                    <script>
-                    // Structure du tableau
-                    const moaNatureTravauxRows = [
-                        { key: 'conception', label: 'Conception' },
-                        { key: 'direction', label: 'Direction' },
-                        { key: 'surveillance', label: 'Surveillance' },
-                        { key: 'execution', label: 'Exécution' }
-                    ];
-                    const moaNatureTravauxCols = [
-                        { key: '1', label: 'Papiers peints/Peintures intérieures' },
-                        { key: '2', label: 'Gros oeuvre/Charpente/Couverture/Etanchéité' },
-                        { key: '3', label: 'Autres travaux' }
-                    ];
-                    function getInitialNatureTravaux() {
-                        let val = document.getElementById('moa_nature_travaux_json').value;
-                        if (!val) return {};
-                        try { return JSON.parse(val); } catch { return {}; }
-                    }
-                    function updateNatureTravauxJSON(obj) {
-                        document.getElementById('moa_nature_travaux_json').value = JSON.stringify(obj);
-                    }
-                    function renderNatureTravauxTable() {
-                        const tbody = document.createElement('tbody');
-                        let data = getInitialNatureTravaux();
-                        moaNatureTravauxRows.forEach(row => {
-                            const tr = document.createElement('tr');
-                            // Libellé ligne
-                            const tdLabel = document.createElement('td');
-                            tdLabel.className = 'border-r-2 border-l-2 border-b border-gray-300 p-2 pl-4';
-                            tdLabel.innerHTML = `<label>${row.label}</label>`;
-                            tr.appendChild(tdLabel);
-                            // Colonnes cases à cocher
-                            moaNatureTravauxCols.forEach(col => {
-                                const td = document.createElement('td');
-                                td.className = 'border-r-2 border-b border-gray-300 text-center p-2';
-                                const id = `moa_${row.key}_${col.key}`;
-                                const checked = data[row.key] && data[row.key][col.key];
-                                td.innerHTML = `<input type=\"checkbox\" id=\"${id}\" ${checked ? 'checked' : ''} />`;
-                                tr.appendChild(td);
-                            });
-                            // Colonne "autres travaux: précisez"
-                            const tdAutre = document.createElement('td');
-                            tdAutre.className = 'border-r-2 border-b border-gray-300 text-center p-2';
-                            const inputId = `moa_${row.key}_autre`;
-                            const val = data[row.key] && data[row.key]['autre'] ? data[row.key]['autre'] : '';
-                            tdAutre.innerHTML = `<input type=\"text\" id=\"${inputId}\" value=\"${val.replace(/"/g,'&quot;')}\" class=\"w-full px-2 py-1 border rounded\" placeholder=\"Précisez...\" />`;
-                            tr.appendChild(tdAutre);
-                            tbody.appendChild(tr);
-                        });
-                        // Remplace le tbody existant
-                        const table = document.querySelector('#moa_construction_pro_tableau table');
-                        const oldTbody = table.querySelector('tbody');
-                        if (oldTbody) table.removeChild(oldTbody);
-                        table.appendChild(tbody);
-                    }
-                    function syncNatureTravauxFromUI() {
-                        let obj = {};
-                        moaNatureTravauxRows.forEach(row => {
-                            obj[row.key] = {};
-                            moaNatureTravauxCols.forEach(col => {
-                                const id = `moa_${row.key}_${col.key}`;
-                                obj[row.key][col.key] = document.getElementById(id).checked;
-                            });
-                            // Ajout du champ texte "autre"
-                            const inputId = `moa_${row.key}_autre`;
-                            obj[row.key]['autre'] = document.getElementById(inputId).value;
-                        });
-                        updateNatureTravauxJSON(obj);
-                    }
-                    document.addEventListener('DOMContentLoaded', function() {
-                        renderNatureTravauxTable();
-                        // Ajoute les listeners sur les cases à cocher et champs texte
-                        moaNatureTravauxRows.forEach(row => {
-                            moaNatureTravauxCols.forEach(col => {
-                                const id = `moa_${row.key}_${col.key}`;
-                                document.getElementById(id).addEventListener('change', syncNatureTravauxFromUI);
-                            });
-                            const inputId = `moa_${row.key}_autre`;
-                            document.getElementById(inputId).addEventListener('input', syncNatureTravauxFromUI);
-                        });
-                    });
-                    </script>
                 </div>
             </div>
         </div>
@@ -345,5 +189,6 @@
         </div>
 
         <input type="hidden" name="fields" value="moa">
+        <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
     </form>
 </section>
