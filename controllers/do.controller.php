@@ -53,6 +53,12 @@
 
         if(!empty($_GET['session_load_id'])){
             loadDo($_GET['session_load_id']);
+        } elseif (!empty($_GET['doid'])) {
+            // Synchroniser la session si le doid GET diffère du doid session (multi-onglet)
+            $get_doid = (int)$_GET['doid'];
+            if ($get_doid > 0 && (!isset($_SESSION['DOID']) || (int)$_SESSION['DOID'] !== $get_doid)) {
+                loadDo($get_doid);
+            }
         }
         
         // Pré-remplir step1 avec les infos du profil utilisateur
