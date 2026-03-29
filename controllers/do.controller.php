@@ -40,6 +40,7 @@
         $_SESSION["info_operation_construction"]=[];
         $_SESSION["info_dommage_ouvrage"]=[];
         $_SESSION["info_moa"]=[];
+        $_SESSION["info_moa_souscripteur"]=[];
         $_SESSION["info_situation"]=[];
         $_SESSION["info_travaux_annexes"]=[];
         $_SESSION["info_moe"]=[];
@@ -61,21 +62,23 @@
             }
         }
         
-        // Pré-remplir step1 avec les infos du profil utilisateur
+        // Pré-remplir step1 avec les infos du profil utilisateur si connecté
         if ($currentstep === 'step1' && empty($_GET['session_load_id'])) {
-            require_once 'models/user.model.php';
-            $user_info = get_infos($_SESSION['user_id']);
-            if ($user_info) {
-                $_SESSION["info_souscripteur"] = [
-                    'souscripteur_nom_raison' => $user_info['nom'] . ' ' . $user_info['prenom'],
-                    'souscripteur_siret' => $user_info['siret'] ?? '',
-                    'souscripteur_adresse' => $user_info['adresse'] ?? '',
-                    'souscripteur_code_postal' => $user_info['code_postal'] ?? '',
-                    'souscripteur_commune' => $user_info['commune'] ?? '',
-                    'souscripteur_profession' => $user_info['profession'] ?? '',
-                    'souscripteur_telephone' => $user_info['telephone'] ?? '',
-                    'souscripteur_email' => $user_info['email'] ?? '',
-                ];
+            if (!empty($_SESSION['user_id'])) {
+                require_once 'models/user.model.php';
+                $user_info = get_infos($_SESSION['user_id']);
+                if ($user_info) {
+                    $_SESSION["info_souscripteur"] = [
+                        'souscripteur_nom_raison' => $user_info['nom'] . ' ' . $user_info['prenom'],
+                        'souscripteur_siret' => $user_info['siret'] ?? '',
+                        'souscripteur_adresse' => $user_info['adresse'] ?? '',
+                        'souscripteur_code_postal' => $user_info['code_postal'] ?? '',
+                        'souscripteur_commune' => $user_info['commune'] ?? '',
+                        'souscripteur_profession' => $user_info['profession'] ?? '',
+                        'souscripteur_telephone' => $user_info['telephone'] ?? '',
+                        'souscripteur_email' => $user_info['email'] ?? '',
+                    ];
+                }
             }
         }
 
@@ -144,8 +147,13 @@
                     $new_DOID = $_GET['session_load_id'];
                 }else{
                     $new_DOID = insert($_SESSION["info_souscripteur"]);
-                    $new_user_session = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
-                    addDoHistorique($new_DOID, 'Création', $_SESSION['user_id'] ?? null, 'Création de la demande DO');
+                    // Si l'utilisateur n'est pas connecté, on ne crée pas de session utilisateur liée
+                    if (!empty($_SESSION['user_id'])) {
+                        $new_user_session = insert_utilisateur_session($new_DOID, $_SESSION['user_id']);
+                        addDoHistorique($new_DOID, 'Création', $_SESSION['user_id'], 'Création de la demande DO');
+                    } else {
+                        addDoHistorique($new_DOID, 'Création', null, 'Création de la demande DO (anonyme)');
+                    }
                 }
                 $_SESSION["DOID"] = $new_DOID;
                 $res=true;
@@ -156,8 +164,8 @@
                 
                 // Si MOA n'est pas le souscripteur, valider les champs du formulaire
                 if (isset($_SESSION['info_moa']['moa_souscripteur']) && $_SESSION['info_moa']['moa_souscripteur'] == 0) {
-                    if (empty($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom'])) {
-                        $errors[] = "Le nom/prénom du Maître d'Ouvrage est obligatoire.";
+                    if (empty($_SESSION['info_moa']['moa_souscripteur_form_nom'])) {
+                        $errors[] = "Le nom du Maître d'Ouvrage est obligatoire.";
                     }
                     if (empty($_SESSION['info_moa']['moa_souscripteur_form_adresse'])) {
                         $errors[] = "L'adresse du Maître d'Ouvrage est obligatoire.";
@@ -197,6 +205,61 @@
                     if (isset($_SESSION['info_moa']['moa_qualite_champ'])) {
                         unset($_SESSION['info_moa']['moa_qualite_champ']);
                     }
+
+                    // Gestion souscripteur MOA et entreprise
+                    if (isset($_SESSION['info_moa']['moa_souscripteur']) && $_SESSION['info_moa']['moa_souscripteur'] == 0) {
+                        // MOA ≠ souscripteur : créer/mettre à jour le souscripteur MOA
+                        $civilite = $_SESSION['info_moa']['moa_souscripteur_form_civilite'] ?? 'particulier';
+                        $nom = $_SESSION['info_moa']['moa_souscripteur_form_nom'] ?? '';
+                        $prenom = $_SESSION['info_moa']['moa_souscripteur_form_prenom'] ?? '';
+                        $adresse = $_SESSION['info_moa']['moa_souscripteur_form_adresse'] ?? '';
+                        $code_postal = $_SESSION['info_moa']['moa_souscripteur_form_code_postal'] ?? '';
+                        $commune = $_SESSION['info_moa']['moa_souscripteur_form_commune'] ?? '';
+                        $raison_sociale = $_SESSION['info_moa']['moa_souscripteur_form_raison_sociale'] ?? '';
+                        $siret = $_SESSION['info_moa']['moa_souscripteur_form_siret'] ?? '';
+
+                        $souscripteur_data = [
+                            'souscripteur_form_civilite' => $civilite,
+                            'souscripteur_nom_raison' => ($civilite === 'entreprise') ? $raison_sociale : trim($nom . ' ' . $prenom),
+                            'souscripteur_adresse' => $adresse,
+                            'souscripteur_code_postal' => $code_postal,
+                            'souscripteur_commune' => $commune,
+                            'souscripteur_siret' => ($civilite === 'entreprise') ? $siret : null,
+                        ];
+
+                        $sub_id = upsertMoaSouscripteur($doid, $souscripteur_data);
+                        if ($sub_id) {
+                            $_SESSION['info_moa']['moa_souscripteur_id'] = $sub_id;
+                        }
+
+                        // Toujours créer/mettre à jour l'enregistrement entreprise (pour stocker nom/prénom)
+                        $existing_ent_id = $_SESSION['info_moa']['moa_entreprise_id'] ?? null;
+                        $array_entreprise = [
+                            'raison_sociale' => ($civilite === 'entreprise') ? $raison_sociale : '',
+                            'nom' => $nom,
+                            'prenom' => $prenom,
+                            'adresse' => $adresse,
+                            'code_postal' => $code_postal,
+                            'commune' => $commune,
+                            'numero_siret' => ($civilite === 'entreprise') ? $siret : '',
+                            'type' => ($civilite === 'entreprise') ? 'moa' : 'particulier',
+                        ];
+
+                        if (!empty($existing_ent_id)) {
+                            updateEntreprise($existing_ent_id, $array_entreprise);
+                        } else {
+                            $ent_id = insertEntreprise($array_entreprise);
+                            if ($ent_id) {
+                                $_SESSION['info_moa']['moa_entreprise_id'] = $ent_id;
+                            }
+                        }
+                    } else {
+                        // MOA = souscripteur : supprimer le lien souscripteur MOA
+                        clearMoaSouscripteur($doid);
+                        $_SESSION['info_moa']['moa_souscripteur_id'] = null;
+                        $_SESSION['info_moa']['moa_entreprise_id'] = null;
+                    }
+
                     $res = update($_SESSION['info_moa'], 'moa', $doid);
                     $_SESSION['validation_errors'] = [];
                 }
@@ -242,7 +305,12 @@
                     $_SESSION['validation_errors'] = $errors;
                 } else {
                     // Nettoyer les champs numériques avant sauvegarde
-                    foreach (['construction_cout_operation', 'construction_cout_honoraires_moe'] as $numField) {
+                    foreach ([
+                        'construction_cout_operation',
+                        'construction_cout_honoraires_moe',
+                        'type_ouvrage_ope_pavill_nombre',
+                        'type_ouvrage_coll_habit_nombre'
+                    ] as $numField) {
                         if (isset($_SESSION['info_operation_construction'][$numField])) {
                             $val = preg_replace('/[^0-9]/', '', $_SESSION['info_operation_construction'][$numField]);
                             $_SESSION['info_operation_construction'][$numField] = $val === '' ? null : $val;
@@ -261,35 +329,52 @@
                 if($currentstep == "step5"){
                     $prefix = 'moe';
                     $session_key = "info_dommage_ouvrage";
-
-                }  
+                }
                 $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
-                if($_SESSION['info_'.$_POST['fields']][$prefix] == 1){
+                // N'enregistrer les coordonnées que si la réponse est "Oui" (1)
+                if(isset($_SESSION['info_'.$_POST['fields']][$prefix]) && $_SESSION['info_'.$_POST['fields']][$prefix] == 1){
                     $array_entreprise = array();
-                    $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'];                                          
-                    $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'];
-                    $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'];
-                    $array_entreprise['prenom']        = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_prenom'];
-                    $array_entreprise['adresse']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_adresse'];
-                    $array_entreprise['code_postale']  = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_code_postale'];
-                    $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_commune'];
-                    $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix.'_numero_siret'];
-                    $array_entreprise['type']          = $prefix; 
-                    echo "<pre>";
-                    var_dump($_SESSION['info_'.$_POST['fields']]);
-                    echo "</pre>";
-
-                    if(!empty($array_entreprise['id'])){
-                        $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
-                        $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
-                    }else{
-                        
-                        $id = insertEntreprise($array_entreprise);
-                        $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
-                        updateEntrepriseID($id, $prefix, $doid);
-                    }      
+                    $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'] ?? null;
+                    $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'] ?? '';
+                    $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'] ?? '';
+                    $array_entreprise['prenom']        = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_prenom'] ?? '';
+                    $array_entreprise['adresse']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_adresse'] ?? '';
+                    $array_entreprise['code_postale']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_code_postale'] ?? '';
+                    $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_commune'] ?? '';
+                    $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_numero_siret'] ?? '';
+                    $array_entreprise['type']          = $prefix;
+                    // Ne rien faire si aucune info d'entreprise n'est renseignée (évite l'id null)
+                    $hasEntreprise = $array_entreprise['raison_sociale'] || $array_entreprise['nom'] || $array_entreprise['prenom'] || $array_entreprise['adresse'] || $array_entreprise['code_postale'] || $array_entreprise['commune'] || $array_entreprise['numero_siret'];
+                    if($hasEntreprise){
+                        if(!empty($array_entreprise['id'])){
+                            $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
+                            $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
+                        }else{
+                            $id = insertEntreprise($array_entreprise);
+                            $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
+                            updateEntrepriseID($id, $prefix, $doid);
+                        }
+                    }
                 }
             }elseif($currentstep == "step4bis"){
+                    $errors = [];
+                    // Validation des champs PHV obligatoires
+                    if (isset($_SESSION['info_situation']['situation_phv']) && $_SESSION['info_situation']['situation_phv'] == '1') {
+                        if (empty($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'])) {
+                            $errors[] = "Le système de montage des panneaux est obligatoire.";
+                        }
+                        if (empty($_SESSION['info_travaux_annexes']['trav_annexes_pv_surface'])) {
+                            $errors[] = "La surface de l'installation est obligatoire.";
+                        }
+                        if (empty($_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance'])) {
+                            $errors[] = "La puissance de l'installation est obligatoire.";
+                        }
+                    }
+
+                    if (!empty($errors)) {
+                        $res = false;
+                        $_SESSION['validation_errors'] = $errors;
+                    } else {
                     // Adapter la sauvegarde des types de contrôle (checkbox multiples)
                     if (isset($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']) && is_array($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'])) {
                         $_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle'] = implode(',', array_filter($_SESSION['info_travaux_annexes']['trav_annexes_ct_type_controle']));
@@ -305,7 +390,6 @@
                             ||  $key == 'geo_entreprise_raison_sociale'
                             ||  $key == 'ctt_entreprise_raison_sociale'
                             ||  $key == 'sol_entreprise_raison_sociale'
-
                         ){
                             $prefix =  substr($key, 0, 3);
                             $array_entreprises[$top]['id']            = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_id'];                                          
@@ -313,7 +397,7 @@
                             $array_entreprises[$top]['nom']           = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_nom'];
                             $array_entreprises[$top]['prenom']        = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_prenom'];
                             $array_entreprises[$top]['adresse']       = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_adresse'];
-                            $array_entreprises[$top]['code_postale']  = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_code_postal'];
+                            $array_entreprises[$top]['code_postal']   = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_code_postal'];
                             $array_entreprises[$top]['commune']       = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_commune'];
                             $array_entreprises[$top]['numero_siret']  = $_SESSION["info_travaux_annexes"][$prefix.'_entreprise_numero_siret'];
                             $array_entreprises[$top]['type']          = $prefix;
@@ -343,6 +427,7 @@
                             }
                         }
                     }
+                    } // end else (no validation errors)
             }else{
                 $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
             }
@@ -357,7 +442,7 @@
                 unset($_SESSION['update_error']);
             }else{                
                 // Détermination dynamique de l'étape suivante après step4
-                if ($currentstep == 'step4') {
+                if ($currentstep == 'step4' && (!empty($_POST['page_next']) && $_POST['page_next'] !== 'step3')) {
                     $info = $_SESSION['info_situation'];
                     $has_annexe = (
                         (isset($info['situation_boi']) && $info['situation_boi'] == '1') ||

@@ -78,12 +78,12 @@ require_once __DIR__ . '/../controllers/LogController.php';
 
             $echo  = '<div class="fiche-entreprise">';
             $echo .=   '<div class="fiche-entreprise-header">'.$iconHtml.$label_type.'</div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">Raison sociale</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["raison_sociale"]).'</span></div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">N° Siret</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["numero_siret"]).'</span></div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">Nom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["nom"]).'</span></div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">Prénom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["prenom"]).'</span></div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["adresse"]).'</span></div>';
-            $echo .=   '<div class="fiche-row"><span class="fiche-label">Code postal / Ville</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["code_postal"]).' '.htmlspecialchars($array_entreprise["commune"]).'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Raison sociale</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["raison_sociale"] ?? '').'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">N° Siret</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["numero_siret"] ?? '').'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Nom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["nom"] ?? '').'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Prénom</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["prenom"] ?? '').'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["adresse"] ?? '').'</span></div>';
+            $echo .=   '<div class="fiche-row"><span class="fiche-label">Code postal / Ville</span><span class="fiche-value">'.htmlspecialchars($array_entreprise["code_postal"] ?? '').' '.htmlspecialchars($array_entreprise["commune"] ?? '').'</span></div>';
             $echo .= '</div>';
 
             return $echo;

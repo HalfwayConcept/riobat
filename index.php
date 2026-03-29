@@ -85,6 +85,14 @@
                 require 'controllers/admin.controller.php';
                 adminEmailsDisplay();
                 break;
+            case 'admin_tickets':
+                require 'controllers/ticket.controller.php';
+                adminTicketsDisplay();
+                break;
+            case 'ticket_create':
+                require 'controllers/ticket.controller.php';
+                ticketCreate();
+                break;
             case 'logs':
                 require 'controllers/LogController.php';
                 $filters = [];

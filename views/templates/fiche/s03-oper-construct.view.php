@@ -15,6 +15,37 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
     <fieldset class="fiche-fieldset">
         <legend>Nature et type de l'ouvrage</legend>
 
+        <!-- Type de l'ouvrage -->
+        <?php
+        $_typeItems = [];
+        if(isset($DATA['type_ouvrage_mais_indiv']) && $DATA['type_ouvrage_mais_indiv'] == 1){
+            $txt = 'Maison individuelle';
+            if(isset($DATA['type_ouvrage_mais_indiv_piscine']) && $DATA['type_ouvrage_mais_indiv_piscine'] == 1){
+                $txt .= ' — piscine ('.$DATA['type_ouvrage_mais_indiv_piscine_situation'].')';
+            }
+            $_typeItems[] = $txt;
+        }
+        if(isset($DATA['type_ouvrage_ope_pavill']) && $DATA['type_ouvrage_ope_pavill'] == 1)
+            $_typeItems[] = 'Opération pavillonnaire : '.$DATA['type_ouvrage_ope_pavill_nombre'].' maisons';
+        if(isset($DATA['type_ouvrage_coll_habit']) && $DATA['type_ouvrage_coll_habit'] == 1)
+            $_typeItems[] = 'Collectif d\'habitation : '.$DATA['type_ouvrage_coll_habit_nombre'].' appartements';
+        if(isset($DATA['type_ouvrage_bat_indus']) && $DATA['type_ouvrage_bat_indus'] == 1)
+            $_typeItems[] = 'Bâtiment à usage industriel ou agricole';
+        if(isset($DATA['type_ouvrage_centre_com']) && $DATA['type_ouvrage_centre_com'] == 1)
+            $_typeItems[] = 'Centre commercial : '.$DATA['type_ouvrage_centre_com_surf'].' m²';
+        if(isset($DATA['type_ouvrage_bat_bur']) && $DATA['type_ouvrage_bat_bur'] == 1)
+            $_typeItems[] = 'Bâtiment à usage de bureau';
+        if(isset($DATA['type_ouvrage_hopital']) && $DATA['type_ouvrage_hopital'] == 1)
+            $_typeItems[] = 'Établissement hospitalier, maison de retraite, clinique';
+        if(isset($DATA['type_ouvrage_vrd_privatif']) && $DATA['type_ouvrage_vrd_privatif'] == 1)
+            $_typeItems[] = 'VRD à usage privatif';
+        if(isset($DATA['type_ouvrage_autre_const']) && $DATA['type_ouvrage_autre_const'] == 1)
+            $_typeItems[] = 'Autre : '.$DATA['type_ouvrage_autre_const_usage'];
+        if(!empty($_typeItems)){
+            echo '<div class="fiche-row"><span class="fiche-label">Type de l\'ouvrage</span><span class="fiche-value">'.$_chk.' '.implode(', ', $_typeItems).'</span></div>';
+        }
+        ?>
+
         <!-- Nature de l'opération -->
         <?php 
         if(isset($DATA['nature_neuf_exist']) && $DATA['nature_neuf_exist'] == "neuve"){
@@ -83,38 +114,9 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
         }
         ?>
 
-        <!-- Type de l'ouvrage -->
-        <?php
-        $_typeItems = [];
-        if(isset($DATA['type_ouvrage_mais_indiv']) && $DATA['type_ouvrage_mais_indiv'] == 1){
-            $txt = 'Maison individuelle';
-            if(isset($DATA['type_ouvrage_mais_indiv_piscine']) && $DATA['type_ouvrage_mais_indiv_piscine'] == 1){
-                $txt .= ' — piscine ('.$DATA['type_ouvrage_mais_indiv_piscine_situation'].')';
-            }
-            $_typeItems[] = $txt;
-        }
-        if(isset($DATA['type_ouvrage_ope_pavill']) && $DATA['type_ouvrage_ope_pavill'] == 1)
-            $_typeItems[] = 'Opération pavillonnaire : '.$DATA['type_ouvrage_ope_pavill_nombre'].' maisons';
-        if(isset($DATA['type_ouvrage_coll_habit']) && $DATA['type_ouvrage_coll_habit'] == 1)
-            $_typeItems[] = 'Collectif d\'habitation : '.$DATA['type_ouvrage_coll_habit_nombre'].' appartements';
-        if(isset($DATA['type_ouvrage_bat_indus']) && $DATA['type_ouvrage_bat_indus'] == 1)
-            $_typeItems[] = 'Bâtiment à usage industriel ou agricole';
-        if(isset($DATA['type_ouvrage_centre_com']) && $DATA['type_ouvrage_centre_com'] == 1)
-            $_typeItems[] = 'Centre commercial : '.$DATA['type_ouvrage_centre_com_surf'].' m²';
-        if(isset($DATA['type_ouvrage_bat_bur']) && $DATA['type_ouvrage_bat_bur'] == 1)
-            $_typeItems[] = 'Bâtiment à usage de bureau';
-        if(isset($DATA['type_ouvrage_hopital']) && $DATA['type_ouvrage_hopital'] == 1)
-            $_typeItems[] = 'Établissement hospitalier, maison de retraite, clinique';
-        if(isset($DATA['type_ouvrage_vrd_privatif']) && $DATA['type_ouvrage_vrd_privatif'] == 1)
-            $_typeItems[] = 'VRD à usage privatif';
-        if(isset($DATA['type_ouvrage_autre_const']) && $DATA['type_ouvrage_autre_const'] == 1)
-            $_typeItems[] = 'Autre : '.$DATA['type_ouvrage_autre_const_usage'];
-        if(!empty($_typeItems)){
-            echo '<div class="fiche-row"><span class="fiche-label">Type de l\'ouvrage</span><span class="fiche-value">'.$_chk.' '.implode(', ', $_typeItems).'</span></div>';
-        }
-        ?>
-
     </fieldset>
+    </div>
+    <div>
     <fieldset class="fiche-fieldset">
         <legend><svg style="display:inline; width:1rem; height:1rem; vertical-align:-2px; margin-right:4px; color:#2563eb;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>Coût de l'opération</legend>
         <div class="fiche-row">
@@ -130,8 +132,6 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
             <span class="fiche-value"><?= (isset($DATA['cout_operation_tva']) && $DATA['cout_operation_tva'] == 1) ? 'Comprise' : 'Non comprise' ?></span>
         </div>
     </fieldset>
-    </div>
-    <div>
     <fieldset class="fiche-fieldset">
         <legend><svg style="display:inline; width:1rem; height:1rem; vertical-align:-2px; margin-right:4px; color:#2563eb;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>Adresse de la construction</legend>
         <div class="fiche-row">

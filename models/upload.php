@@ -27,8 +27,19 @@ if (!$is_post_request || !$has_files) {
     //redirect_with_message('Opération de téléchargement de fichier invalide', "error");
 }
 
-$files = $_FILES['file_rcd'];
-$file_count = count($files['name']);
+if (isset($_FILES['file_rcd']) && is_array($_FILES['file_rcd'])) {
+    $files = $_FILES['file_rcd'];
+    $file_count = count($files['name']);
+} else {
+    $files = [
+        'name' => [],
+        'type' => [],
+        'tmp_name' => [],
+        'error' => [],
+        'size' => []
+    ];
+    $file_count = 0;
+}
 // validation
 $errors = [];
 for ($i = 0; $i < $file_count; $i++) {

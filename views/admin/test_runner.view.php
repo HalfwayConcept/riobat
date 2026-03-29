@@ -94,6 +94,10 @@ function _runScenario($scenarioLabel, $userId, $withAnnexes = false) {
             'construction_adresse_code_postal'  => (string)rand(10000, 99999),
             'construction_adresse_commune'      => _testRandomStr(8),
             'type_ouvrage_mais_indiv'           => '1',
+            // Ajout simulation des dates comme dans test_runner.php
+            'construction_date_debut'           => date('Y-m-d', strtotime('+'.rand(1,30).' days')),
+            'construction_date_debut_prevue'    => date('Y-m-d', strtotime('+'.rand(31,60).' days')),
+            'construction_date_reception'       => date('Y-m-d', strtotime('+'.rand(180,365).' days')),
             'page_next'                         => 'step4',
         ], 'operation_construction', $doid);
         $results[] = ['step' => '3', 'label' => 'Opération de construction', 'ok' => (bool)$r3,

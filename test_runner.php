@@ -121,9 +121,45 @@ function _cliRunScenario($label, $userId, $withAnnexes = false, $moaOverride = [
         $moaData = ['fields' => 'moa', 'moa_souscripteur' => '1', 'moa_qualite' => '1', 'moa_construction' => '0', 'page_next' => 'step3'];
         if (!empty($moaOverride)) {
             $moaData = array_merge($moaData, $moaOverride);
+
+            // MOA ≠ souscripteur : créer le souscripteur MOA via upsertMoaSouscripteur
+            if (isset($moaOverride['moa_souscripteur']) && $moaOverride['moa_souscripteur'] == '0') {
+                $civilite = $moaOverride['moa_souscripteur_form_civilite'] ?? 'particulier';
+                $nom_prenom = $moaOverride['moa_souscripteur_form_nom_prenom'] ?? '';
+                $raison_sociale = $moaOverride['moa_souscripteur_form_raison_sociale'] ?? '';
+                $sub_data = [
+                    'souscripteur_form_civilite' => $civilite,
+                    'souscripteur_nom_raison' => ($civilite === 'entreprise') ? $raison_sociale : $nom_prenom,
+                    'souscripteur_adresse' => $moaOverride['moa_souscripteur_form_adresse'] ?? '',
+                    'souscripteur_siret' => ($civilite === 'entreprise') ? ($moaOverride['moa_souscripteur_form_siret'] ?? '') : null,
+                ];
+                $sub_id = upsertMoaSouscripteur($doid, $sub_data);
+                if ($sub_id) {
+                    $moaData['moa_souscripteur_id'] = $sub_id;
+                }
+
+                // Si entreprise, aussi créer l'enregistrement entreprise
+                if ($civilite === 'entreprise') {
+                    $ent_id = insertEntreprise([
+                        'raison_sociale' => $raison_sociale,
+                        'nom' => $nom_prenom,
+                        'prenom' => '',
+                        'adresse' => $moaOverride['moa_souscripteur_form_adresse'] ?? '',
+                        'code_postal' => '',
+                        'commune' => '',
+                        'numero_siret' => $moaOverride['moa_souscripteur_form_siret'] ?? '',
+                        'type' => 'moa',
+                    ]);
+                    if ($ent_id) {
+                        $moaData['moa_entreprise_id'] = $ent_id;
+                        $entrepriseIds[] = $ent_id;
+                        echo "    Entreprise moa=#$ent_id\n";
+                    }
+                }
+            }
         }
         $r = update($moaData, 'moa', $doid);
-        $moaLabel = ($moaData['moa_souscripteur'] == '1') ? 'MOA=souscripteur' : 'MOA≠souscripteur (' . ($moaData['moa_souscripteur_form_civilite'] ?? '?') . ')';
+        $moaLabel = ($moaData['moa_souscripteur'] == '1') ? 'MOA=souscripteur' : 'MOA≠souscripteur (' . ($moaOverride['moa_souscripteur_form_civilite'] ?? '?') . ')';
         echo "  Step 2  " . ($r ? 'OK' : 'ECHEC') . "  $moaLabel\n";
         if (!$r) $success = false;
 
@@ -231,18 +267,22 @@ function _cliRunScenario($label, $userId, $withAnnexes = false, $moaOverride = [
 
         // Vérification MOA
         if (!empty($moaOverride) && isset($moaOverride['moa_souscripteur']) && $moaOverride['moa_souscripteur'] == '0') {
-            $moaCivOk = ($data['moa_souscripteur_form_civilite'] ?? '') === ($moaOverride['moa_souscripteur_form_civilite'] ?? '');
-            $moaNomOk = ($data['moa_souscripteur_form_nom_prenom'] ?? '') === ($moaOverride['moa_souscripteur_form_nom_prenom'] ?? '');
+            $civilite = $moaOverride['moa_souscripteur_form_civilite'] ?? '';
+            $moaCivOk = ($data['moa_sub_civilite'] ?? '') === $civilite;
+            $expectedNom = ($civilite === 'entreprise')
+                ? ($moaOverride['moa_souscripteur_form_raison_sociale'] ?? '')
+                : ($moaOverride['moa_souscripteur_form_nom_prenom'] ?? '');
+            $moaNomOk = ($data['moa_sub_nom_raison'] ?? '') === $expectedNom;
             if ($moaCivOk && $moaNomOk) {
-                echo "  MOA     OK  civilite=" . $data['moa_souscripteur_form_civilite'] . " nom=" . $data['moa_souscripteur_form_nom_prenom'] . "\n";
-                if ($moaOverride['moa_souscripteur_form_civilite'] === 'entreprise') {
-                    $rsOk = ($data['moa_souscripteur_form_raison_sociale'] ?? '') === ($moaOverride['moa_souscripteur_form_raison_sociale'] ?? '');
-                    $siretOk = ($data['moa_souscripteur_form_siret'] ?? '') === ($moaOverride['moa_souscripteur_form_siret'] ?? '');
-                    echo "  MOAent  " . (($rsOk && $siretOk) ? 'OK' : 'ECHEC') . "  rs=" . ($data['moa_souscripteur_form_raison_sociale'] ?? '') . " siret=" . ($data['moa_souscripteur_form_siret'] ?? '') . "\n";
-                    if (!$rsOk || !$siretOk) $success = false;
+                echo "  MOA     OK  civilite=" . ($data['moa_sub_civilite'] ?? '') . " nom=" . ($data['moa_sub_nom_raison'] ?? '') . "\n";
+                if ($civilite === 'entreprise') {
+                    $siretOk = ($data['moa_sub_siret'] ?? '') === ($moaOverride['moa_souscripteur_form_siret'] ?? '');
+                    $entOk = !empty($data['moa_entreprise_id']);
+                    echo "  MOAent  " . (($siretOk && $entOk) ? 'OK' : 'ECHEC') . "  siret=" . ($data['moa_sub_siret'] ?? '') . " ent_id=" . ($data['moa_entreprise_id'] ?? 'null') . "\n";
+                    if (!$siretOk || !$entOk) $success = false;
                 }
             } else {
-                echo "  MOA     ECHEC  civilite=" . ($data['moa_souscripteur_form_civilite'] ?? 'null') . " nom=" . ($data['moa_souscripteur_form_nom_prenom'] ?? 'null') . "\n";
+                echo "  MOA     ECHEC  civilite=" . ($data['moa_sub_civilite'] ?? 'null') . " nom=" . ($data['moa_sub_nom_raison'] ?? 'null') . "\n";
                 $success = false;
             }
         }

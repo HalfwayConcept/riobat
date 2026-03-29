@@ -18,10 +18,21 @@ function getDo($doid){
         return $DATA;
     }
 
-    $sql = "SELECT dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.*
+    $sql = "SELECT dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.*,
+                   IF(moa.moa_souscripteur_id IS NULL, 1, 0) AS moa_souscripteur,
+                   moa_sub.souscripteur_id AS moa_sub_souscripteur_id,
+                   moa_sub.souscripteur_form_civilite AS moa_sub_civilite,
+                   moa_sub.souscripteur_nom_raison AS moa_sub_nom_raison,
+                   moa_sub.souscripteur_siret AS moa_sub_siret,
+                   moa_sub.souscripteur_adresse AS moa_sub_adresse,
+                   moa_sub.souscripteur_code_postal AS moa_sub_code_postal,
+                   moa_sub.souscripteur_commune AS moa_sub_commune,
+                   moa_sub.souscripteur_telephone AS moa_sub_telephone,
+                   moa_sub.souscripteur_email AS moa_sub_email
             FROM dommage_ouvrage
             JOIN souscripteur ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
             JOIN moa ON moa.DOID = dommage_ouvrage.DOID
+            LEFT JOIN souscripteur moa_sub ON moa_sub.souscripteur_id = moa.moa_souscripteur_id
             JOIN operation_construction ON operation_construction.DOID = dommage_ouvrage.DOID
             JOIN travaux_annexes ON travaux_annexes.DOID = dommage_ouvrage.DOID
             JOIN situation ON situation.DOID = dommage_ouvrage.DOID
@@ -56,10 +67,17 @@ function getListDo($user_id = null){
     }
 
     $sql = "SELECT dommage_ouvrage.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*,
-                   assurance.nom AS assurance_nom, assurance.logo AS assurance_logo
+                   assurance.nom AS assurance_nom, assurance.logo AS assurance_logo,
+                   IF(moa.moa_souscripteur_id IS NULL, 1, 0) AS moa_souscripteur,
+                   moa_sub.souscripteur_id AS moa_sub_souscripteur_id,
+                   moa_sub.souscripteur_form_civilite AS moa_sub_civilite,
+                   moa_sub.souscripteur_nom_raison AS moa_sub_nom_raison,
+                   moa_sub.souscripteur_siret AS moa_sub_siret,
+                   moa_sub.souscripteur_adresse AS moa_sub_adresse
             FROM souscripteur
             JOIN dommage_ouvrage ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
             JOIN moa ON moa.DOID = dommage_ouvrage.DOID
+            LEFT JOIN souscripteur moa_sub ON moa_sub.souscripteur_id = moa.moa_souscripteur_id
             JOIN utilisateur_session ON utilisateur_session.DOID = dommage_ouvrage.DOID
             JOIN operation_construction ON operation_construction.DOID = dommage_ouvrage.DOID
             JOIN travaux_annexes ON travaux_annexes.DOID = dommage_ouvrage.DOID
@@ -190,13 +208,6 @@ function update($array_SESSION, $table, $DOID){
     foreach ($array_SESSION as $field => $value) {
         if($field != "fields" &&  $field != "page_next"
             && $field != "DOID"
-            && !str_starts_with($field, "sol_")
-            && !str_starts_with($field, "boi_")
-            && !str_starts_with($field, "phv_")
-            && !str_starts_with($field, "geo_")
-            && !str_starts_with($field, "ctt_")
-            && !str_starts_with($field, "moe_")
-            && !str_starts_with($field, "cnr_")
             && !str_starts_with($field, "moa_conception")
             && !str_starts_with($field, "moa_direction")
             && !str_starts_with($field, "moa_surveillance")
@@ -313,6 +324,9 @@ function deleteAllTestDos() {
             $moeStmt = $pdo->prepare('SELECT moe_entreprise_id FROM dommage_ouvrage WHERE DOID = :d');
             $moeStmt->execute([':d' => $doid]);
             $moeRow = $moeStmt->fetch(PDO::FETCH_ASSOC);
+            $moaStmt = $pdo->prepare('SELECT moa_souscripteur_id, moa_entreprise_id FROM moa WHERE DOID = :d');
+            $moaStmt->execute([':d' => $doid]);
+            $moaRow = $moaStmt->fetch(PDO::FETCH_ASSOC);
 
             foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'situation', 'operation_construction', 'moa'] as $t) {
                 $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $doid]);
@@ -329,8 +343,13 @@ function deleteAllTestDos() {
             if ($entRow) { foreach ($entRow as $eid) { if ($eid) $entIds[] = (int)$eid; } }
             if ($solRow && !empty($solRow['sol_entreprise_id'])) $entIds[] = (int)$solRow['sol_entreprise_id'];
             if ($moeRow && !empty($moeRow['moe_entreprise_id'])) $entIds[] = (int)$moeRow['moe_entreprise_id'];
+            if ($moaRow && !empty($moaRow['moa_entreprise_id'])) $entIds[] = (int)$moaRow['moa_entreprise_id'];
             foreach (array_unique($entIds) as $eid) {
                 $pdo->prepare('DELETE FROM entreprise WHERE ID = :id')->execute([':id' => $eid]);
+            }
+            // Supprimer le souscripteur MOA lié
+            if ($moaRow && !empty($moaRow['moa_souscripteur_id'])) {
+                $pdo->prepare('DELETE FROM souscripteur WHERE souscripteur_id = :s')->execute([':s' => (int)$moaRow['moa_souscripteur_id']]);
             }
             $pdo->commit();
             $count++;
@@ -390,6 +409,49 @@ function loadDo($doid){
             if ($col === 'DOID') continue; // DOID is managed separately, skip to avoid polluting UPDATE queries
             $_SESSION["info_".$table][$col] = $do[$col] ?? null;                    
         }
+    }
+
+    // Dériver moa_souscripteur (booléen) depuis moa_souscripteur_id
+    // (la colonne moa_souscripteur a été supprimée, on la recalcule pour la session)
+    $_SESSION['info_moa']['moa_souscripteur'] = empty($do['moa_souscripteur_id']) ? 1 : 0;
+
+    // Charger les données du souscripteur MOA (si MOA ≠ souscripteur)
+    // et restaurer les clés de session compatibles avec le formulaire step2
+    if (!empty($do['moa_souscripteur_id'])) {
+        $_SESSION['info_moa_souscripteur'] = [
+            'souscripteur_form_civilite' => $do['moa_sub_civilite'] ?? null,
+            'souscripteur_nom_raison'    => $do['moa_sub_nom_raison'] ?? null,
+            'souscripteur_siret'         => $do['moa_sub_siret'] ?? null,
+            'souscripteur_adresse'       => $do['moa_sub_adresse'] ?? null,
+            'souscripteur_code_postal'   => $do['moa_sub_code_postal'] ?? null,
+            'souscripteur_commune'       => $do['moa_sub_commune'] ?? null,
+            'souscripteur_telephone'     => $do['moa_sub_telephone'] ?? null,
+            'souscripteur_email'         => $do['moa_sub_email'] ?? null,
+        ];
+
+        // Restaurer les clés formulaire dans info_moa pour le template step2
+        $civilite = $do['moa_sub_civilite'] ?? null;
+        $_SESSION['info_moa']['moa_souscripteur_form_civilite'] = $civilite;
+        $_SESSION['info_moa']['moa_souscripteur_form_adresse'] = $do['moa_sub_adresse'] ?? null;
+        $_SESSION['info_moa']['moa_souscripteur_form_code_postal'] = $do['moa_sub_code_postal'] ?? null;
+        $_SESSION['info_moa']['moa_souscripteur_form_commune'] = $do['moa_sub_commune'] ?? null;
+        $_SESSION['info_moa']['moa_souscripteur_form_siret'] = $do['moa_sub_siret'] ?? null;
+
+        // Raison sociale : depuis souscripteur_nom_raison si entreprise
+        $_SESSION['info_moa']['moa_souscripteur_form_raison_sociale'] = ($civilite === 'entreprise') ? ($do['moa_sub_nom_raison'] ?? null) : null;
+
+        // Nom et prénom toujours stockés dans la table entreprise
+        if (!empty($_SESSION['info_moa']['moa_entreprise_id'])) {
+            require_once __DIR__ . '/entreprise.model.php';
+            $moa_ent = loadEntreprise($_SESSION['info_moa']['moa_entreprise_id']);
+            $_SESSION['info_moa']['moa_souscripteur_form_nom'] = $moa_ent['nom'] ?? '';
+            $_SESSION['info_moa']['moa_souscripteur_form_prenom'] = $moa_ent['prenom'] ?? '';
+        } else {
+            $_SESSION['info_moa']['moa_souscripteur_form_nom'] = '';
+            $_SESSION['info_moa']['moa_souscripteur_form_prenom'] = '';
+        }
+    } else {
+        $_SESSION['info_moa_souscripteur'] = [];
     }
 }
 
@@ -504,5 +566,91 @@ function deleteAssurance($id) {
     if ($stmt->fetchColumn() > 0) return 'used';
     $stmt = $pdo->prepare('DELETE FROM assurance WHERE assurance_id = :id');
     return $stmt->execute([':id' => (int)$id]);
+}
+
+/**
+ * Crée ou met à jour le souscripteur MOA (quand MOA ≠ souscripteur principal).
+ * Retourne l'ID du souscripteur MOA.
+ */
+function upsertMoaSouscripteur(int $doid, array $data): int|false {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+
+    // Récupérer l'ID existant
+    $stmt = $pdo->prepare('SELECT moa_souscripteur_id FROM moa WHERE DOID = :doid');
+    $stmt->execute([':doid' => $doid]);
+    $existing_id = $stmt->fetchColumn();
+
+    $params = [
+        ':civilite'   => $data['souscripteur_form_civilite'] ?? null,
+        ':nom'        => $data['souscripteur_nom_raison'] ?? null,
+        ':siret'      => !empty($data['souscripteur_siret']) ? $data['souscripteur_siret'] : null,
+        ':adresse'    => $data['souscripteur_adresse'] ?? null,
+        ':cp'         => !empty($data['souscripteur_code_postal']) ? $data['souscripteur_code_postal'] : 0,
+        ':commune'    => $data['souscripteur_commune'] ?? '',
+        ':telephone'  => $data['souscripteur_telephone'] ?? '',
+        ':email'      => $data['souscripteur_email'] ?? '',
+    ];
+
+    if ($existing_id) {
+        // UPDATE
+        $sql = "UPDATE souscripteur SET
+                    souscripteur_form_civilite = :civilite,
+                    souscripteur_nom_raison = :nom,
+                    souscripteur_siret = :siret,
+                    souscripteur_adresse = :adresse,
+                    souscripteur_code_postal = :cp,
+                    souscripteur_commune = :commune,
+                    souscripteur_telephone = :telephone,
+                    souscripteur_email = :email
+                WHERE souscripteur_id = :id";
+        $params[':id'] = $existing_id;
+        $pdo->prepare($sql)->execute($params);
+
+        require_once __DIR__ . '/../controllers/LogController.php';
+        logQuery($doid, 'souscripteur', $sql, $params, $_SESSION['user_id'] ?? null, 'réussi');
+
+        return (int)$existing_id;
+    } else {
+        // INSERT
+        $sql = "INSERT INTO souscripteur (souscripteur_form_civilite, souscripteur_nom_raison, souscripteur_siret,
+                    souscripteur_adresse, souscripteur_code_postal, souscripteur_commune, souscripteur_telephone, souscripteur_email)
+                VALUES (:civilite, :nom, :siret, :adresse, :cp, :commune, :telephone, :email)";
+        $pdo->prepare($sql)->execute($params);
+        $new_id = (int)$pdo->lastInsertId();
+
+        // Lier à la table moa
+        $pdo->prepare('UPDATE moa SET moa_souscripteur_id = :sid WHERE DOID = :doid')
+            ->execute([':sid' => $new_id, ':doid' => $doid]);
+
+        require_once __DIR__ . '/../controllers/LogController.php';
+        logQuery($doid, 'souscripteur', $sql, $params, $_SESSION['user_id'] ?? null, 'réussi');
+
+        return $new_id;
+    }
+}
+
+/**
+ * Récupère les données du souscripteur MOA (quand MOA ≠ souscripteur principal).
+ */
+function getMoaSouscripteur(int $doid): array|false {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $sql = "SELECT s.* FROM souscripteur s
+            JOIN moa ON moa.moa_souscripteur_id = s.souscripteur_id
+            WHERE moa.DOID = :doid LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':doid' => $doid]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Supprime le lien MOA→souscripteur (quand on repasse MOA = souscripteur).
+ */
+function clearMoaSouscripteur(int $doid): bool {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return false;
+    $stmt = $pdo->prepare('UPDATE moa SET moa_souscripteur_id = NULL WHERE DOID = :doid');
+    return $stmt->execute([':doid' => $doid]);
 }
 

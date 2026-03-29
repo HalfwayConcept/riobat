@@ -1,4 +1,46 @@
 <script src="public/script/s02-maitre-ouvrage.js"></script>
+<script src="public/script/adresse-autocomplete.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('search_adresse_moa');
+    var ul = document.getElementById('search_adresse_moa_suggestions');
+    if (!input || !ul) return;
+    let timeoutMoa;
+    input.addEventListener('input', function() {
+        var query = input.value;
+        clearTimeout(timeoutMoa);
+        if (query.length < 3) { ul.classList.add('hidden'); return; }
+        timeoutMoa = setTimeout(function() {
+            fetch('https://api-adresse.data.gouv.fr/search/?q=' + encodeURIComponent(query) + '&limit=7')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    ul.innerHTML = '';
+                    if (!data.features || data.features.length === 0) { ul.classList.add('hidden'); return; }
+                    data.features.forEach(function(f) {
+                        var li = document.createElement('li');
+                        li.textContent = f.properties.label;
+                        li.className = 'px-4 py-2 cursor-pointer hover:bg-blue-100';
+                        li.onclick = function() {
+                            input.value = f.properties.label;
+                            ul.classList.add('hidden');
+                            var adresse = document.getElementById('moa_souscripteur_form_adresse');
+                            var cp = document.querySelector('input[name="moa_souscripteur_form_code_postal"]');
+                            var commune = document.querySelector('input[name="moa_souscripteur_form_commune"]');
+                            if (adresse) adresse.value = f.properties.name || '';
+                            if (cp) cp.value = f.properties.postcode || '';
+                            if (commune) commune.value = f.properties.city || '';
+                        };
+                        ul.appendChild(li);
+                    });
+                    ul.classList.remove('hidden');
+                });
+        }, 300);
+    });
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !ul.contains(e.target)) ul.classList.add('hidden');
+    });
+});
+</script>
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER HARMONISÉ -->
     <div class="mb-8">
@@ -63,18 +105,53 @@
                         <input type="radio" name="moa_souscripteur_form_civilite" value="particulier" id="radio_moa_civilite_particulier" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="particulier" ? "checked=checked" : ""; ?>/>
                         <input type="radio" name="moa_souscripteur_form_civilite" value="entreprise" id="radio_moa_civilite_entreprise" class="hidden" <?= isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && ($_SESSION['info_moa']['moa_souscripteur_form_civilite'])=="entreprise" ? "checked=checked" : ""; ?>/>
                     </div>
+                    <?php $is_entreprise = isset($_SESSION['info_moa']['moa_souscripteur_form_civilite']) && $_SESSION['info_moa']['moa_souscripteur_form_civilite'] === 'entreprise'; ?>
                     <div class="py-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom, Prénom </label>
-                        <input type="text" name="moa_souscripteur_form_nom_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <div class="grid gap-6 md:grid-cols-2">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom</label>
+                                <input type="text" name="moa_souscripteur_form_nom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_nom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_nom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom</label>
+                                <input type="text" name="moa_souscripteur_form_prenom" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_prenom']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_prenom']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                            </div>
+                        </div>
                     </div>
-
-                    <div id="raison_champ" class="hidden py-4">
+                    <div id="raison_champ" class="<?= $is_entreprise ? '' : 'hidden' ?> py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raison sociale</label>
                         <input type="text" id="moa_souscripteur_form_raison_sociale" name="moa_souscripteur_form_raison_sociale" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_raison_sociale']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
-                    <div id="siret_champ" class="hidden py-4">
+                    <div id="siret_champ" class="<?= $is_entreprise ? '' : 'hidden' ?> py-4">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SIRET n°</label>
                         <input type="text" name="moa_souscripteur_form_siret" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_siret']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_siret']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                    </div>
+
+                    <!-- Recherche d'adresse avec autocomplétion -->
+                    <div class="py-4 relative">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Recherche d'adresse</label>
+                        <div class="relative">
+                            <input type="text" id="search_adresse_moa" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Rechercher une adresse..." autocomplete="off" />
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </span>
+                            <ul id="search_adresse_moa_suggestions" class="bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto hidden z-10 absolute w-full"></ul>
+                        </div>
+                    </div>
+
+                    <div class="py-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse</label>
+                        <input type="text" id="moa_souscripteur_form_adresse" name="moa_souscripteur_form_adresse" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_adresse']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_adresse']) : ''; ?>" placeholder="Adresse du Maître d'Ouvrage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                    </div>
+                    <div class="grid gap-6 mb-2 md:grid-cols-2">
+                        <div class="py-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code postal</label>
+                            <input type="text" name="moa_souscripteur_form_code_postal" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_code_postal']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_code_postal']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        </div>
+                        <div class="py-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Commune</label>
+                            <input type="text" name="moa_souscripteur_form_commune" value="<?= isset($_SESSION['info_moa']['moa_souscripteur_form_commune']) ? htmlspecialchars($_SESSION['info_moa']['moa_souscripteur_form_commune']) : ''; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        </div>
                     </div>
                 </div>
             </div>

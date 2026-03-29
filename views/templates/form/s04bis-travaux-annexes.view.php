@@ -74,22 +74,14 @@
     <hr>
     <div class="mt-4">
         <h3 class="section-title">Panneaux photovoltaïques</h3>
-        <div class="ml-10 mt-6">
-            <h3 class="section-title">Quel est le système de montage des panneaux ?</h3>
-            <div class="ml-10">
-                <span>
-                    <input type="radio" name="trav_annexes_pv_montage" value="integre" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && ($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'])=="integre" ? "checked=checked" : ""; ?>/>
-                    <label> intégrés à la toiture</label>
-                </span>
-                <span class="ml-4">
-                    <input type="radio" name="trav_annexes_pv_montage" value="surimpose" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && ($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'])=="surimpose" ? "checked=checked" : ""; ?>/>
-                    <label> surimposés à la toiture</label>
-                </span>
-                <span class="ml-4">
-                    <input type="radio" name="trav_annexes_pv_montage" value="autre" <?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && ($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'])=="autre" ? "checked=checked" : ""; ?>/>
-                    <label> autres (ex : façade... )</label>
-                </span>
-            </div>
+        <div class="ml-10 mt-6 flex items-center justify-between">
+            <label class="font-normal flex-1 pr-4 text-left">Quel est le système de montage des panneaux ? <span class="text-red-500">*</span></label>
+            <select name="trav_annexes_pv_montage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-64">
+                <option value="">-- Sélectionnez --</option>
+                <option value="integre" <?= (isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && $_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'] == 'integre') ? 'selected' : '' ?>>Intégrés à la toiture</option>
+                <option value="surimpose" <?= (isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && $_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'] == 'surimpose') ? 'selected' : '' ?>>Surimposés à la toiture</option>
+                <option value="autre" <?= (isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_montage']) && $_SESSION['info_travaux_annexes']['trav_annexes_pv_montage'] == 'autre') ? 'selected' : '' ?>>Autres (ex : façade...)</option>
+            </select>
         </div>
         <div class="ml-10 mt-4 flex items-center justify-between">
             <label class="font-normal flex-1 pr-4 text-left">Les procédés mis en oeuvre bénéficient-ils d'un avis technique ?</label>
@@ -122,31 +114,30 @@
                 <input type="radio" name="trav_annexes_pv_liste_c2p" value="0" id="radio_trav_annexes_pv_liste_c2p_non" class="hidden" checked="checked" />
             </label>
         </div>
-        <div class="ml-10 mt-4">
-            <span class="font-normal">Quelle est la surface de l'installation ?
-                <input type="text" name="trav_annexes_pv_surface" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_surface']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_surface'] : ''?>" class="bg-gray-50 ml-4 h-2.5 w-[60px] rounded-md"/> m²
-            </span>
+        <div class="ml-10 mt-4 grid grid-cols-2 gap-4">
+            <div class="flex items-center">
+                <label class="font-normal pr-2">Surface de l'installation <span class="text-red-500">*</span></label>
+                <input type="text" name="trav_annexes_pv_surface" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_surface']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_surface'] : ''?>" class="bg-gray-50 border border-gray-300 text-sm rounded-lg h-8 w-[80px] p-2"/> <span class="ml-1">m²</span>
+            </div>
+            <div class="flex items-center">
+                <label class="font-normal pr-2">Puissance de l'installation <span class="text-red-500">*</span></label>
+                <input type="text" name="trav_annexes_pv_puissance" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance'] : ''?>" class="bg-gray-50 border border-gray-300 text-sm rounded-lg h-8 w-[80px] p-2"/> <span class="ml-1">kWc</span>
+            </div>
         </div>
-        <div class="ml-10 mt-4">
-            <span class="font-normal">Quelle est la puissance de l'installation ?
-                <input type="text" name="trav_annexes_pv_puissance" value="<?= isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance']) ? $_SESSION['info_travaux_annexes']['trav_annexes_pv_puissance'] : ''?>" class="bg-gray-50 ml-4 h-2.5 w-[60px] rounded-md"/> kWc
-            </span>
-        </div>
-        <div class="ml-10 mt-4">
+        <div class="ml-10 mt-4 flex items-center justify-between">
                 <label class="font-normal flex-1 pr-4 text-left flex items-center">
                     Quelle est la destination de l'électricité produite par l'installation photovoltaïque ? <span class="text-red-500">*</span>
+                    <button data-popover-target="popover-description-pv" data-popover-placement="bottom-end" type="button" class="ml-1 relative"><svg class="w-4 h-4 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
+                    <div data-popover id="popover-description-pv" role="tooltip" class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72">
+                            <div class="p-3 space-y-2">
+                                <h3 class="font-semibold text-gray-900">Conditions d'acceptation : </h3>
+                                <p>Un contrat de production a été souscrit avec un opérateur dans le domaine de l'énergie</p>
+                            </div>
+                    </div>
                 </label>
-                <label class="inline-flex items-center cursor-pointer">
+                <label class="inline-flex items-center cursor-pointer shrink-0">
                     <span class="select-none text-sm font-medium text-gray-900 flex items-center">
-                        <span id="label_revente" class="destination-label<?= (!isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']) || $_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']=='revente') ? ' font-bold' : '' ?>" title="Revente : l'électricité est vendue à un opérateur">Revente</span>
-                        <button data-popover-target="popover-description" data-popover-placement="bottom-end" type="button" class="ml-1 mr-2"><svg class="w-4 h-4 ms-2 text-gray-400 hover:text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg><span class="sr-only">Show information</span></button>
-                        <div data-popover id="popover-description" role="tooltip" class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-                                <div class="p-3 space-y-2">
-                                    <h3 class="font-semibold text-gray-900 dark:text-white">Conditions d'acceptation : </h3>
-                                    <p>Un contrat de production a été souscrit avec un opérateur dans le domaine de l'énergie</p>
-                                </div>
-                        </div>
-                        <span class="mx-1"></span>
+                        <span id="label_revente" class="destination-label<?= (!isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']) || $_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']=='revente') ? ' font-bold' : '' ?>">Revente</span>
                         <input name="trav_annexes_pv_destination" type="checkbox" id="toggle_trav_annexes_pv_destination" class="sr-only peer" value="revente"
                             onchange="
                                 document.getElementById('label_autocons').classList.toggle('font-bold', this.checked===false);
@@ -162,7 +153,6 @@
                         <span id="label_autocons" class="destination-label<?= (isset($_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']) && $_SESSION['info_travaux_annexes']['trav_annexes_pv_destination']=='autocons') ? ' font-bold' : '' ?>">Autoconsommation</span>
                     </span>
                 </label>
-
         </div>
         <div class="ml-10 mt-4">
             <span class="font-normal">Nom de l'entreprise réalisant l'installation : &ensp;&ensp;</span>
