@@ -17,7 +17,7 @@ function check_login($email, $password){
     logQuery(null, 'utilisateur', $stmt->queryString, [':email' => $email], $user_id, 'réussi');
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    //if (!$user) return false;
+    if (!$user) return false;
 
     $stored = $user['pass'];
 
