@@ -4,19 +4,7 @@ require_once __DIR__ . '/connect.db.php';
 
 function getDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
-    if (!$pdo) {
-        $sql = "SELECT dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.*
-                FROM dommage_ouvrage
-                JOIN souscripteur ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
-                JOIN moa ON moa.DOID = dommage_ouvrage.DOID
-                JOIN operation_construction ON operation_construction.DOID = dommage_ouvrage.DOID
-                JOIN travaux_annexes ON travaux_annexes.DOID = dommage_ouvrage.DOID
-                JOIN situation ON situation.DOID = dommage_ouvrage.DOID
-                WHERE dommage_ouvrage.DOID = $doid;";
-        $resquery = mysqli_query($GLOBALS['conn'], $sql);
-        $DATA = mysqli_fetch_array($resquery, MYSQLI_ASSOC);
-        return $DATA;
-    }
+    if (!$pdo) return false;
 
     $sql = "SELECT dommage_ouvrage.*, souscripteur.*, moa.*, operation_construction.*, situation.*, travaux_annexes.*,
                    IF(moa.moa_souscripteur_id IS NULL, 1, 0) AS moa_souscripteur,
@@ -49,22 +37,7 @@ function getDo($doid){
 
 function getListDo($user_id = null){
     $pdo = $GLOBALS['pdo'] ?? null;
-    if (!$pdo) {
-        $sql = "SELECT dommage_ouvrage.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*
-                FROM souscripteur
-                JOIN dommage_ouvrage ON dommage_ouvrage.souscripteur_id = souscripteur.souscripteur_id
-                JOIN moa ON moa.DOID = dommage_ouvrage.DOID
-                JOIN utilisateur_session ON utilisateur_session.DOID = dommage_ouvrage.DOID
-                JOIN operation_construction ON operation_construction.DOID = dommage_ouvrage.DOID
-                JOIN travaux_annexes ON travaux_annexes.DOID = dommage_ouvrage.DOID
-                JOIN situation ON situation.DOID = dommage_ouvrage.DOID";
-        if($user_id != null){
-            $sql .= " WHERE utilisateur_session.utilisateur_id = $user_id";
-        }
-        $resquery = mysqli_query($GLOBALS['conn'], $sql);
-        $DATA = mysqli_fetch_all($resquery, MYSQLI_ASSOC);
-        return $DATA;
-    }
+    if (!$pdo) return [];
 
     $sql = "SELECT dommage_ouvrage.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*,
                    assurance.nom AS assurance_nom, assurance.logo AS assurance_logo,

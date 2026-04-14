@@ -6,6 +6,10 @@
  * Sans --cleanup : exécute les scénarios et conserve les données (affiche les DOID)
  * Avec --cleanup : exécute les scénarios puis nettoie automatiquement
  */
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    die('Accès interdit.');
+}
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 

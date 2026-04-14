@@ -7,8 +7,7 @@ require_once __DIR__ . '/connect.db.php';
 function check_login($email, $password){
     if (empty($email) || empty($password)) return false;
     $pdo = $GLOBALS['pdo'] ?? null;
-    var_dump($pdo);
-    //if (!$pdo) return false;
+    if (!$pdo) return false;
 
     $stmt = $pdo->prepare('SELECT ID, pass, role FROM utilisateur WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
@@ -119,7 +118,7 @@ function register_user($array_post){
 }
 
 function send_email_new_user($last_id, $first_name, $last_name, $email ){
-    $to = "christophe_leydier@hotmail.com";
+    $to = getenv('ADMIN_EMAIL') ?: 'cabinetcotton@outlook.fr';
     $subject = "[RIOBAT] Nouvel utilisateur";
 
     $message = "
@@ -265,7 +264,7 @@ function truncateFormTables(){
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return false;
 
-    $tables = ['do_historique', 'utilisateur_session', 'rcd', 'rcd_upload_tokens', 'log', 'travaux_annexes', 'situation', 'operation_construction', 'moa', 'dommage_ouvrage', 'entreprise', 'souscripteur'];
+    $tables = ['do_historique', 'utilisateur_session', 'rcd', 'rcd_upload_token', 'log', 'travaux_annexes', 'situation', 'operation_construction', 'moa', 'dommage_ouvrage', 'entreprise', 'souscripteur'];
     $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
     foreach ($tables as $t) {
         $pdo->exec('TRUNCATE TABLE `' . $t . '`');
