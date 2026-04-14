@@ -118,7 +118,7 @@ function register_user($array_post){
 }
 
 function send_email_new_user($last_id, $first_name, $last_name, $email ){
-    $to = getenv('ADMIN_EMAIL') ?: 'cabinetcotton@outlook.fr';
+    $to = "contact@riobat.cc-assur.fr";
     $subject = "[RIOBAT] Nouvel utilisateur";
 
     $message = "
@@ -148,7 +148,7 @@ function send_email_new_user($last_id, $first_name, $last_name, $email ){
 
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= 'From: <contact@riobat.ruki5964.odns.fr>' . "\r\n";
+    $headers .= 'From: <contact@riobat.cc-assur.fr>' . "\r\n";
 
     mail($to,$subject,$message,$headers);
 }
