@@ -456,7 +456,7 @@
                     $nextstep = $_POST['page_next'];
                 }
                 header("Location: index.php?page=".$nextstep."&doid=$doid");
-
+                exit;
             }
             
         }
@@ -469,7 +469,7 @@
             && $_SESSION["info_situation"]['situation_cnr'] =="0") {
                 $doid = !empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '';
                 header("Location: index.php?page=step5&doid=$doid");
-            }  
+                exit;            }  
         }
 
  
