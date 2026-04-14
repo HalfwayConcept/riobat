@@ -4,7 +4,7 @@
 
         <!-- Champ texte CGU -->
         <h1 class="mb-4 text-xl lg:text-2xl font-extrabold tracking-tight leading-none text-gray-800 dark:text-white">Dommage Ouvrage</h1>
-        <textarea id="cgu" class="p-2 w-[500px] h-[400px] lg:w-[700px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
+        <textarea id="cgu" class="p-2 w-full max-w-[700px] h-[400px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
             Ce contrat est commercialisé par la société Cabinet Cotton Alexandre, courtier/agent d'assurance -  immatriculé  à  l'Orias  (Registre  unique  des  intermédiaires  en  assurance)  sous  le  numéro  18002947 (www.orias.fr) et au RCS de Mende n° 840 357 743.  
             Le siège social de la société Cabinet Cotton Alexandre est situé au 5, rue Boulevard du Soubeyran 48000 MENDE. La forme juridique de la société Cabinet Cotton Alexandre est une EIRL. 
 
@@ -18,7 +18,7 @@
             
         <!-- Champ texte RGPD -->
         <h1 class="mb-4 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Mentions légales RGPD</h1>
-        <textarea id="rgpd" class="p-2 w-[500px] h-[400px] lg:w-[700px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
+        <textarea id="rgpd" class="p-2 w-full max-w-[700px] h-[400px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
            <?= RGPD_TEXT ?>
         </textarea>
 

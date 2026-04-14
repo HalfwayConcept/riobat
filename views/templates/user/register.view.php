@@ -47,7 +47,7 @@
             
             <!-- Champ texte RGPD -->
             <h1 class="mb-6 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Mentions légales RGPD</h1>
-            <textarea id="rgpd" class="p-2 h-[200px] md:w-[410px] lg:w-[730px] xl:w-[1000px] m-auto p-4  mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
+            <textarea id="rgpd" class="p-2 h-[200px] w-full max-w-[1000px] m-auto p-4 mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
                 <?= RGPD_TEXT;?>
             </textarea>
             <!-- Checkbox "Lu et approuvé" -->

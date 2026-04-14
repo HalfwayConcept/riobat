@@ -37,7 +37,8 @@ function login(){
 
 function logout(){ 
     session_destroy();
-    header("Location: index.php?page=home"); 
+    header("Location: index.php?page=home");
+    exit;
 }
 
 function passwordReminder($message =""){
