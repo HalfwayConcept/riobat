@@ -14,3 +14,4 @@ public/uploads/
 
 # SQL dumps
 inc/bdd/*.sql
+inc/settings.env.php
