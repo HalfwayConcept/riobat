@@ -5,6 +5,10 @@ inc/settings.php
 # Environment file (contains secrets)
 .env
 
+# Configuration hébergement (contient des accès sensibles)
+inc/settings-o2switch.md
+inc/settings.php
+
 # Uploads and user files
 public/uploads/
 

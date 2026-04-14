@@ -44,6 +44,11 @@
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8L17.4392 9.975C15.454 11.078 14.4614 11.63 13.4102 11.846C12.4798 12.037 11.5202 12.037 10.5898 11.846C9.53864 11.63 8.54603 11.078 6.5608 9.975L3 8M6.2 19H17.8C18.9201 19 19.4802 19 19.908 18.782C20.2843 18.59 20.5903 18.284 20.782 17.908C21 17.48 21 16.92 21 15.8V8.2C21 7.08 21 6.52 20.782 6.092C20.5903 5.716 20.2843 5.41 19.908 5.218C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.218C3.71569 5.41 3.40973 5.716 3.21799 6.092C3 6.52 3 7.08 3 8.2V15.8C3 16.92 3 17.48 3.21799 17.908C3.40973 18.284 3.71569 18.59 4.09202 18.782C4.51984 19 5.07989 19 6.2 19Z"/></svg>
                     Envoyer par mail
                 </button>
+                <!-- Bouton rappel pièces manquantes -->
+                <button type="button" id="btn-rappel-link" onclick="sendRappelRcdByMail()" class="shrink-0 inline-flex items-center gap-1 py-2.5 px-4 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg focus:ring-4 focus:outline-none focus:ring-orange-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5 18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z"/></svg>
+                    Rappel RCD
+                </button>
             </div>
             <p id="link-expiry-info" class="mt-1 text-xs text-gray-500 dark:text-gray-400 hidden"></p>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Attention à ne communiquer ce lien qu'à l'émetteur de la demande</p>

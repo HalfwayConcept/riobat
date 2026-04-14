@@ -89,6 +89,14 @@
                 require 'controllers/ticket.controller.php';
                 adminTicketsDisplay();
                 break;
+            case 'faq':
+                require 'controllers/faq.controller.php';
+                faqDisplay();
+                break;
+            case 'admin_faq':
+                require 'controllers/faq.controller.php';
+                adminFaqDisplay();
+                break;
             case 'ticket_create':
                 require 'controllers/ticket.controller.php';
                 ticketCreate();

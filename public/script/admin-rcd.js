@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         var input = document.getElementById('url-shortener');
                         input.value = data.url;
                         document.getElementById('btn-mailto-link').disabled = false;
+                        document.getElementById('btn-rappel-link').disabled = false;
                         document.getElementById('btn-generate-link').textContent = 'Renouveler';
                         var info = document.getElementById('link-expiry-info');
                         info.textContent = 'Expire le ' + new Date(data.expires).toLocaleDateString('fr-FR') + ' à ' + new Date(data.expires).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
@@ -175,6 +176,7 @@ function generateRcdToken(doid) {
                 var input = document.getElementById('url-shortener');
                 input.value = data.url;
                 document.getElementById('btn-mailto-link').disabled = false;
+                document.getElementById('btn-rappel-link').disabled = false;
                 btn.innerHTML = '<svg class="w-4 h-4 me-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"/></svg> Renouveler';
                 var info = document.getElementById('link-expiry-info');
                 info.textContent = 'Expire le ' + new Date(data.expires).toLocaleDateString('fr-FR') + ' à ' + new Date(data.expires).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
@@ -224,6 +226,28 @@ function sendUploadLinkByMail() {
         'Pour cela, veuillez cliquer sur le lien sécurisé ci-dessous :\n' +
         url + '\n\n' +
         'Ce lien est valable 7 jours.\n\n' +
+        'Cordialement'
+    );
+
+    window.location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + subject + '&body=' + body;
+}
+
+function sendRappelRcdByMail() {
+    var url = document.getElementById('url-shortener').value;
+    if (!url) return;
+
+    var form = document.getElementById('form-rcd');
+    var email = form.dataset.souscripteurEmail || '';
+    var doid = form.dataset.doid || '';
+
+    var subject = encodeURIComponent('Rappel — Pièces RCD manquantes — DO n°' + doid);
+    var body = encodeURIComponent(
+        'Bonjour,\n\n' +
+        'Nous vous avons précédemment sollicité pour la transmission des attestations de responsabilité civile décennale concernant la dommage ouvrage n°' + doid + '.\n\n' +
+        'À ce jour, certaines pièces n\'ont pas encore été transmises ou nécessitent une correction.\n\n' +
+        'Nous vous prions de bien vouloir compléter votre envoi via le lien sécurisé ci-dessous :\n' +
+        url + '\n\n' +
+        'Sans retour de votre part, le traitement du dossier ne pourra pas être finalisé.\n\n' +
         'Cordialement'
     );
 
