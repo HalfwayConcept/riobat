@@ -12,7 +12,7 @@
             Administration
         </a>
     </div>
-<p class="text-center font-medium text-2xl mt-16">Liste des Dommages Ouvrages</p>
+<p class="text-center font-medium text-2xl mt-16">Liste des demandes contrat</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>
     </div>

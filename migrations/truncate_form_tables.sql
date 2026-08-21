@@ -1,7 +1,7 @@
 -- Script de nettoyage des tables principales du formulaire DO
 SET FOREIGN_KEY_CHECKS=0;
 TRUNCATE TABLE `travaux_annexes`;
-TRUNCATE TABLE `dommage_ouvrage`;
+TRUNCATE TABLE `dommage_contrat`;
 TRUNCATE TABLE `entreprise`;
 TRUNCATE TABLE `moa`;
 TRUNCATE TABLE `operation_construction`;

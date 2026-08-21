@@ -6,10 +6,6 @@
  * Sans --cleanup : exécute les scénarios et conserve les données (affiche les DOID)
  * Avec --cleanup : exécute les scénarios puis nettoie automatiquement
  */
-if (php_sapi_name() !== 'cli') {
-    http_response_code(403);
-    die('Accès interdit.');
-}
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -58,10 +54,10 @@ function _cliCleanupDoid($doid, $entrepriseIds = []) {
         foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'situation', 'operation_construction', 'moa'] as $t) {
             $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $doid]);
         }
-        $stmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_ouvrage WHERE DOID = :d');
+        $stmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_contrat WHERE DOID = :d');
         $stmt->execute([':d' => $doid]);
         $sid = $stmt->fetchColumn();
-        $pdo->prepare('DELETE FROM dommage_ouvrage WHERE DOID = :d')->execute([':d' => $doid]);
+        $pdo->prepare('DELETE FROM dommage_contrat WHERE DOID = :d')->execute([':d' => $doid]);
         if ($sid) $pdo->prepare('DELETE FROM souscripteur WHERE souscripteur_id = :s')->execute([':s' => $sid]);
 
         // Supprimer les entreprises
@@ -110,7 +106,7 @@ function _cliRunScenario($label, $userId, $withAnnexes = false, $moaOverride = [
             // Flaguer comme DO de test
             $pdo = $GLOBALS['pdo'] ?? null;
             if ($pdo) {
-                $pdo->prepare('UPDATE dommage_ouvrage SET is_test = 1 WHERE DOID = :d')->execute([':d' => $doid]);
+                $pdo->prepare('UPDATE dommage_contrat SET is_test = 1 WHERE DOID = :d')->execute([':d' => $doid]);
             }
             $_SESSION['DOID'] = $doid;
             insert_utilisateur_session($doid, $userId);

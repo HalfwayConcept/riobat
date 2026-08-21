@@ -83,14 +83,14 @@
                     </h2>
                 </div>
                 <div class="p-6 space-y-3">
-                    <form method="post" action="index.php?page=admin_settings" onsubmit="return confirm('⚠️ ATTENTION : Cela va supprimer TOUTES les données des tables DO (souscripteur, dommage_ouvrage, situation, etc.) de manière irréversible.\n\nConfirmer le nettoyage ?');">
+                    <form method="post" action="index.php?page=admin_settings" onsubmit="return confirm('⚠️ ATTENTION : Cela va supprimer TOUTES les données des tables DO et PV (souscripteur, dommage_contrat, situation, pv_*, etc.) de manière irréversible.\n\nConfirmer le nettoyage ?');">
                         <button type="submit" name="truncate_form_tables" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 hover:bg-red-50 dark:bg-gray-700 dark:hover:bg-red-900/20 transition-colors group text-left">
                             <div class="flex-shrink-0 w-10 h-10 bg-red-100 dark:bg-red-900/40 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-red-600 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </div>
                             <div>
-                                <p class="font-medium text-gray-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-300">Vider toutes les tables DO</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Suppression irréversible de toutes les DO</p>
+                                <p class="font-medium text-gray-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-300">Vider toutes les tables DO et PV</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Suppression irréversible de toutes les demandes DO/PV</p>
                             </div>
                         </button>
                     </form>

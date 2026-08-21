@@ -1,5 +1,11 @@
 <?php
-    
+    $isPvTheme = (($_SESSION['type_demande'] ?? 'do') === 'pv');
+    $stepperSectionClass = $isPvTheme ? 'border-l-4 border-amber-500 bg-amber-50' : 'border-l-4 border-blue-500 bg-blue-50';
+    $activeStepTextClass = $isPvTheme ? 'text-amber-700' : 'text-blue-700';
+    $activeStepBadgeClass = $isPvTheme
+        ? 'flex items-center justify-center w-7 h-7 bg-amber-200 rounded-full border-2 border-amber-700'
+        : 'flex items-center justify-center w-7 h-7 bg-blue-200 rounded-full border-2 border-blue-700';
+    $stepLinkColorClass = $isPvTheme ? 'text-amber-700' : 'text-blue-700';
     
     if(!empty($_GET['page']) && substr($_GET['page'], 0, 4) === "step"):
     if($currentstep != 'rcd'):
@@ -8,17 +14,24 @@
         $home = 'border-blue-500 bg-blue-50';
     }else{  
         // Stepper Flowbite style
-            echo '<section id="stepper" class="flex flex-row items-center justify-center mb-4 m-2 p-2 border-l-4 border-blue-500 bg-blue-50">';
+            echo '<section id="stepper" class="flex flex-row items-center justify-center mb-4 m-2 p-2 '.$stepperSectionClass.'">';
             echo '<div class="flex flex-row w-full">';
+        $step2Title = $isPvTheme ? 'DESCRIPTION' : "Maitre d'Ouvrage";
+        $step2Subtitle = $isPvTheme ? 'DE LA CENTRALE PHOTOVOLTAIQUE' : 'Informations';
+        $step3Title = $isPvTheme ? 'CENTRALE PHOTOVOLTAIQUE' : 'Opération de construction';
+        $step3Subtitle = $isPvTheme ? '<div class="flex flex-col gap-0 hover:underline text-[11px] '.$stepLinkColorClass.'">
+                    <a href="index.php?page=step4">&gt; prévention</a>
+                    <a href="index.php?page=step4bis">&gt; environnement</a>
+                    <a href="index.php?page=step4ter">&gt; protection</a>
+                </div>' : "<div class=\"flex flex-col gap-0 hover:underline $stepLinkColorClass text-[11px] \">
+                    <a href='index.php?page=step3' >&gt; Nature et type de l'ouvrage</a>
+                <a href='index.php?page=step4' >&gt; Situation de l'ouvrage</a>
+                <a href='index.php?page=step4bis' >&gt; Travaux annexes</a>
+                    </div>";
         $steps = [
             ["step1", "Souscripteur", "Coordonnées", '<svg class="w-5 h-5 text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/></svg>'],
-            ["step2", "Maitre d'Ouvrage", "Informations", '<svg class="w-5 h-5 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/></svg>'],
-            ["step3", "Opération de construction", 
-                "<div class=\"flex flex-col gap-0 hover:underline text-blue-700 text-[11px] \">
-                    <a href='index.php?page=step3' >> Nature et type de l'ouvrage</a>
-                    <a href='index.php?page=step4' >> Situation de l'ouvrage</a>
-                    <a href='index.php?page=step4bis' >> Travaux annexes</a>
-                    </div>", '<svg class="w-5 h-5 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/></svg>'],
+            ["step2", $step2Title, $step2Subtitle, '<svg class="w-5 h-5 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/></svg>'],
+            ["step3", $step3Title, $step3Subtitle, '<svg class="w-5 h-5 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/></svg>'],
             ["step5", "Garanties demandées", "Maîtrise d'oeuvre et Garanties", '<svg class="w-5 h-5 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/></svg>'],
             ["validation", "Validation", "Validation finale", '<svg class="w-5 h-5 text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>']
         ];
@@ -31,10 +44,12 @@
         for ($i = 0; $i < count($steps); $i++) {
             $isActive = ($i == $currentIndex);
             $isDone = ($i < $currentIndex);
-            $liClass = $isActive ? 'text-blue-700 space-x-2 rtl:space-x-reverse font-bold' : ($isDone ? 'text-fg-brand space-x-2 rtl:space-x-reverse' : 'text-body space-x-2 rtl:space-x-reverse');
-            $spanClass = $isActive ? 'flex items-center justify-center w-7 h-7 bg-blue-200 rounded-full border-2 border-blue-700' : 'flex items-center justify-center w-7 h-7 bg-neutral-tertiary rounded-full';
+            $liClass = $isActive ? $activeStepTextClass.' space-x-2 rtl:space-x-reverse font-bold' : ($isDone ? 'text-fg-brand space-x-2 rtl:space-x-reverse' : 'text-body space-x-2 rtl:space-x-reverse');
+            $spanClass = $isActive ? $activeStepBadgeClass : 'flex items-center justify-center w-7 h-7 bg-neutral-tertiary rounded-full';
             if ($i >= 3 && $isActive) { 
-                $spanClass =         'flex items-center justify-center w-7 h-7 bg-brand-softer rounded-full border-2 border-blue-700'; 
+                $spanClass = $isPvTheme
+                    ? 'flex items-center justify-center w-7 h-7 bg-amber-100 rounded-full border-2 border-amber-700'
+                    : 'flex items-center justify-center w-7 h-7 bg-brand-softer rounded-full border-2 border-blue-700'; 
             }
             // Ajout d'un séparateur vertical desktop, horizontal mobile (sauf dernier)
             $isLast = ($i === count($steps) - 1);

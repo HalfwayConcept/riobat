@@ -18,6 +18,16 @@
     <title><?php echo $title ?></title>
 </head>
 <body>
+    <?php
+        $isPvTheme = (($_SESSION['type_demande'] ?? 'do') === 'pv');
+        $isStepPage = !empty($_GET['page']) && strpos($_GET['page'], 'step') === 0;
+        $accentBg = $isPvTheme ? 'bg-amber-500' : 'bg-blue-700';
+        $accentText = $isPvTheme ? 'md:text-amber-600 md:dark:text-amber-400' : 'md:text-blue-700 md:dark:text-blue-500';
+        $accentHover = $isPvTheme ? 'md:hover:text-amber-600 md:dark:hover:text-amber-400' : 'md:hover:text-blue-700 md:dark:hover:text-blue-500';
+        $demandesMenuClass = $isStepPage
+            ? ($isPvTheme ? 'text-amber-700 md:text-amber-600 md:dark:text-amber-400' : 'text-blue-700 md:text-blue-700 md:dark:text-blue-500')
+            : '';
+    ?>
     <header class="shadow-lg">
         <nav class="bg-white border-gray-200 dark:bg-gray-900">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -44,13 +54,13 @@
                 <div class="hidden w-full md:block md:w-auto pr-8" id="navbar-default">
                     <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                         <li>
-                        <a href="index.php?page=home" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Accueil</a>
+                        <a href="index.php?page=home" class="block py-2 px-3 text-white rounded md:bg-transparent md:p-0 dark:text-white <?= $accentBg ?> <?= $accentText ?>" aria-current="page">Accueil</a>
                         </li>
                         <li>
-                        <a href="index.php?page=step1" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Dommage Ouvrage</a>
+                        <a href="index.php?page=step1" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent <?= $accentHover ?> <?= $demandesMenuClass ?>">Demandes contrat</a>
                         </li>
                         <li>
-                        <a href="index.php?page=faq" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">FAQ</a>
+                        <a href="index.php?page=faq" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent <?= $accentHover ?>">FAQ</a>
                         </li>
 
                         <li>
@@ -58,7 +68,7 @@
                         if(!empty($_SESSION['user_id'])){
                             $name_login = get_infos($_SESSION['user_id']);
                         ?>                                    
-                            <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                            <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 md:w-auto dark:text-white dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent <?= $accentHover ?>">
                                 <?="Bonjour ".$name_login['nom']." ".$name_login['prenom'];?> 
                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
@@ -92,14 +102,14 @@
                                             <li>
                                                 <a href="index.php?page=dashboard" class="flex items-center gap-2 px-4 py-2 <?= $user_role === 'collab' ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50' : 'bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/50' ?>">
                                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                                    Tous les dossiers DO
+                                                    Toutes les demandes contrat
                                                 </a>
                                             </li>
                                         <?php endif; ?>
                                             <li>
                                                 <a href="index.php?page=dashboard" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                                    Mes dommages ouvrages
+                                                    Mes demandes contrat
                                                 </a>
                                             </li>
                                             <li>
@@ -120,7 +130,7 @@
                         }else{
                         ?>
 
-                        <a href="index.php?page=login" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                        <a href="index.php?page=login" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent <?= $accentHover ?>">
                             Inscription / connexion
                         </a>
                         <?php

@@ -80,3 +80,39 @@ html{ font-size: var(--root-font-size); }
 .ticket-fab:focus{ outline: 2px solid #93c5fd; outline-offset: 2px; }
 .dark .ticket-fab{ background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
 .dark .ticket-fab:hover{ background: #2563eb; }
+
+/* PV theme palette (based on PPV brochure) */
+:root{
+    --pv-yellow-100: #fff8d6;
+    --pv-yellow-300: #ffd85a;
+    --pv-yellow-500: #ffc107;
+    --pv-yellow-600: #f2b705;
+    --pv-yellow-700: #dd9f00;
+    --pv-ink: #1d1b16;
+}
+
+.theme-pv{
+    background: linear-gradient(180deg, #fffef8 0%, var(--pv-yellow-100) 100%);
+}
+
+.pv-accent{
+    color: var(--pv-yellow-700);
+}
+
+.pv-btn{
+    background: var(--pv-yellow-500);
+    color: var(--pv-ink);
+    border: 1px solid var(--pv-yellow-600);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pv-btn:hover{
+    background: var(--pv-yellow-600);
+    transform: translateY(-1px);
+}
+
+.pv-badge{
+    background: var(--pv-yellow-100);
+    color: var(--pv-ink);
+    border: 1px solid var(--pv-yellow-300);
+}

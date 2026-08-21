@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<?php
+    $isPvTheme = (($_SESSION['type_demande'] ?? 'do') === 'pv');
+?>
 <section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
     <!-- HEADER HARMONISÉ -->
     <div class="mb-8">
@@ -48,12 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 2 : Maître d'Ouvrage</h1>
+            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300"><?= $isPvTheme ? 'Étape 2 : DESCRIPTION DE LA CENTRALE PHOTOVOLTAIQUE' : "Étape 2 : Maître d'Ouvrage" ?></h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span>Formulaire Dommages Ouvrage</span>
+            <span><?= $isPvTheme ? 'Formulaire Centrale Photovoltaïque' : 'Formulaire Dommages Ouvrage' ?></span>
             <span class="mx-2">|</span>
-            <span>Projet de construction</span>
+            <span><?= $isPvTheme ? "Projet d'installation" : 'Projet de construction' ?></span>
         </div>
         <hr class="border-blue-200 mb-4">
     </div>

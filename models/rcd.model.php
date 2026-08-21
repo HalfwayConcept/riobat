@@ -17,11 +17,11 @@ require_once __DIR__ . '/connect.db.php';
 
     function getFolderName($DOID){
         $pdo = $GLOBALS['pdo'] ?? null;
-        $stmt = $pdo->prepare('SELECT DISTINCT repertoire as folder FROM dommage_ouvrage WHERE DOID = :doid LIMIT 1');
+        $stmt = $pdo->prepare('SELECT DISTINCT repertoire as folder FROM dommage_contrat WHERE DOID = :doid LIMIT 1');
         $stmt->execute([':doid' => $DOID]);
         require_once __DIR__ . '/../controllers/LogController.php';
         $user_id = $_SESSION['user_id'] ?? null;
-        logQuery($DOID, 'dommage_ouvrage', $stmt->queryString, [':doid' => $DOID], $user_id, 'réussi');
+        logQuery($DOID, 'dommage_contrat', $stmt->queryString, [':doid' => $DOID], $user_id, 'réussi');
         $folder = $stmt->fetch(PDO::FETCH_ASSOC);
         return $folder['folder'] ?? '';
     }

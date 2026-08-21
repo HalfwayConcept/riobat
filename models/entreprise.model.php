@@ -103,7 +103,7 @@ require_once __DIR__ . '/../controllers/LogController.php';
             $stmt = $pdo->prepare("SELECT TA.DOID, boi_entreprise_id, phv_entreprise_id, geo_entreprise_id, cnr_entreprise_id, ctt_entreprise_id, sol_entreprise_id, moe_entreprise_id
                                    FROM travaux_annexes TA
                                    JOIN situation S ON TA.DOID = S.DOID
-                                   JOIN dommage_ouvrage DO ON TA.DOID = DO.DOID
+                                   JOIN dommage_contrat DO ON TA.DOID = DO.DOID
                                    WHERE TA.DOID = :doid LIMIT 1");
             $stmt->execute([':doid' => $doid]);
             $user_id = $_SESSION['user_id'] ?? null;
@@ -157,7 +157,7 @@ require_once __DIR__ . '/../controllers/LogController.php';
 
             $table = match($type) {
                 'sol' => 'situation',
-                'moe' => 'dommage_ouvrage',
+                'moe' => 'dommage_contrat',
                 default => 'travaux_annexes',
             };
 

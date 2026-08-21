@@ -1,18 +1,41 @@
-<section class="mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
+<?php
+    $isPvTheme = (($_SESSION['type_demande'] ?? 'do') === 'pv');
+    $sectionClass = $isPvTheme
+        ? 'mb-8 p-4 border-l-4 border-amber-500 bg-amber-50 dark:bg-gray-800 dark:border-amber-400 theme-pv-step1'
+        : 'mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400';
+    $iconClass = $isPvTheme ? 'w-8 h-8 text-amber-600 dark:text-amber-400' : 'w-8 h-8 text-blue-600 dark:text-blue-400';
+    $titleClass = $isPvTheme ? 'text-2xl font-extrabold text-amber-800 dark:text-amber-300' : 'text-2xl font-extrabold text-blue-800 dark:text-blue-300';
+    $hrClass = $isPvTheme ? 'border-amber-200 mb-4' : 'border-blue-200 mb-4';
+    $btnClass = $isPvTheme
+        ? 'text-gray-900 bg-amber-500 hover:bg-amber-600 focus:ring-amber-300 dark:bg-amber-500 dark:hover:bg-amber-600 dark:focus:ring-amber-800'
+        : 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800';
+    $devCheckClass = $isPvTheme ? 'text-amber-600 focus:ring-amber-500' : 'text-blue-600 focus:ring-blue-500';
+?>
+<?php if ($isPvTheme): ?>
+<style>
+    .theme-pv-step1 input:focus {
+        border-color: #d97706 !important;
+    }
+    .theme-pv-step1 .group input:focus ~ label {
+        color: #b45309 !important;
+    }
+</style>
+<?php endif; ?>
+<section class="<?= $sectionClass ?>">
     <!-- HEADER HARMONISÉ -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="<?= $iconClass ?>" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
             </svg>
-            <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300">Étape 1 : Coordonnées du souscripteur</h1>
+            <h1 class="<?= $titleClass ?>">Étape 1 : Coordonnées du souscripteur</h1>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span>Formulaire Dommages Ouvrage</span>
+            <span>Formulaire Centrale Photovoltaïque</span>
             <span class="mx-2">|</span>
-            <span>Projet de construction</span>
+            <span>Projet d'installation</span>
         </div>
-        <hr class="border-blue-200 mb-4">
+        <hr class="<?= $hrClass ?>">
     </div>
     <form action="" method="post" class="max-w-lg mx-auto mt-8">
     
@@ -69,13 +92,13 @@
 
     <!-- DEV: Vider les tableaux de session (MOA, opération, situation, travaux annexes) -->
     <div class="flex items-center mb-4">
-        <input id="dev_clear_session" type="checkbox" name="dev_clear_session" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+        <input id="dev_clear_session" type="checkbox" name="dev_clear_session" value="1" class="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-2 <?= $devCheckClass ?>">
         <label for="dev_clear_session" class="ml-2 text-sm font-medium text-gray-700">[DEV] Vider les infos MOA, opération, situation, travaux annexes</label>
     </div>
 
     <!-- Bouton suivant -->
     <div class="text-center">
-        <button type="submit" name="page_next" value="step2" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-2/5 lg:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>
+        <button type="submit" name="page_next" value="step2" class="focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-2/5 lg:w-1/5 px-5 py-2.5 text-center <?= $btnClass ?>">Suivant</button>
     </div>
     
 </form>

@@ -2,7 +2,7 @@
     session_start();
 
     //session_destroy();
-    $_SESSION['env'] = getenv('APP_ENV') ?: 'prod';
+    $_SESSION['env'] = 'dev'; //prod
 
     include_once("inc/settings.php");
     require 'controllers/page-erreur.controller.php';
@@ -45,6 +45,7 @@
             case 'step3':
             case 'step4':
             case 'step4bis':
+            case 'step4ter':
             case 'step5':   
                 require 'controllers/do.controller.php';    
                 stepDisplay($currentstep);

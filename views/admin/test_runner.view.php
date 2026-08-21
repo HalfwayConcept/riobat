@@ -61,7 +61,7 @@ function _runScenario($scenarioLabel, $userId, $withAnnexes = false) {
             // Flaguer comme DO de test
             $pdo = $GLOBALS['pdo'] ?? null;
             if ($pdo) {
-                $pdo->prepare('UPDATE dommage_ouvrage SET is_test = 1 WHERE DOID = :d')->execute([':d' => $doid]);
+                $pdo->prepare('UPDATE dommage_contrat SET is_test = 1 WHERE DOID = :d')->execute([':d' => $doid]);
             }
             $_SESSION['DOID'] = $doid;
             insert_utilisateur_session($doid, $userId);
@@ -297,17 +297,17 @@ if (isset($_GET['cleanup_doid'])) {
             $solStmt = $pdo->prepare("SELECT sol_entreprise_id FROM situation WHERE DOID = :d");
             $solStmt->execute([':d' => $cleanupDoid]);
             $solRow = $solStmt->fetch(PDO::FETCH_ASSOC);
-            $moeStmt = $pdo->prepare("SELECT moe_entreprise_id FROM dommage_ouvrage WHERE DOID = :d");
+            $moeStmt = $pdo->prepare("SELECT moe_entreprise_id FROM dommage_contrat WHERE DOID = :d");
             $moeStmt->execute([':d' => $cleanupDoid]);
             $moeRow = $moeStmt->fetch(PDO::FETCH_ASSOC);
 
             foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'situation', 'operation_construction', 'moa'] as $t) {
                 $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $cleanupDoid]);
             }
-            $stmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_ouvrage WHERE DOID = :d');
+            $stmt = $pdo->prepare('SELECT souscripteur_id FROM dommage_contrat WHERE DOID = :d');
             $stmt->execute([':d' => $cleanupDoid]);
             $sid = $stmt->fetchColumn();
-            $pdo->prepare('DELETE FROM dommage_ouvrage WHERE DOID = :d')->execute([':d' => $cleanupDoid]);
+            $pdo->prepare('DELETE FROM dommage_contrat WHERE DOID = :d')->execute([':d' => $cleanupDoid]);
             if ($sid) {
                 $pdo->prepare('DELETE FROM souscripteur WHERE souscripteur_id = :s')->execute([':s' => $sid]);
             }

@@ -38,7 +38,7 @@
   </h2>
   <div id="accordion-collapse-body-3" class="hidden" aria-labelledby="accordion-collapse-heading-3">
     <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
-         <?php require 'views/templates/form/s03-oper-construct.view.php'; ?>
+         <?php require 'views/templates/form/s03-do-oper-construct.view.php'; ?>
     </div>
   </div>
   <h2 id="accordion-collapse-heading-3">
@@ -51,7 +51,7 @@
   </h2>
   <div id="accordion-collapse-body-3" class="hidden" aria-labelledby="accordion-collapse-heading-3">
     <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
-         <?php require 'views/templates/form/s04-informations-diverses.view.php'; ?>
+         <?php require 'views/templates/form/s04-do-informations-diverses.view.php'; ?>
     </div>
   </div>  
 <h2 id="accordion-collapse-heading-3">
@@ -64,7 +64,7 @@
   </h2>
   <div id="accordion-collapse-body-3" class="hidden" aria-labelledby="accordion-collapse-heading-3">
     <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
-         <?php require 'views/templates/form/s04bis-travaux-annexes.view.php'; ?>
+         <?php require 'views/templates/form/s04bis-do-travaux-annexes.view.php'; ?>
     </div>
   </div>   
   <h2 id="accordion-collapse-heading-3">

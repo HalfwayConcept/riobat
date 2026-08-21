@@ -19,17 +19,42 @@
 
             // Mode admin (fiche) ou utilisateur (validation)
             $isAdminFiche = ($currentstep === 'fiche');
-            $title = $isAdminFiche ? "Fiche Dommage Ouvrage n° ".$DOID : "Recueil d'information Dommage ouvrage";
+            $isPvDemand = (($DATA['type_demande'] ?? 'do') === 'pv');
+            if ($isPvDemand) {
+                $title = $isAdminFiche ? "Fiche Contrat Photovoltaique n° ".$DOID : "Recueil d'information Contrat photovoltaique";
+            } else {
+                $title = $isAdminFiche ? "Fiche Dommage Ouvrage n° ".$DOID : "Recueil d'information Dommage ouvrage";
+            }
+
+            $PV_DESCRIPTION = [];
+            $PV_PREVENTION = [];
+            $PV_ENVIRONNEMENT = [];
+            $PV_PROTECTION = [];
+            if ($isPvDemand) {
+                $PV_DESCRIPTION = getPvDescription((int)$DOID);
+                $PV_PREVENTION = getPvPrevention((int)$DOID);
+                $PV_ENVIRONNEMENT = getPvEnvironnement((int)$DOID);
+                $PV_PROTECTION = getPvProtection((int)$DOID);
+            }
 
             // Remplissage de la variable $content
             ob_start();
-            require 'views/templates/fiche/do.header.view.php';
-            require 'views/templates/fiche/s01-coordonnees.view.php';
-            require 'views/templates/fiche/s02-maitre-ouvrage.view.php';
-            require 'views/templates/fiche/s03-oper-construct.view.php';
-            require 'views/templates/fiche/s04-informations-diverses.view.php';
-            require 'views/templates/fiche/s04bis-travaux-annexes.view.php';
-            require 'views/templates/fiche/s05-maitrise-oeuvre.view.php';
+            if ($isPvDemand) {
+                require 'views/templates/fiche/pv.header.view.php';
+                require 'views/templates/fiche/s01-coordonnees.view.php';
+                require 'views/templates/fiche/pv.s02-description.view.php';
+                require 'views/templates/fiche/pv.s03-prevention.view.php';
+                require 'views/templates/fiche/pv.s04-environnement.view.php';
+                require 'views/templates/fiche/pv.s05-protection-garanties.view.php';
+            } else {
+                require 'views/templates/fiche/do.header.view.php';
+                require 'views/templates/fiche/s01-coordonnees.view.php';
+                require 'views/templates/fiche/s02-maitre-ouvrage.view.php';
+                require 'views/templates/fiche/s03-oper-construct.view.php';
+                require 'views/templates/fiche/s04-informations-diverses.view.php';
+                require 'views/templates/fiche/s04bis-travaux-annexes.view.php';
+                require 'views/templates/fiche/s05-maitrise-oeuvre.view.php';
+            }
             require 'views/validation.view.php';
             $content = ob_get_clean();
             require("views/base.view.php");

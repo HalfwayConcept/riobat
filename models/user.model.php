@@ -56,6 +56,9 @@ function insert_utilisateur_session($DOID, $user_id){
     if ($user_id <= 0 && $_SESSION['env'] === 'dev') {
         $user_id = 1; // Pour les tests en dev, on force à 1
     }
+    if ((int)$DOID <= 0) {
+        return false;
+    }
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return false;
     $stmt = $pdo->prepare('INSERT INTO utilisateur_session (utilisateur_id, DOID, session_debut, session_maj, session_fin) VALUES (:user_id, :doid, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL)');
@@ -264,12 +267,38 @@ function truncateFormTables(){
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return false;
 
-    $tables = ['do_historique', 'utilisateur_session', 'rcd', 'rcd_upload_token', 'log', 'travaux_annexes', 'situation', 'operation_construction', 'moa', 'dommage_ouvrage', 'entreprise', 'souscripteur'];
-    $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
-    foreach ($tables as $t) {
-        $pdo->exec('TRUNCATE TABLE `' . $t . '`');
+    try {
+        $tables = ['do_historique', 'utilisateur_session', 'rcd', 'rcd_upload_token', 'log', 'travaux_annexes', 'situation', 'operation_construction', 'moa', 'dommage_contrat', 'dommage_ouvrage', 'entreprise', 'souscripteur'];
+
+        // Ajoute dynamiquement toutes les tables pv_* existantes.
+        $pvStmt = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'pv\\_%'");
+        $pvTables = $pvStmt ? $pvStmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+
+        $allTables = array_values(array_unique(array_merge($tables, $pvTables)));
+
+        // Ne garder que les tables présentes pour éviter les erreurs SQL en cas de migration partielle.
+        $existingStmt = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()");
+        $existingTables = $existingStmt ? $existingStmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+        $existingMap = array_flip($existingTables);
+
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        foreach ($allTables as $t) {
+            if (isset($existingMap[$t])) {
+                $pdo->exec('TRUNCATE TABLE `' . $t . '`');
+            }
+        }
+
+        if (isset($existingMap['dommage_contrat'])) {
+            $pdo->exec('ALTER TABLE `dommage_contrat` AUTO_INCREMENT = 1');
+        } elseif (isset($existingMap['dommage_ouvrage'])) {
+            $pdo->exec('ALTER TABLE `dommage_ouvrage` AUTO_INCREMENT = 1');
+        }
+
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+        return true;
+    } catch (Throwable $e) {
+        try { $pdo->exec('SET FOREIGN_KEY_CHECKS = 1'); } catch (Throwable $ignored) {}
+        error_log('[riobat] truncateFormTables failed: ' . $e->getMessage());
+        return false;
     }
-    $pdo->exec('ALTER TABLE `dommage_ouvrage` AUTO_INCREMENT = 1');
-    $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
-    return true;
 }

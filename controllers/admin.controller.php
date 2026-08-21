@@ -119,10 +119,10 @@
 
         $settings_message = '';
 
-        // Vider toutes les tables DO
+        // Vider toutes les tables DO/PV
         if (isset($_POST['truncate_form_tables'])) {
             if (truncateFormTables()) {
-                $settings_message = infoAlerts('Toutes les tables DO ont été vidées avec succès.', 'success');
+                $settings_message = infoAlerts('Toutes les tables DO/PV ont été vidées avec succès.', 'success');
             } else {
                 $settings_message = infoAlerts('Erreur lors du nettoyage des tables.', 'error');
             }
