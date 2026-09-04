@@ -28,7 +28,7 @@
                 <?php endforeach; ?>
             </ul>
         </div>
-        <?php unset($_SESSION['validation_errors']); ?>
+            <?php unset($_SESSION['validation_errors'], $_SESSION['validation_errors_step']); ?>
     <?php endif; ?>
 
     <form action="" method="post" class="space-y-6">

@@ -456,6 +456,97 @@ function getPvDescription(int $doid): array {
 	];
 }
 
+function getMappedPvPrevention(int $doid): array {
+	$row = getPvPrevention($doid);
+	if (empty($row)) return [];
+
+	return [
+		'pv_prev_contrat_maintenance' => isset($row['contrat_maintenance_equipements']) ? (string)$row['contrat_maintenance_equipements'] : null,
+		'pv_prev_monitoring' => isset($row['monitoring_production_continue']) ? (string)$row['monitoring_production_continue'] : null,
+		'pv_prev_duree_garantie_onduleurs' => $row['duree_garantie_onduleurs'] ?? null,
+		'pv_prev_local_coupe_feu' => isset($row['onduleurs_local_coupe_feu_2h']) ? (string)$row['onduleurs_local_coupe_feu_2h'] : null,
+		'pv_prev_hauteur_mini_m' => $row['hauteur_implantation_min_m'] ?? null,
+		'pv_prev_systeme_antivol' => isset($row['fixation_modules_antivol']) ? (string)$row['fixation_modules_antivol'] : null,
+		'pv_prev_systeme_antivol_details' => $row['fixation_antivol_details'] ?? null,
+		'pv_prev_incendie_extincteurs' => isset($row['incendie_extincteurs_mobiles']) ? (string)$row['incendie_extincteurs_mobiles'] : null,
+		'pv_prev_incendie_poteaux' => isset($row['incendie_poteaux']) ? (string)$row['incendie_poteaux'] : null,
+		'pv_prev_incendie_detection_auto' => isset($row['incendie_detection_automatique']) ? (string)$row['incendie_detection_automatique'] : null,
+		'pv_prev_incendie_sprinkler' => isset($row['incendie_sprinkler']) ? (string)$row['incendie_sprinkler'] : null,
+		'pv_prev_incendie_autres' => $row['incendie_autres'] ?? null,
+		'pv_prev_verif_elec_annuelle' => isset($row['verification_electrique_annuelle']) ? (string)$row['verification_electrique_annuelle'] : null,
+		'pv_prev_nom_organisme_verificateur' => $row['nom_organisme_verificateur'] ?? null,
+		'pv_prev_thermo_infrarouge' => isset($row['controle_thermographie_infrarouge']) ? (string)$row['controle_thermographie_infrarouge'] : null,
+		'pv_prev_etude_vent_ombriere' => isset($row['etude_resistance_vent_ombriere']) ? (string)$row['etude_resistance_vent_ombriere'] : null,
+	];
+}
+
+function getMappedPvEnvironnement(int $doid): array {
+	$row = getPvEnvironnement($doid);
+	if (empty($row)) return [];
+
+	return [
+		'trav_annexes_pv_montage' => $row['mode_pose_panneaux'] ?? null,
+		'trav_annexes_pv_env_mode_pose_autres' => $row['mode_pose_autres_precisions'] ?? null,
+		'trav_annexes_pv_env_support_combustible' => isset($row['support_integration_combustible']) ? (string)$row['support_integration_combustible'] : null,
+		'trav_annexes_pv_env_nature_integration' => $row['nature_integration_systeme'] ?? null,
+		'trav_annexes_pv_env_isolant_combustible' => isset($row['isolant_toiture_combustible']) ? (string)$row['isolant_toiture_combustible'] : null,
+		'trav_annexes_pv_env_isolant_nature' => $row['isolant_toiture_nature'] ?? null,
+		'trav_annexes_pv_env_souscripteur_proprietaire' => isset($row['souscripteur_proprietaire_batiment']) ? (string)$row['souscripteur_proprietaire_batiment'] : null,
+		'trav_annexes_pv_env_proprietaire_assureur_contrat' => $row['proprietaire_assureur_num_contrat'] ?? null,
+		'trav_annexes_pv_env_bail_renonciation' => $row['bail_renonciation_recours_infos'] ?? null,
+		'trav_annexes_pv_env_locataires' => isset($row['presence_locataires_batiment']) ? (string)$row['presence_locataires_batiment'] : null,
+		'trav_annexes_pv_env_locataires_details' => $row['locataires_details_baux_valeur_ca'] ?? null,
+		'trav_annexes_pv_env_activites_20m' => $row['activites_batiment_moins_20m'] ?? null,
+		'trav_annexes_pv_env_nature_chauffage_sechage' => $row['nature_chauffage_ou_sechage'] ?? null,
+		'trav_annexes_pv_env_depot_tiers_conventions' => $row['depot_marchandises_tiers_conventions'] ?? null,
+		'trav_annexes_pv_env_stockage_combustibles' => isset($row['stockage_matieres_combustibles']) ? (string)$row['stockage_matieres_combustibles'] : null,
+		'trav_annexes_pv_env_stockage_combustibles_details' => $row['stockage_combustibles_details'] ?? null,
+		'trav_annexes_pv_env_site_cloture' => isset($row['site_cloture']) ? (string)$row['site_cloture'] : null,
+		'trav_annexes_pv_env_site_cloture_details' => $row['site_cloture_nature_hauteur'] ?? null,
+		'trav_annexes_pv_env_detection_intrusion' => isset($row['detection_intrusion_electronique']) ? (string)$row['detection_intrusion_electronique'] : null,
+		'trav_annexes_pv_env_detection_intrusion_details' => $row['detection_intrusion_description_delai'] ?? null,
+		'trav_annexes_pv_env_video_surveillance' => isset($row['video_surveillance']) ? (string)$row['video_surveillance'] : null,
+		'trav_annexes_pv_env_video_24h' => isset($row['video_surveillance_24h_intervention']) ? (string)$row['video_surveillance_24h_intervention'] : null,
+		'trav_annexes_pv_env_site_gardienne' => isset($row['site_gardienne']) ? (string)$row['site_gardienne'] : null,
+		'trav_annexes_pv_env_etude_vent' => isset($row['etude_structure_risque_tempete']) ? (string)$row['etude_structure_risque_tempete'] : null,
+		'trav_annexes_pv_env_hypothese_vent_maxi' => $row['hypothese_vent_maxi'] ?? null,
+		'trav_annexes_pv_env_etude_foudre' => isset($row['etude_foudre_specialisee']) ? (string)$row['etude_foudre_specialisee'] : null,
+		'trav_annexes_pv_env_parafoudre_dc' => isset($row['parafoudre_dc']) ? (string)$row['parafoudre_dc'] : null,
+		'trav_annexes_pv_env_parafoudre_ac' => isset($row['parafoudre_ac']) ? (string)$row['parafoudre_ac'] : null,
+		'trav_annexes_pv_env_debroussaillage' => isset($row['debroussaillage_regulier_20cm']) ? (string)$row['debroussaillage_regulier_20cm'] : null,
+		'trav_annexes_pv_env_stock_hydrocarbure' => isset($row['stock_hydrocarbure']) ? (string)$row['stock_hydrocarbure'] : null,
+		'trav_annexes_pv_env_stock_meubles' => isset($row['stock_meubles']) ? (string)$row['stock_meubles'] : null,
+		'trav_annexes_pv_env_stock_textiles' => isset($row['stock_textiles']) ? (string)$row['stock_textiles'] : null,
+		'trav_annexes_pv_env_stock_bombe_aerosols' => isset($row['stock_bombe_aerosols']) ? (string)$row['stock_bombe_aerosols'] : null,
+		'trav_annexes_pv_env_stock_explosifs' => isset($row['stock_explosifs']) ? (string)$row['stock_explosifs'] : null,
+		'trav_annexes_pv_env_stock_papier' => isset($row['stock_papier']) ? (string)$row['stock_papier'] : null,
+		'trav_annexes_pv_env_stock_bois' => isset($row['stock_bois']) ? (string)$row['stock_bois'] : null,
+		'trav_annexes_pv_env_stock_fourrage' => isset($row['stock_fourrage']) ? (string)$row['stock_fourrage'] : null,
+		'trav_annexes_pv_env_stock_engrais' => isset($row['stock_engrais']) ? (string)$row['stock_engrais'] : null,
+		'trav_annexes_pv_env_stock_cereales' => isset($row['stock_cereales']) ? (string)$row['stock_cereales'] : null,
+	];
+}
+
+function getMappedPvProtection(int $doid): array {
+	$row = getPvTableRow('pv_protection', $doid);
+	if (empty($row)) return [];
+
+	return [
+		'respect_ute_c15712' => isset($row['respect_ute_c15712']) ? (string)$row['respect_ute_c15712'] : '0',
+		'certificat_cofrac_securite_incendie' => isset($row['certificat_cofrac_securite_incendie']) ? (string)$row['certificat_cofrac_securite_incendie'] : '0',
+		'verification_annuelle_qualifiquee' => isset($row['verification_annuelle_qualifiquee']) ? (string)$row['verification_annuelle_qualifiquee'] : '0',
+		'maintenance_mise_en_place' => isset($row['maintenance_mise_en_place']) ? (string)$row['maintenance_mise_en_place'] : '0',
+		'maintenance_entreprise_tierce' => isset($row['maintenance_entreprise_tierce']) ? (string)$row['maintenance_entreprise_tierce'] : '0',
+		'procedure_remediation_defauts' => isset($row['procedure_remediation_defauts']) ? (string)$row['procedure_remediation_defauts'] : '0',
+		'connecteurs_conformes_en50521' => isset($row['connecteurs_conformes_en50521']) ? (string)$row['connecteurs_conformes_en50521'] : '0',
+		'boucles_induction' => isset($row['boucles_induction']) ? (string)$row['boucles_induction'] : '0',
+		'thermographie_infrarouge_annuelle' => isset($row['thermographie_infrarouge_annuelle']) ? (string)$row['thermographie_infrarouge_annuelle'] : '0',
+		'zone_graviers_5m_interieur_cloture' => isset($row['zone_graviers_5m_interieur_cloture']) ? (string)$row['zone_graviers_5m_interieur_cloture'] : '0',
+		'protection_cables_rongeurs' => isset($row['protection_cables_rongeurs']) ? (string)$row['protection_cables_rongeurs'] : '0',
+		'observations' => $row['observations'] ?? '',
+	];
+}
+
 function getPvTableRow(string $table, int $doid): array {
 	$pdo = $GLOBALS['pdo'] ?? null;
 	if (!$pdo || $doid <= 0 || !pvTableExists($table)) {

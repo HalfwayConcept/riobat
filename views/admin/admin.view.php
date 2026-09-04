@@ -3,6 +3,9 @@
     .rcd-icon-yellow { filter: invert(73%) sepia(74%) saturate(658%) hue-rotate(360deg) brightness(101%) contrast(104%); }
     .rcd-icon-green { filter: invert(52%) sepia(87%) saturate(391%) hue-rotate(93deg) brightness(96%) contrast(92%); }
     .action-icon-neutral { filter: invert(50%) sepia(0%) saturate(0%) brightness(60%) contrast(90%); }
+    .admin-actions-column { min-width: 260px; }
+    .admin-actions { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 0.5rem; }
+    .admin-actions > a, .admin-actions > button { flex: 0 0 auto; }
 </style>
 <script src="public/script/admin-historique.js"></script>
 <section class="dark:bg-gray-900 p-3 sm:p-5 mb-8 p-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-gray-800 dark:border-blue-400">
@@ -25,14 +28,15 @@
                 <table class="bg-slate-50 w-full text-sm text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-4 py-3">Demande DO n°</th>
+                            <th scope="col" class="px-4 py-3">Demande n°</th>
+                            <th scope="col" class="px-4 py-3">Type</th>
                             <th scope="col" class="px-4 py-3">Date de création</th>
                             <th scope="col" class="px-4 py-3">Souscripteur</th>
-                            <th scope="col" class="px-4 py-3">Adresse de la construction</th>
+                            <th scope="col" class="px-4 py-3">Adresse de l'opération</th>
                             <th scope="col" class="px-4 py-3">Coût en €</th>
                             <th scope="col" class="px-4 py-3">Statut</th>
                             <th scope="col" class="px-4 py-3">Assurance</th>
-                            <th scope="col" class="px-4 py-3">
+                            <th scope="col" class="admin-actions-column px-4 py-3">
                                 <span class="sr-only">Actions</span>
                             </th>
                         </tr>
@@ -48,17 +52,25 @@
                         foreach($dos as $do){
                             $do_status = (int)($do['status'] ?? 0);
                             $sc = $status_config[$do_status] ?? $status_config[0];
+                            $isPv = ($do['type_demande'] ?? 'do') === 'pv';
+                            $typeLabel = $isPv ? 'PV' : 'DO';
+                            $typeBadge = $isPv ? 'bg-amber-400 text-amber-950' : 'bg-blue-600 text-white';
+                            $rowBackground = $isPv ? 'bg-yellow-100' : $sc['bg'];
+                            $operationAddress = $isPv ? ($do['pv_adresse'] ?? '') : ($do['construction_adresse'] ?? '');
+                            $operationPostalCode = $isPv ? ($do['pv_code_postal'] ?? '') : ($do['construction_adresse_code_postal'] ?? '');
+                            $operationCity = $isPv ? ($do['pv_commune'] ?? '') : ($do['construction_adresse_commune'] ?? '');
                             ?>
-                            <tr class="<?= $sc['bg'] ?> border-b text-black dark:border-gray-700">
+                            <tr class="<?= $rowBackground ?> border-b text-black dark:border-gray-700">
                                 <th scope="row" class="px-4 py-3 font-medium whitespace-nowrap dark:text-white">
                                     <?php echo $do['DOID']; ?>
                                 </th>
+                                <td class="px-4 py-3 text-center"><span class="inline-flex rounded px-2 py-1 text-xs font-bold <?= $typeBadge ?>"><?= $typeLabel ?></span></td>
                                 <td class="px-4 py-3 text-center"><?php echo $do['date_creation']; ?></td>
                                 <td class="px-4 py-3 text-center"><?php echo $do['souscripteur_nom_raison']; ?></td>
                                 <td class="px-4 py-3">
                                     <div class="flex flex-col text-center">
-                                        <?php echo "<span>".$do['construction_adresse']."</span>"; ?>
-                                        <?php echo "<span>".$do['construction_adresse_code_postal']."&nbsp;". $do['construction_adresse_commune'] ."</span>"; ?>
+                                        <span><?= htmlspecialchars($operationAddress) ?></span>
+                                        <span><?= htmlspecialchars($operationPostalCode . ' ' . $operationCity) ?></span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-center"><?php echo $do['construction_cout_operation']; ?></td>
@@ -92,8 +104,8 @@
                                         </form>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 flex justify-center">
-                                    <div class="flex flex-row py-1 text-sm dark:text-gray-200">
+                                <td class="admin-actions-column px-4 py-3">
+                                    <div class="admin-actions py-1 text-sm dark:text-gray-200">
                                         <?php
                                         $doid_key = (int)$do['DOID'];
                                         $rcd_s = $rcd_stats[$doid_key] ?? ['total' => 0, 'uploaded' => 0];
@@ -111,20 +123,20 @@
                                             $rcd_title = 'Tous les documents uploadés (' . $rcd_s['total'] . '/' . $rcd_s['total'] . ')';
                                         }
                                         ?>
-                                        <a href="index.php?page=rcd&doid=<?php echo $do['DOID']; ?>" class="relative block py-2 px-1 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="<?= $rcd_title ?>">
-                                            <img src="public/pictures/briefcase-upload.svg" alt="RCD" width="20px" class="<?= $rcd_color ?>"/>
+                                        <a href="index.php?page=rcd&doid=<?php echo $do['DOID']; ?>" class="relative block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="<?= $rcd_title ?>">
+                                            <img src="public/pictures/briefcase-upload.svg" alt="RCD" width="24" class="<?= $rcd_color ?>"/>
                                             <?php if ($rcd_s['total'] > 0): ?>
                                             <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white rounded-full <?= $rcd_s['uploaded'] === $rcd_s['total'] ? 'bg-green-500' : ($rcd_s['uploaded'] === 0 ? 'bg-red-500' : 'bg-yellow-500') ?>"><?= $rcd_s['uploaded'] ?></span>
                                             <?php endif; ?>
                                         </a>
-                                        <a href="index.php?page=fiche&doid=<?php echo $do['DOID']; ?>" class="block py-2 px-1 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"><img src="public/pictures/eye-solid.svg" alt="see-pic" width="20px" class="action-icon-neutral"/></a>
-                                        <a href="index.php?page=step1&session_load_id=<?php echo $do['DOID']; ?>" class="block py-2 px-1 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"><img src="public/pictures/file-pen-solid.svg" alt="edit-pic" width="20px" class="action-icon-neutral"/></a>
-                                        <button type="button" onclick="openHistorique(<?php echo $do['DOID']; ?>)" class="block py-2 px-1 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Historique">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <a href="index.php?page=fiche&doid=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Voir la fiche"><img src="public/pictures/eye-solid.svg" alt="Voir la fiche" width="24" class="action-icon-neutral"/></a>
+                                        <a href="index.php?page=step1&session_load_id=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Modifier la demande"><img src="public/pictures/file-pen-solid.svg" alt="Modifier la demande" width="24" class="action-icon-neutral"/></a>
+                                        <button type="button" onclick="openHistorique(<?php echo $do['DOID']; ?>)" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Historique">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </button>
-                                        <a href="index.php?page=admin&deletedo=<?php echo $do['DOID']; ?>" class="block py-2 px-1 text-sm text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"><img src="public/pictures/trash-solid.svg" alt="trash-pic" width="16px" class="action-icon-neutral"/></a>
+                                        <a href="index.php?page=admin&deletedo=<?php echo $do['DOID']; ?>" class="block rounded p-2 text-sm text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" title="Supprimer la demande"><img src="public/pictures/trash-solid.svg" alt="Supprimer la demande" width="24" class="action-icon-neutral"/></a>
                                     </div>
                                 </td>
                             </tr>

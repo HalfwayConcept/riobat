@@ -114,6 +114,12 @@ function getListDo($user_id = null){
     $pdo = $GLOBALS['pdo'] ?? null;
     if (!$pdo) return [];
     $doTable = getContractTableName();
+    $pvAddressSelect = tableExists('pv_description_centrale')
+        ? 'pv_description_centrale.adresse_centrale AS pv_adresse, pv_description_centrale.code_postal AS pv_code_postal, pv_description_centrale.commune AS pv_commune'
+        : 'NULL AS pv_adresse, NULL AS pv_code_postal, NULL AS pv_commune';
+    $pvAddressJoin = tableExists('pv_description_centrale')
+        ? " LEFT JOIN pv_description_centrale ON pv_description_centrale.DOID = $doTable.DOID"
+        : '';
 
     $sql = "SELECT $doTable.*, operation_construction.*, situation.*, souscripteur.*, moa.*, travaux_annexes.*, utilisateur_session.*,
                    assurance.nom AS assurance_nom, assurance.logo AS assurance_logo,
@@ -122,16 +128,19 @@ function getListDo($user_id = null){
                    moa_sub.souscripteur_form_civilite AS moa_sub_civilite,
                    moa_sub.souscripteur_nom_raison AS moa_sub_nom_raison,
                    moa_sub.souscripteur_siret AS moa_sub_siret,
-                   moa_sub.souscripteur_adresse AS moa_sub_adresse
+                   moa_sub.souscripteur_adresse AS moa_sub_adresse,
+                   $doTable.DOID AS DOID,
+                     $doTable.type_demande AS type_demande,
+                     $pvAddressSelect
             FROM souscripteur
             JOIN $doTable ON $doTable.souscripteur_id = souscripteur.souscripteur_id
-            JOIN moa ON moa.DOID = $doTable.DOID
+            LEFT JOIN moa ON moa.DOID = $doTable.DOID
             LEFT JOIN souscripteur moa_sub ON moa_sub.souscripteur_id = moa.moa_souscripteur_id
-            JOIN utilisateur_session ON utilisateur_session.DOID = $doTable.DOID
-            JOIN operation_construction ON operation_construction.DOID = $doTable.DOID
-            JOIN travaux_annexes ON travaux_annexes.DOID = $doTable.DOID
-            JOIN situation ON situation.DOID = $doTable.DOID
-            LEFT JOIN assurance ON assurance.assurance_id = $doTable.assurance_id";
+            LEFT JOIN utilisateur_session ON utilisateur_session.DOID = $doTable.DOID
+            LEFT JOIN operation_construction ON operation_construction.DOID = $doTable.DOID
+            LEFT JOIN travaux_annexes ON travaux_annexes.DOID = $doTable.DOID
+            LEFT JOIN situation ON situation.DOID = $doTable.DOID
+            LEFT JOIN assurance ON assurance.assurance_id = $doTable.assurance_id$pvAddressJoin";
     $params = [];
     if($user_id != null){
         $sql .= " WHERE utilisateur_session.utilisateur_id = :user_id";
@@ -206,7 +215,7 @@ function insert($array_SESSION, $type_demande = 'do'){
                         logQuery($DOID, $t, $stmt->queryString, [':doid' => $DOID], $uid, 'réussi');
                 }
 
-                if (!insertPvRows($DOID)) {
+                if ($type_demande === 'pv' && !insertPvRows($DOID)) {
                     throw new PDOException('Échec initialisation des tables PV.');
                 }
 
@@ -253,7 +262,9 @@ function insert($array_SESSION, $type_demande = 'do'){
             $_SESSION["SQL"]["travaux"] = $sql_travaux;
             $query = mysqli_query($GLOBALS["conn"], $sql_travaux);
 
-            insertPvRows((int)$DOID);
+            if ($type_demande === 'pv') {
+                insertPvRows((int)$DOID);
+            }
         }
     }
     return $DOID;
@@ -474,6 +485,9 @@ function loadDo($doid){
 
     $_SESSION['DOID']       = $doid;
     $do = getDo($doid);
+    $_SESSION['type_demande'] = in_array($do['type_demande'] ?? null, ['do', 'pv'], true)
+        ? $do['type_demande']
+        : 'do';
 
     $_SESSION["info_souscripteur"]["souscripteur_id"] = $do["souscripteur_id"];
 
@@ -486,11 +500,32 @@ function loadDo($doid){
         }
     }
 
-    // Charger les données PV dédiées (si la table existe)
+    // Charger les données PV dédiées (si les tables existent)
     $pvInfo = getPvDescription((int)$doid);
     if (!empty($pvInfo)) {
         foreach ($pvInfo as $k => $v) {
             $_SESSION['info_operation_construction'][$k] = $v;
+        }
+    }
+
+    if (function_exists('getMappedPvPrevention')) {
+        $prevInfo = getMappedPvPrevention((int)$doid);
+        if (!empty($prevInfo)) {
+            $_SESSION['info_pv_prevention'] = $prevInfo;
+        }
+    }
+
+    if (function_exists('getMappedPvEnvironnement')) {
+        $envInfo = getMappedPvEnvironnement((int)$doid);
+        if (!empty($envInfo)) {
+            $_SESSION['info_pv_environnement'] = $envInfo;
+        }
+    }
+
+    if (function_exists('getMappedPvProtection')) {
+        $protInfo = getMappedPvProtection((int)$doid);
+        if (!empty($protInfo)) {
+            $_SESSION['info_pv_protection'] = $protInfo;
         }
     }
 

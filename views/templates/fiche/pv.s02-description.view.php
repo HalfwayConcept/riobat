@@ -4,11 +4,9 @@
 </div>
 <hr class="fiche-hr">
 
+<div class="fiche-two-columns">
 <fieldset class="fiche-fieldset">
     <legend>Informations générales</legend>
-    <div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_adresse'] ?? '') ?></span></div>
-    <div class="fiche-row"><span class="fiche-label">Code postal</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_code_postal'] ?? '') ?></span></div>
-    <div class="fiche-row"><span class="fiche-label">Commune</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_commune'] ?? '') ?></span></div>
     <div class="fiche-row"><span class="fiche-label">Entreprise de pose / qualification</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_entreprise_pose_qualipv'] ?? '') ?></span></div>
     <div class="fiche-row"><span class="fiche-label">Valeur à neuf</span><span class="fiche-value"><?= htmlspecialchars((string)($PV_DESCRIPTION['pv_valeur_neuve_remplacement'] ?? '')) ?> <?= htmlspecialchars((string)($PV_DESCRIPTION['pv_valeur_type'] ?? '')) ?></span></div>
     <div class="fiche-row"><span class="fiche-label">Date de mise en service</span><span class="fiche-value"><?= !empty($PV_DESCRIPTION['pv_date_mise_en_service']) ? dateFormat($PV_DESCRIPTION['pv_date_mise_en_service']) : '' ?></span></div>
@@ -16,6 +14,14 @@
     <div class="fiche-row"><span class="fiche-label">Sinistre déjà survenu</span><span class="fiche-value"><?= (($PV_DESCRIPTION['pv_sinistre_deja'] ?? '0') === '1') ? 'Oui' : 'Non' ?></span></div>
     <div class="fiche-row"><span class="fiche-label">Nature / montant du sinistre</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_sinistre_nature_montant'] ?? '') ?></span></div>
 </fieldset>
+
+<fieldset class="fiche-fieldset fiche-address-block">
+    <legend>Adresse</legend>
+    <div class="fiche-row"><span class="fiche-label">Adresse</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_adresse'] ?? '') ?></span></div>
+    <div class="fiche-row"><span class="fiche-label">Code postal</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_code_postal'] ?? '') ?></span></div>
+    <div class="fiche-row"><span class="fiche-label">Commune</span><span class="fiche-value"><?= htmlspecialchars($PV_DESCRIPTION['pv_commune'] ?? '') ?></span></div>
+</fieldset>
+</div>
 
 <fieldset class="fiche-fieldset">
     <legend>Caractéristiques techniques</legend>

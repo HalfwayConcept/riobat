@@ -16,14 +16,16 @@
         </div>
         <hr class="border-blue-200 mb-4">
     </div>
-    <?php if (!empty($_SESSION['form_errors'])): ?>
+    <?php $errors = $_SESSION['validation_errors'] ?? ($_SESSION['form_errors'] ?? []); ?>
+    <?php if (!empty($errors)): ?>
         <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
             <ul class="list-disc pl-5">
-                <?php foreach ($_SESSION['form_errors'] as $error): ?>
+                <?php foreach ($errors as $error): ?>
                     <li><?= htmlspecialchars($error) ?></li>
                 <?php endforeach; ?>
             </ul>
         </div>
+        <?php unset($_SESSION['validation_errors'], $_SESSION['form_errors']); ?>
     <?php endif; ?>
     <form action="" method="post">
     <!-- Maitrise d'oeuvre -->
@@ -47,7 +49,7 @@
             <div>
                 <?php 
                 //var_dump($_SESSION['info_dommage_ouvrage']);
-                echo coordFormDisplay('moe',$_SESSION['info_dommage_ouvrage']["moe_entreprise_id"]); ?>
+                echo coordFormDisplay('moe', $_SESSION['info_dommage_ouvrage']['moe_entreprise_id'] ?? null); ?>
             </div>
             <div class="flex mt-4">
                 <span class="font-normal">Est-il indépendant à l'égard des autres constructeurs et du maître d'ouvrage ?</span>
@@ -156,25 +158,12 @@
 
 
     <div class="flex flex-row justify-center mt-10">
-        <!-- Bouton précédent -->                                          
+        <?php $nextstep = isset($_SESSION['info_travaux_annexes']) ? 'step4bis' : 'step4'; ?>
         <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-            <?php
-                if (isset($_SESSION['info_travaux_annexes'])){                
-                    $nextstep = "step4bis";
-                }else{
-                    $nextstep = "step4";
-                }
-            ?>
-
-        <div class="flex flex-row justify-center mt-10">
-            <!-- Bouton précédent -->                                          
-            <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="<?= $nextstep; ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Précédent</button>
-            </div>
-            <!-- Bouton suivant -->
-            <div class="text-center ml-6">
-                <button type="submit" name="page_next" value="validation" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>
-            </div>
+            <button type="submit" name="page_next" value="<?= $nextstep ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Précédent</button>
+        </div>
+        <div class="text-center ml-6">
+            <button type="submit" name="page_next" value="validation" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Suivant</button>
         </div>
     </div>
 

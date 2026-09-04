@@ -18,8 +18,8 @@
         $doid = $post_doid > 0 ? $post_doid : $session_doid;
 
         // Vérification de propriété (sauf admin/collab)
-        if ($doid > 0 && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'user') {
-            if (!userOwnsDo($_SESSION['user_id'] ?? 0, $doid)) {
+        if ($doid > 0 && !empty($_SESSION['user_id']) && ($_SESSION['user_role'] ?? null) === 'user') {
+            if (!userOwnsDo((int)$_SESSION['user_id'], $doid)) {
                 $_SESSION['validation_errors'] = ["Accès non autorisé à ce dossier."];
                 header("Location: index.php?page=home");
                 exit;
@@ -33,11 +33,14 @@
         return $doid;
     }
 
-    function clearSessionDO(){
+    function clearSessionDO(?string $type_demande = null){
+        $type_demande = $type_demande ?? ($_GET['type_demande'] ?? 'do');
+        $type_demande = in_array($type_demande, ['do', 'pv'], true) ? $type_demande : 'do';
+
         $_SESSION["info_debut"]=[];
         $_SESSION["info_souscripteur"]=[];
         $_SESSION["DOID"]=[];
-        $_SESSION["type_demande"]='pv';
+        $_SESSION["type_demande"]=$type_demande;
         $_SESSION["info_operation_construction"]=[];
         $_SESSION["info_dommage_ouvrage"]=[];
         $_SESSION["info_moa"]=[];
@@ -56,15 +59,19 @@
         // Remplissage de la variable $content
         ob_start();
 
-        // Toutes les nouvelles demandes sont désormais de type photovoltaïque.
-        $_SESSION['type_demande'] = 'pv';
+        if (!in_array($_SESSION['type_demande'] ?? null, ['do', 'pv'], true)) {
+            $_SESSION['type_demande'] = 'do';
+        }
+
+        if ($currentstep === 'step2' && !isset($_POST['fields']) && ($_SESSION['validation_errors_step'] ?? null) !== 'step2') {
+            unset($_SESSION['validation_errors']);
+        }
 
         if(!empty($_GET['session_load_id'])){
             loadDo($_GET['session_load_id']);
         } elseif (!empty($_GET['doid'])) {
-            // Synchroniser la session si le doid GET diffère du doid session (multi-onglet)
             $get_doid = (int)$_GET['doid'];
-            if ($get_doid > 0 && (!isset($_SESSION['DOID']) || (int)$_SESSION['DOID'] !== $get_doid)) {
+            if ($get_doid > 0 && !isset($_POST['fields'])) {
                 loadDo($get_doid);
             }
         }
@@ -215,77 +222,91 @@
                     $errors = [];
                     $info = $_SESSION['info_operation_construction'];
 
-                    if (empty(trim((string)($info['pv_adresse'] ?? '')))) {
-                        $errors[] = "L'adresse de la centrale photovoltaïque est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_code_postal'] ?? '')))) {
-                        $errors[] = "Le code postal est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_commune'] ?? '')))) {
-                        $errors[] = "La commune est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_entreprise_pose_qualipv'] ?? '')))) {
-                        $errors[] = "Le nom et la qualification de l'entreprise de pose sont obligatoires.";
-                    }
-                    if (empty(trim((string)($info['pv_valeur_neuve_remplacement'] ?? '')))) {
-                        $errors[] = "La valeur à neuf de remplacement est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_date_mise_en_service'] ?? '')))) {
-                        $errors[] = "La date de mise en service est obligatoire.";
-                    }
-                    if (!isset($info['pv_deja_assuree']) || ($info['pv_deja_assuree'] !== '0' && $info['pv_deja_assuree'] !== '1')) {
-                        $errors[] = "Vous devez indiquer si la centrale a déjà été assurée.";
-                    }
-                    if (!isset($info['pv_sinistre_deja']) || ($info['pv_sinistre_deja'] !== '0' && $info['pv_sinistre_deja'] !== '1')) {
-                        $errors[] = "Vous devez indiquer si la centrale a déjà subi un sinistre.";
-                    }
-                    if (($info['pv_sinistre_deja'] ?? '0') === '1' && empty(trim((string)($info['pv_sinistre_nature_montant'] ?? '')))) {
-                        $errors[] = "La nature et le montant du sinistre sont obligatoires.";
-                    }
-                    if (empty(trim((string)($info['pv_surface_totale'] ?? '')))) {
-                        $errors[] = "La surface totale est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_puissance_crete'] ?? '')))) {
-                        $errors[] = "La puissance crête est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_nature_panneaux'] ?? '')))) {
-                        $errors[] = "La nature des panneaux photovoltaïques est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_panneaux_details'] ?? '')))) {
-                        $errors[] = "Le détail des panneaux photovoltaïques est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_onduleurs_details'] ?? '')))) {
-                        $errors[] = "Le détail des onduleurs est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_prix_vente_kwh'] ?? '')))) {
-                        $errors[] = "Le prix de vente du kWh est obligatoire.";
-                    }
-                    if (empty(trim((string)($info['pv_recettes_annuelles'] ?? '')))) {
-                        $errors[] = "Les recettes prévisionnelles annuelles sont obligatoires.";
-                    }
-                    if (empty(trim((string)($info['pv_destination_energie'] ?? '')))) {
-                        $errors[] = "Le mode d'exploitation de l'énergie est obligatoire.";
-                    }
-                    if (($info['pv_destination_energie'] ?? '') === 'autoconsommation') {
-                        if (empty(trim((string)($info['pv_economies_achat_annuelles'] ?? '')))) {
-                            $errors[] = "Les économies annuelles prévisionnelles sont obligatoires en autoconsommation.";
+                    $is_backward = (isset($_POST['page_next']) && $_POST['page_next'] === 'step1');
+
+                    if (!$is_backward) {
+                        if (empty(trim((string)($info['pv_adresse'] ?? '')))) {
+                            $errors[] = "L'adresse de la centrale photovoltaïque est obligatoire.";
                         }
-                        if (!isset($info['pv_batteries_existent']) || ($info['pv_batteries_existent'] !== '0' && $info['pv_batteries_existent'] !== '1')) {
-                            $errors[] = "Vous devez indiquer s'il existe des batteries d'accumulateurs.";
+                        if (empty(trim((string)($info['pv_code_postal'] ?? '')))) {
+                            $errors[] = "Le code postal est obligatoire.";
                         }
-                        if (($info['pv_batteries_existent'] ?? '0') === '1' && empty(trim((string)($info['pv_batteries_details'] ?? '')))) {
-                            $errors[] = "Le détail des batteries est obligatoire.";
+                        if (empty(trim((string)($info['pv_commune'] ?? '')))) {
+                            $errors[] = "La commune est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_entreprise_pose_qualipv'] ?? '')))) {
+                            $errors[] = "Le nom et la qualification de l'entreprise de pose sont obligatoires.";
+                        }
+                        if (empty(trim((string)($info['pv_valeur_neuve_remplacement'] ?? '')))) {
+                            $errors[] = "La valeur à neuf de remplacement est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_date_mise_en_service'] ?? '')))) {
+                            $errors[] = "La date de mise en service est obligatoire.";
+                        }
+                        if (!isset($info['pv_deja_assuree']) || ($info['pv_deja_assuree'] !== '0' && $info['pv_deja_assuree'] !== '1')) {
+                            $errors[] = "Vous devez indiquer si la centrale a déjà été assurée.";
+                        }
+                        if (!isset($info['pv_sinistre_deja']) || ($info['pv_sinistre_deja'] !== '0' && $info['pv_sinistre_deja'] !== '1')) {
+                            $errors[] = "Vous devez indiquer si la centrale a déjà subi un sinistre.";
+                        }
+                        if (($info['pv_sinistre_deja'] ?? '0') === '1' && empty(trim((string)($info['pv_sinistre_nature_montant'] ?? '')))) {
+                            $errors[] = "La nature et le montant du sinistre sont obligatoires.";
+                        }
+                        if (empty(trim((string)($info['pv_surface_totale'] ?? '')))) {
+                            $errors[] = "La surface totale est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_puissance_crete'] ?? '')))) {
+                            $errors[] = "La puissance crête est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_nature_panneaux'] ?? '')))) {
+                            $errors[] = "La nature des panneaux photovoltaïques est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_panneaux_details'] ?? '')))) {
+                            $errors[] = "Le détail des panneaux photovoltaïques est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_onduleurs_details'] ?? '')))) {
+                            $errors[] = "Le détail des onduleurs est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_prix_vente_kwh'] ?? '')))) {
+                            $errors[] = "Le prix de vente du kWh est obligatoire.";
+                        }
+                        if (empty(trim((string)($info['pv_recettes_annuelles'] ?? '')))) {
+                            $errors[] = "Les recettes prévisionnelles annuelles sont obligatoires.";
+                        }
+                        if (empty(trim((string)($info['pv_destination_energie'] ?? '')))) {
+                            $errors[] = "Le mode d'exploitation de l'énergie est obligatoire.";
+                        }
+                        if (($info['pv_destination_energie'] ?? '') === 'autoconsommation') {
+                            if (empty(trim((string)($info['pv_economies_achat_annuelles'] ?? '')))) {
+                                $errors[] = "Les économies annuelles prévisionnelles sont obligatoires en autoconsommation.";
+                            }
+                            if (!isset($info['pv_batteries_existent']) || ($info['pv_batteries_existent'] !== '0' && $info['pv_batteries_existent'] !== '1')) {
+                                $errors[] = "Vous devez indiquer s'il existe des batteries d'accumulateurs.";
+                            }
+                            if (($info['pv_batteries_existent'] ?? '0') === '1' && empty(trim((string)($info['pv_batteries_details'] ?? '')))) {
+                                $errors[] = "Le détail des batteries est obligatoire.";
+                            }
+                        } else {
+                            // Hors autoconsommation, ces champs ne s'appliquent pas.
+                            $_SESSION['info_operation_construction']['pv_economies_achat_annuelles'] = null;
+                            $_SESSION['info_operation_construction']['pv_batteries_existent'] = '0';
+                            $_SESSION['info_operation_construction']['pv_batteries_details'] = null;
                         }
                     } else {
-                        // Hors autoconsommation, ces champs ne s'appliquent pas.
-                        $_SESSION['info_operation_construction']['pv_economies_achat_annuelles'] = null;
-                        $_SESSION['info_operation_construction']['pv_batteries_existent'] = '0';
-                        $_SESSION['info_operation_construction']['pv_batteries_details'] = null;
+                        // Hors autoconsommation, si destination_energie est en revente simple, on nettoie les champs autoconsommation.
+                        if (($info['pv_destination_energie'] ?? '') !== 'autoconsommation') {
+                            $_SESSION['info_operation_construction']['pv_economies_achat_annuelles'] = null;
+                            $_SESSION['info_operation_construction']['pv_batteries_existent'] = '0';
+                            $_SESSION['info_operation_construction']['pv_batteries_details'] = null;
+                        }
                     }
 
                     if (count($errors) > 0) {
                         $res = false;
                         $_SESSION['validation_errors'] = $errors;
+                        $_SESSION['validation_errors_step'] = 'step2';
+                        header('Location: index.php?page=step2&doid=' . (int)$doid);
+                        exit;
                     } else {
                         $resPv = savePvDescription((int)$doid, $_SESSION['info_operation_construction']);
                         $res = $resPv;
@@ -447,45 +468,52 @@
             }elseif($currentstep == "step4" || $currentstep == "step5"){  
                 $isPvStep = (($_SESSION['type_demande'] ?? 'do') === 'pv');
 
-                if($currentstep == "step4"){
-                    $prefix = 'sol' ;
-                    $session_key = "info_situation";
-                }
-                if($currentstep == "step5"){
-                    $prefix = 'moe';
-                    $session_key = "info_dommage_ouvrage";
-                }
-                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
-
-                // En parcours PV, l'etape 5 ne contient que les garanties (pas de maitre d'oeuvre).
-                if ($currentstep == "step5" && $isPvStep) {
-                    // Rien d'autre a persister ici.
+                if ($isPvStep && $currentstep == "step4") {
+                    $res = savePvPrevention((int)$doid, $_SESSION['info_pv_prevention'] ?? []);
                 } else {
-                // N'enregistrer les coordonnées que si la réponse est "Oui" (1)
-                if(isset($_SESSION['info_'.$_POST['fields']][$prefix]) && $_SESSION['info_'.$_POST['fields']][$prefix] == 1){
-                    $array_entreprise = array();
-                    $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'] ?? null;
-                    $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'] ?? '';
-                    $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'] ?? '';
-                    $array_entreprise['prenom']        = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_prenom'] ?? '';
-                    $array_entreprise['adresse']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_adresse'] ?? '';
-                    $array_entreprise['code_postale']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_code_postale'] ?? '';
-                    $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_commune'] ?? '';
-                    $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_numero_siret'] ?? '';
-                    $array_entreprise['type']          = $prefix;
-                    // Ne rien faire si aucune info d'entreprise n'est renseignée (évite l'id null)
-                    $hasEntreprise = $array_entreprise['raison_sociale'] || $array_entreprise['nom'] || $array_entreprise['prenom'] || $array_entreprise['adresse'] || $array_entreprise['code_postale'] || $array_entreprise['commune'] || $array_entreprise['numero_siret'];
-                    if($hasEntreprise){
-                        if(!empty($array_entreprise['id'])){
-                            $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
-                            $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
-                        }else{
-                            $id = insertEntreprise($array_entreprise);
-                            $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
-                            updateEntrepriseID($id, $prefix, $doid);
+                    if($currentstep == "step4"){
+                        $prefix = 'sol' ;
+                        $session_key = "info_situation";
+                    }
+                    if($currentstep == "step5"){
+                        $prefix = 'moe';
+                        $session_key = "info_dommage_ouvrage";
+                        if (!$isPvStep && (($_SESSION['info_dommage_ouvrage']['moe'] ?? '0') !== '1')) {
+                            unset($_SESSION['info_dommage_ouvrage']['moe_entreprise_id']);
                         }
                     }
-                }
+                    $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
+
+                    // En parcours PV, l'etape 5 ne contient que les garanties (pas de maitre d'oeuvre).
+                    if ($currentstep == "step5" && $isPvStep) {
+                        // Rien d'autre a persister ici.
+                    } else {
+                        // N'enregistrer les coordonnées que si la réponse est "Oui" (1)
+                        if(isset($_SESSION['info_'.$_POST['fields']][$prefix]) && $_SESSION['info_'.$_POST['fields']][$prefix] == 1){
+                            $array_entreprise = array();
+                            $array_entreprise['id']            = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_id'] ?? null;
+                            $array_entreprise['raison_sociale']= $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_raison_sociale'] ?? '';
+                            $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'] ?? '';
+                            $array_entreprise['prenom']        = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_prenom'] ?? '';
+                            $array_entreprise['adresse']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_adresse'] ?? '';
+                            $array_entreprise['code_postale']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_code_postale'] ?? '';
+                            $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_commune'] ?? '';
+                            $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_numero_siret'] ?? '';
+                            $array_entreprise['type']          = $prefix;
+                            // Ne rien faire si aucune info d'entreprise n'est renseignée (évite l'id null)
+                            $hasEntreprise = $array_entreprise['raison_sociale'] || $array_entreprise['nom'] || $array_entreprise['prenom'] || $array_entreprise['adresse'] || $array_entreprise['code_postale'] || $array_entreprise['commune'] || $array_entreprise['numero_siret'];
+                            if($hasEntreprise){
+                                if(!empty($array_entreprise['id'])){
+                                    $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
+                                    $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;                                                                                            
+                                }else{
+                                    $id = insertEntreprise($array_entreprise);
+                                    $_SESSION[$session_key][$prefix.'_entreprise_id'] = $id;
+                                    updateEntrepriseID($id, $prefix, $doid);
+                                }
+                            }
+                        }
+                    }
                 }
             }elseif($currentstep == "step4bis"){
                     $errors = [];
@@ -494,23 +522,27 @@
                     if ($isPvStep) {
                         $env = $_SESSION['info_pv_environnement'] ?? [];
 
-                        if (empty(trim((string)($env['trav_annexes_pv_montage'] ?? '')))) {
-                            $errors[] = "Le mode de pose des panneaux est obligatoire.";
-                        }
-                        if (($env['trav_annexes_pv_montage'] ?? '') === 'autre' && empty(trim((string)($env['trav_annexes_pv_env_mode_pose_autres'] ?? '')))) {
-                            $errors[] = "Veuillez préciser le mode de pose (Autres).";
-                        }
-                        if (($env['trav_annexes_pv_env_souscripteur_proprietaire'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_proprietaire_assureur_contrat'] ?? '')))) {
-                            $errors[] = "Si le souscripteur est propriétaire, le nom de l'assureur et le n° de contrat sont obligatoires.";
-                        }
-                        if (($env['trav_annexes_pv_env_stockage_combustibles'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_stockage_combustibles_details'] ?? '')))) {
-                            $errors[] = "Veuillez décrire la nature et la quantité des matières combustibles stockées.";
-                        }
-                        if (($env['trav_annexes_pv_env_site_cloture'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_site_cloture_details'] ?? '')))) {
-                            $errors[] = "Veuillez préciser la nature et la hauteur de la clôture.";
-                        }
-                        if (($env['trav_annexes_pv_env_detection_intrusion'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_detection_intrusion_details'] ?? '')))) {
-                            $errors[] = "Veuillez décrire la détection d'intrusion et le délai d'intervention.";
+                        $is_backward = (isset($_POST['page_next']) && $_POST['page_next'] === 'step4');
+
+                        if (!$is_backward) {
+                            if (empty(trim((string)($env['trav_annexes_pv_montage'] ?? '')))) {
+                                $errors[] = "Le mode de pose des panneaux est obligatoire.";
+                            }
+                            if (($env['trav_annexes_pv_montage'] ?? '') === 'autre' && empty(trim((string)($env['trav_annexes_pv_env_mode_pose_autres'] ?? '')))) {
+                                $errors[] = "Veuillez préciser le mode de pose (Autres).";
+                            }
+                            if (($env['trav_annexes_pv_env_souscripteur_proprietaire'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_proprietaire_assureur_contrat'] ?? '')))) {
+                                $errors[] = "Si le souscripteur est propriétaire, le nom de l'assureur et le n° de contrat sont obligatoires.";
+                            }
+                            if (($env['trav_annexes_pv_env_stockage_combustibles'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_stockage_combustibles_details'] ?? '')))) {
+                                $errors[] = "Veuillez décrire la nature et la quantité des matières combustibles stockées.";
+                            }
+                            if (($env['trav_annexes_pv_env_site_cloture'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_site_cloture_details'] ?? '')))) {
+                                $errors[] = "Veuillez préciser la nature et la hauteur de la clôture.";
+                            }
+                            if (($env['trav_annexes_pv_env_detection_intrusion'] ?? '0') === '1' && empty(trim((string)($env['trav_annexes_pv_env_detection_intrusion_details'] ?? '')))) {
+                                $errors[] = "Veuillez décrire la détection d'intrusion et le délai d'intervention.";
+                            }
                         }
                     } else {
                         // Validation des champs PHV obligatoires sur le parcours DO historique
