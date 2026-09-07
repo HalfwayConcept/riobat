@@ -15,7 +15,7 @@
             Administration
         </a>
     </div>
-<p class="text-center font-medium text-2xl mt-16">Liste des demandes contrat</p>
+<p class="text-center font-medium text-2xl mt-16">Liste des demandes DO et photovoltaïques</p>
     <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
         <?php if(isset($infodelete)){ echo "<span>".$infodelete."</span>"; }; ?>
     </div>
@@ -123,14 +123,16 @@
                                             $rcd_title = 'Tous les documents uploadés (' . $rcd_s['total'] . '/' . $rcd_s['total'] . ')';
                                         }
                                         ?>
-                                        <a href="index.php?page=rcd&doid=<?php echo $do['DOID']; ?>" class="relative block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="<?= $rcd_title ?>">
-                                            <img src="public/pictures/briefcase-upload.svg" alt="RCD" width="24" class="<?= $rcd_color ?>"/>
-                                            <?php if ($rcd_s['total'] > 0): ?>
-                                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white rounded-full <?= $rcd_s['uploaded'] === $rcd_s['total'] ? 'bg-green-500' : ($rcd_s['uploaded'] === 0 ? 'bg-red-500' : 'bg-yellow-500') ?>"><?= $rcd_s['uploaded'] ?></span>
-                                            <?php endif; ?>
-                                        </a>
+                                        <?php if (!$isPv): ?>
+                                            <a href="index.php?page=rcd&doid=<?php echo $do['DOID']; ?>" class="relative block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="<?= $rcd_title ?>">
+                                                <img src="public/pictures/briefcase-upload.svg" alt="RCD" width="24" class="<?= $rcd_color ?>"/>
+                                                <?php if ($rcd_s['total'] > 0): ?>
+                                                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white rounded-full <?= $rcd_s['uploaded'] === $rcd_s['total'] ? 'bg-green-500' : ($rcd_s['uploaded'] === 0 ? 'bg-red-500' : 'bg-yellow-500') ?>"><?= $rcd_s['uploaded'] ?></span>
+                                                <?php endif; ?>
+                                            </a>
+                                        <?php endif; ?>
                                         <a href="index.php?page=fiche&doid=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Voir la fiche"><img src="public/pictures/eye-solid.svg" alt="Voir la fiche" width="24" class="action-icon-neutral"/></a>
-                                        <a href="index.php?page=step1&session_load_id=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Modifier la demande"><img src="public/pictures/file-pen-solid.svg" alt="Modifier la demande" width="24" class="action-icon-neutral"/></a>
+                                        <a href="index.php?page=<?= $isPv ? 'step2' : 'step1' ?>&session_load_id=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Modifier la demande"><img src="public/pictures/file-pen-solid.svg" alt="Modifier la demande" width="24" class="action-icon-neutral"/></a>
                                         <button type="button" onclick="openHistorique(<?php echo $do['DOID']; ?>)" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Historique">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

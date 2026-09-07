@@ -23,7 +23,7 @@
     
 
     function adminDisplay(){
-        $title = "Administration des demandes Dommage Ouvrage";
+        $title = "Administration des demandes DO et photovoltaïques";
         $user_role = $_SESSION['user_role'] ?? 'user';
 
         // Traitements POST avec redirect (avant tout output HTML)
@@ -80,8 +80,9 @@
 
     
     function editDo($doid){
-        $title = "Edition de la demande Dommage Ouvrage n° ".$doid;
         loadDo($doid);
+        $typeLabel = ($_SESSION['type_demande'] ?? 'do') === 'pv' ? 'photovoltaïque' : 'Dommage Ouvrage';
+        $title = "Édition de la demande $typeLabel n° ".$doid;
 
         ob_start();
         require 'views/admin/edit.view.php';

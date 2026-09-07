@@ -57,6 +57,11 @@
             $DOID = $_GET['doid'];
             $DATA = getDo($DOID);
 
+            if (($DATA['type_demande'] ?? 'do') === 'pv') {
+                header('Location: index.php?page=admin');
+                exit;
+            }
+
         }        
         syncRcdFromAnnexes($_GET['doid']);
         $array_datas = getRcdByDoid($_GET['doid']);
