@@ -11,9 +11,9 @@
             <div>
                 <h1 class="text-2xl font-extrabold text-blue-800 dark:text-blue-300"><?= $isPvTheme ? 'CENTRALE PHOTOVOLTAIQUE' : 'Opération de construction' ?></h1>
                 <div class="flex flex-col gap-0 mt-1 hover:underline text-blue-700 text-sm">
-                    <a   href="index.php?page=step3" >&gt; <?= $isPvTheme ? 'prévention générale' : "Nature et type de l'ouvrage" ?></a>
-                    <a   href="index.php?page=step4" >&gt; <?= $isPvTheme ? 'Environnement' : "Situation de l'ouvrage" ?></a>
-                    <a   href="index.php?page=step4bis" >&gt; <?= $isPvTheme ? 'prévention et protection' : 'Travaux annexes' ?></a>
+                    <a href="index.php?page=<?= $isPvTheme ? 'step3pv' : 'step3do' ?>" >&gt; <?= $isPvTheme ? 'prévention générale' : "Nature et type de l'ouvrage" ?></a>
+                    <a href="index.php?page=<?= $isPvTheme ? 'step4pv' : 'step4do' ?>" >&gt; <?= $isPvTheme ? 'Environnement' : "Situation de l'ouvrage" ?></a>
+                    <a href="index.php?page=<?= $isPvTheme ? 'step4bispv' : 'step4bisdo' ?>" >&gt; <?= $isPvTheme ? 'prévention et protection' : 'Travaux annexes' ?></a>
                 </div>
             </div>
         </div>

@@ -10,9 +10,9 @@
             <div>
                 <h1 class="text-2xl font-extrabold text-amber-800 dark:text-amber-300">DESCRIPTION DE LA CENTRALE PHOTOVOLTAÏQUE</h1>
                 <div class="flex flex-col gap-0 mt-1 hover:underline text-amber-700 text-sm">
-                    <a href="index.php?page=step2">&gt; description de la centrale</a>
-                    <a href="index.php?page=step4">&gt; prévention</a>
-                    <a href="index.php?page=step4bis">&gt; environnement</a>
+                    <a href="index.php?page=step2pv">&gt; description de la centrale</a>
+                    <a href="index.php?page=step4pv">&gt; prévention</a>
+                    <a href="index.php?page=step4bispv">&gt; environnement</a>
                 </div>
             </div>
         </div>
@@ -187,10 +187,10 @@
 
         <div class="flex flex-row justify-center mt-4">
             <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="step1" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
+                <button type="submit" name="page_next" value="step1pv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
             </div>
             <div class="text-center ml-6">
-                <button type="submit" name="page_next" value="step4" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Suivant</button>
+                <button type="submit" name="page_next" value="step4pv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Suivant</button>
             </div>
         </div>
 

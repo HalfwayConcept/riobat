@@ -41,13 +41,34 @@
                 stepDisplay($currentstep);
                 break;
             case 'step1':
+            case 'step1pv':
+            case 'step1do':
             case 'step2':
+            case 'step2pv':
+            case 'step2do':
             case 'step3':
+            case 'step3pv':
+            case 'step3do':
             case 'step4':
+            case 'step4pv':
+            case 'step4do':
             case 'step4bis':
+            case 'step4bispv':
+            case 'step4bisdo':
             case 'step4ter':
+            case 'step4terpv':
+            case 'step4terdo':
             case 'step5':   
+            case 'step5pv':
+            case 'step5do':
                 require 'controllers/do.controller.php';    
+                if (preg_match('/^(step(?:1|2|3|4|5|4bis|4ter))(pv|do)$/', $_GET['page'], $route_parts)) {
+                    $_SESSION['type_demande'] = $route_parts[2];
+                } elseif ($_GET['page'] === 'step2pv') {
+                    $_SESSION['type_demande'] = 'pv';
+                } elseif ($_GET['page'] === 'step2do') {
+                    $_SESSION['type_demande'] = 'do';
+                }
                 stepDisplay($currentstep);
                 break;      
             case 'fiche':

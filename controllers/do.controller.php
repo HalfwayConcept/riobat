@@ -56,6 +56,12 @@
     }
 
     function stepDisplay($currentstep){  
+        // Les routes explicites garantissent le bon tunnel avant le rendu et le traitement POST.
+        if (preg_match('/^(step(?:1|2|3|4|5|4bis|4ter))(pv|do)$/', $currentstep, $route_parts)) {
+            $_SESSION['type_demande'] = $route_parts[2];
+            $currentstep = $route_parts[1];
+        }
+
         // Remplissage de la variable $content
         ob_start();
 
@@ -125,7 +131,7 @@
                 $title = "Formulaire DO-03";
                 if (($_SESSION['type_demande'] ?? 'do') === 'pv') {
                     $doid_redirect = isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : 0;
-                    header("Location: index.php?page=step4&doid=$doid_redirect");
+                    header("Location: index.php?page=step4pv&doid=$doid_redirect");
                     exit;
                 } else {
                     require('views/templates/form/s03-do-oper-construct.view.php');
@@ -313,7 +319,8 @@
                         $res = false;
                         $_SESSION['validation_errors'] = $errors;
                         $_SESSION['validation_errors_step'] = 'step2';
-                        header('Location: index.php?page=step2&doid=' . (int)$doid);
+                        $step2_route = (($_SESSION['type_demande'] ?? 'do') === 'pv') ? 'step2pv' : 'step2do';
+                        header('Location: index.php?page=' . $step2_route . '&doid=' . (int)$doid);
                         exit;
                     } else {
                         $resPv = savePvDescription((int)$doid, $_SESSION['info_operation_construction']);
@@ -607,6 +614,9 @@
                 } else if (!empty($_POST['page_next'])) {
                     $nextstep = $_POST['page_next'];
                 }
+                if (preg_match('/^step(?:1|2|3|4|5|4bis|4ter)$/', $nextstep)) {
+                    $nextstep .= (($_SESSION['type_demande'] ?? 'do') === 'pv') ? 'pv' : 'do';
+                }
                 header("Location: index.php?page=".$nextstep."&doid=$doid");
 
             }
@@ -620,7 +630,7 @@
             && $_SESSION["info_situation"]['situation_ctt'] =="0"
             && $_SESSION["info_situation"]['situation_cnr'] =="0") {
                 $doid = !empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '';
-                header("Location: index.php?page=step5&doid=$doid");
+                header("Location: index.php?page=step5do&doid=$doid");
             }  
         }
 

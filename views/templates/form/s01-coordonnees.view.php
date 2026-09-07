@@ -99,7 +99,7 @@
 
     <!-- Bouton suivant -->
     <div class="text-center">
-        <button type="submit" name="page_next" value="step2" class="focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-2/5 lg:w-1/5 px-5 py-2.5 text-center <?= $btnClass ?>">Suivant</button>
+        <button type="submit" name="page_next" value="<?= (($_SESSION['type_demande'] ?? 'do') === 'pv') ? 'step2pv' : 'step2do' ?>" class="focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-2/5 lg:w-1/5 px-5 py-2.5 text-center <?= $btnClass ?>">Suivant</button>
     </div>
     
 </form>

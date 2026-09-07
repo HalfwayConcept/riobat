@@ -73,7 +73,7 @@ $info = $_SESSION['info_dommage_ouvrage'] ?? [];
 
         <div class="flex flex-row justify-center mt-10">
             <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="step4ter" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Precedent</button>
+                <button type="submit" name="page_next" value="step4terpv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Precedent</button>
             </div>
             <div class="text-center ml-6">
                 <button type="submit" name="page_next" value="validation" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Suivant</button>
