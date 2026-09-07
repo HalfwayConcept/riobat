@@ -57,8 +57,10 @@
 
     function stepDisplay($currentstep){  
         // Les routes explicites garantissent le bon tunnel avant le rendu et le traitement POST.
+        $explicit_type_demande = null;
         if (preg_match('/^(step(?:1|2|3|4|5|4bis|4ter))(pv|do)$/', $currentstep, $route_parts)) {
-            $_SESSION['type_demande'] = $route_parts[2];
+            $explicit_type_demande = $route_parts[2];
+            $_SESSION['type_demande'] = $explicit_type_demande;
             $currentstep = $route_parts[1];
         }
 
@@ -88,6 +90,11 @@
             if ($get_doid > 0 && !isset($_POST['fields'])) {
                 loadDo($get_doid);
             }
+        }
+
+        // loadDo() recharge le type depuis la base : la route explicite reste prioritaire.
+        if ($explicit_type_demande !== null) {
+            $_SESSION['type_demande'] = $explicit_type_demande;
         }
         
         // Pré-remplir step1 avec les infos du profil utilisateur si connecté
