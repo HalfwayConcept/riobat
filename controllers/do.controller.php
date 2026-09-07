@@ -59,6 +59,14 @@
         // Remplissage de la variable $content
         ob_start();
 
+        // Restaurer le type depuis le formulaire avant de choisir la vue suivante.
+        if ($currentstep === 'step1' && ($_POST['fields'] ?? '') === 'souscripteur') {
+            $posted_type = $_POST['type_demande'] ?? '';
+            if (in_array($posted_type, ['do', 'pv'], true)) {
+                $_SESSION['type_demande'] = $posted_type;
+            }
+        }
+
         if (!in_array($_SESSION['type_demande'] ?? null, ['do', 'pv'], true)) {
             $_SESSION['type_demande'] = 'do';
         }

@@ -88,6 +88,7 @@
         </div>
     </fieldset>
     <input type="hidden" name="fields" value="souscripteur">
+    <input type="hidden" name="type_demande" value="<?= htmlspecialchars($_SESSION['type_demande'] ?? 'do', ENT_QUOTES, 'UTF-8') ?>">
     <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 
     <!-- DEV: Vider les tableaux de session (MOA, opération, situation, travaux annexes) -->
