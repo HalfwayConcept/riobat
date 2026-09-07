@@ -57,7 +57,22 @@
                         <a href="index.php?page=home" class="block py-2 px-3 text-white rounded md:bg-transparent md:p-0 dark:text-white <?= $accentBg ?> <?= $accentText ?>" aria-current="page">Accueil</a>
                         </li>
                         <li>
-                        <a href="index.php?page=step1" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent <?= $accentHover ?> <?= $demandesMenuClass ?>">Demandes contrat</a>
+                            <button id="dropdownDemandesLink" data-dropdown-toggle="dropdownDemandes" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 md:w-auto dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent <?= $accentHover ?> <?= $demandesMenuClass ?>" type="button" aria-expanded="false">
+                                Demande de contrat
+                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            </button>
+                            <div id="dropdownDemandes" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700 dark:divide-gray-600">
+                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDemandesLink">
+                                    <li>
+                                        <a href="index.php?page=step0" class="block px-4 py-2 hover:bg-blue-50 dark:hover:bg-gray-600 dark:hover:text-white">Dommage Ouvrage</a>
+                                    </li>
+                                    <li>
+                                        <a href="index.php?page=step0&amp;type_demande=pv" class="block px-4 py-2 hover:bg-amber-50 dark:hover:bg-gray-600 dark:hover:text-white">Photovoltaïque</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li>
                         <a href="index.php?page=faq" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent <?= $accentHover ?>">FAQ</a>
