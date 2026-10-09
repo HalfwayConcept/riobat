@@ -81,3 +81,69 @@ function deleteEmailTemplate($id) {
     $stmt = $pdo->prepare("DELETE FROM email_templates WHERE template_id = :id");
     return $stmt->execute([':id' => $id]);
 }
+
+/**
+ * Notifie les administrateurs et collaborateurs lorsqu'un dossier est validé.
+ */
+function sendDossierValidationAlert(int $doid, bool $isUpdate): bool {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo || $doid <= 0) {
+        error_log("[riobat] Notification de validation impossible : DOID invalide.");
+        return false;
+    }
+
+    $stmt = $pdo->query("SELECT email FROM utilisateur
+                         WHERE role IN ('admin', 'collab')
+                           AND email IS NOT NULL
+                           AND email <> ''");
+    $recipients = array_values(array_unique(array_filter(
+        $stmt->fetchAll(PDO::FETCH_COLUMN),
+        static function ($email) {
+            return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+        }
+    )));
+    if (empty($recipients)) {
+        error_log("[riobat] Aucun destinataire admin/collab pour la validation du dossier $doid.");
+        return false;
+    }
+
+    $settings = getEmailSettings();
+    $fromName = trim((string)($settings['from_name'] ?? 'RIOBAT'));
+    $fromEmail = trim((string)($settings['from_email'] ?? ''));
+    $replyTo = trim((string)($settings['reply_to'] ?? ''));
+    if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+        error_log("[riobat] Notification de validation non envoyée : adresse expéditeur invalide.");
+        return false;
+    }
+
+    $action = $isUpdate ? 'mis à jour' : 'créé';
+    $subject = "[RIOBAT] Dossier n°{$doid} {$action} et validé";
+    $safeAction = htmlspecialchars($action, ENT_QUOTES, 'UTF-8');
+    $safeDoid = htmlspecialchars((string)$doid, ENT_QUOTES, 'UTF-8');
+    $signature = (string)($settings['signature'] ?? '');
+    $message = "<html><body>"
+        . "<p>Bonjour,</p>"
+        . "<p>Le dossier <strong>n°{$safeDoid}</strong> vient d'être {$safeAction} lors de l'étape de validation.</p>"
+        . "<p><a href=\"index.php?page=admin\">Accéder à l'administration</a></p>"
+        . $signature
+        . "</body></html>";
+
+    $headers = [
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . ($fromName !== '' ? '"' . addcslashes($fromName, '"\\') . '" ' : '') . '<' . $fromEmail . '>',
+    ];
+    if (filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+        $headers[] = 'Reply-To: ' . $replyTo;
+    }
+
+    $allSent = true;
+    foreach ($recipients as $recipient) {
+        if (!mail($recipient, $subject, $message, implode("\r\n", $headers))) {
+            error_log("[riobat] Échec d'envoi de la notification de validation du dossier $doid à $recipient.");
+            $allSent = false;
+        }
+    }
+
+    return $allSent;
+}

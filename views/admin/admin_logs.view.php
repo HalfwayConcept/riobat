@@ -2,6 +2,24 @@
 <div class="mx-auto my-12 max-w-screen-xl px-4 lg:px-12">
     <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
         <div class="w-full flex flex-col items-center p-4">
+            <?php if (!empty($_SESSION['logs_message'])): ?>
+                <?php $logsMessage = $_SESSION['logs_message']; unset($_SESSION['logs_message']); ?>
+                <div class="w-full mb-4 p-4 text-sm rounded-lg <?= $logsMessage['type'] === 'success' ? 'text-green-800 bg-green-50' : 'text-red-800 bg-red-50' ?>" role="alert">
+                    <?= htmlspecialchars($logsMessage['text'], ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+            <div class="w-full flex flex-wrap justify-end gap-2 mb-4">
+                <form method="post" action="index.php?page=logs" onsubmit="return confirm('Supprimer les logs datant de plus de 365 jours ?');">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['logs_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                    <input type="hidden" name="logs_action" value="delete_old">
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded">Supprimer les logs de plus de 365 jours</button>
+                </form>
+                <form method="post" action="index.php?page=logs" onsubmit="return confirm('Supprimer définitivement tous les logs ?');">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['logs_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                    <input type="hidden" name="logs_action" value="delete_all">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded">Supprimer tous les logs</button>
+                </form>
+            </div>
             <form method="get" action="index.php" class="flex flex-row flex-wrap gap-2 justify-center items-center w-full mb-4">
                 <input type="hidden" name="page" value="logs">
                 <input type="text" name="DOID" placeholder="DOID" class="border rounded px-2 py-1 text-sm" value="<?= htmlspecialchars($_GET['DOID'] ?? '') ?>">

@@ -467,9 +467,11 @@ function deleteDo($doid){
 
 function validDo($doid){
     $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo || (int)$doid <= 0) {
+        return false;
+    }
     $stmt = $pdo->prepare('UPDATE ' . getContractTableName() . ' SET status = 1 WHERE DOID = :doid');
-    $stmt->execute([':doid' => $doid]);
-    return true;
+    return $stmt->execute([':doid' => $doid]);
 }
 
 
@@ -774,4 +776,3 @@ function clearMoaSouscripteur(int $doid): bool {
     $stmt = $pdo->prepare('UPDATE moa SET moa_souscripteur_id = NULL WHERE DOID = :doid');
     return $stmt->execute([':doid' => $doid]);
 }
-

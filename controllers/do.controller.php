@@ -4,6 +4,42 @@
     require_once 'models/entreprise.model.php'; 
     require_once 'models/user.model.php';
 
+    function persistTravauxAnnexEntreprise(int $doid, string $type, array $annexes, array $overrides = []) {
+        $allowedTypes = ['boi', 'phv', 'geo', 'ctt', 'cnr'];
+        if (!in_array($type, $allowedTypes, true)) return false;
+
+        $prefix = $type . '_entreprise_';
+        $data = [
+            'raison_sociale' => $annexes[$prefix . 'raison_sociale'] ?? '',
+            'nom' => $annexes[$prefix . 'nom'] ?? '',
+            'prenom' => $annexes[$prefix . 'prenom'] ?? '',
+            'adresse' => $annexes[$prefix . 'adresse'] ?? '',
+            'code_postal' => $annexes[$prefix . 'code_postal'] ?? '',
+            'commune' => $annexes[$prefix . 'commune'] ?? '',
+            'numero_siret' => $annexes[$prefix . 'numero_siret'] ?? '',
+            'type' => $type,
+        ];
+        $data = array_merge($data, $overrides);
+        $id = $annexes[$type . '_entreprise_id'] ?? null;
+
+        $hasData = false;
+        foreach (['raison_sociale', 'nom', 'prenom', 'adresse', 'code_postal', 'commune', 'numero_siret'] as $field) {
+            if (trim((string)($data[$field] ?? '')) !== '') {
+                $hasData = true;
+                break;
+            }
+        }
+        if (!$hasData) return $id ?: false;
+
+        $entrepriseId = !empty($id)
+            ? updateEntreprise((int)$id, $data)
+            : insertEntreprise($data);
+        if (!$entrepriseId) return false;
+
+        updateEntrepriseID((int)$entrepriseId, $type, $doid);
+        return (int)$entrepriseId;
+    }
+
     /**
      * Résout le DOID de manière sécurisée :
      * 1. Priorité au POST (champ hidden dans le formulaire)
@@ -333,6 +369,17 @@
                         $resPv = savePvDescription((int)$doid, $_SESSION['info_operation_construction']);
                         $res = $resPv;
                         if ($res) {
+                            $phvNom = trim((string)($_SESSION['info_operation_construction']['pv_entreprise_pose_qualipv'] ?? ''));
+                            $annexes = $_SESSION['info_travaux_annexes'] ?? [];
+                            $phvId = persistTravauxAnnexEntreprise(
+                                (int)$doid,
+                                'phv',
+                                $annexes,
+                                ['raison_sociale' => $phvNom]
+                            );
+                            if ($phvId) {
+                                $_SESSION['info_travaux_annexes']['phv_entreprise_id'] = $phvId;
+                            }
                             $_SESSION['validation_errors'] = [];
                         } elseif (empty($_SESSION['validation_errors'])) {
                             $detail = !empty($_SESSION['update_error']) ? ' (' . $_SESSION['update_error'] . ')' : '';
@@ -518,12 +565,12 @@
                             $array_entreprise['nom']           = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_nom'] ?? '';
                             $array_entreprise['prenom']        = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_prenom'] ?? '';
                             $array_entreprise['adresse']       = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_adresse'] ?? '';
-                            $array_entreprise['code_postale']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_code_postale'] ?? '';
+                            $array_entreprise['code_postal']   = $_SESSION['info_'.$_POST['fields']][$prefix.'_entreprise_code_postal'] ?? '';
                             $array_entreprise['commune']       = $_SESSION['info_'.$_POST['fields']][$prefix+'_entreprise_commune'] ?? '';
                             $array_entreprise['numero_siret']  = $_SESSION['info_'.$_POST['fields']][$prefix+'_numero_siret'] ?? '';
                             $array_entreprise['type']          = $prefix;
                             // Ne rien faire si aucune info d'entreprise n'est renseignée (évite l'id null)
-                            $hasEntreprise = $array_entreprise['raison_sociale'] || $array_entreprise['nom'] || $array_entreprise['prenom'] || $array_entreprise['adresse'] || $array_entreprise['code_postale'] || $array_entreprise['commune'] || $array_entreprise['numero_siret'];
+                            $hasEntreprise = $array_entreprise['raison_sociale'] || $array_entreprise['nom'] || $array_entreprise['prenom'] || $array_entreprise['adresse'] || $array_entreprise['code_postal'] || $array_entreprise['commune'] || $array_entreprise['numero_siret'];
                             if($hasEntreprise){
                                 if(!empty($array_entreprise['id'])){
                                     $id = updateEntreprise($_SESSION[$session_key][$prefix.'_entreprise_id'],$array_entreprise);   
@@ -606,7 +653,20 @@
                     $_SESSION['validation_errors'] = ["Erreur lors de la sauvegarde en base de données."];
                 }
                 unset($_SESSION['update_error']);
-            }else{                
+            }else{
+                if ($currentstep === 'step4bis' && (($_SESSION['type_demande'] ?? 'do') !== 'pv')) {
+                    $annexes = $_SESSION['info_travaux_annexes'] ?? [];
+                    $situation = $_SESSION['info_situation'] ?? [];
+                    foreach (['boi', 'phv', 'geo', 'ctt', 'cnr'] as $type) {
+                        if (($situation['situation_' . $type] ?? '0') === '1') {
+                            $entrepriseId = persistTravauxAnnexEntreprise((int)$doid, $type, $annexes);
+                            if ($entrepriseId) {
+                                $_SESSION['info_travaux_annexes'][$type . '_entreprise_id'] = $entrepriseId;
+                            }
+                        }
+                    }
+                }
+
                 // Détermination dynamique de l'étape suivante après step4
                 if ($currentstep == 'step4' && (($_SESSION['type_demande'] ?? 'do') !== 'pv') && (!empty($_POST['page_next']) && $_POST['page_next'] !== 'step3')) {
                     $info = $_SESSION['info_situation'];

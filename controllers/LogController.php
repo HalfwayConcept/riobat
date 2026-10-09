@@ -91,3 +91,25 @@ function countLogs($filters = []) {
     $stmt->execute($params);
     return (int)$stmt->fetchColumn();
 }
+
+// Supprime tous les logs et retourne le nombre de lignes supprimées
+function deleteAllLogs() {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    if (!$pdo) return 0;
+
+    $stmt = $pdo->prepare('DELETE FROM log');
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
+// Supprime les logs plus anciens que le nombre de jours fourni
+function deleteLogsOlderThanDays($days = 365) {
+    $pdo = $GLOBALS['pdo'] ?? null;
+    $days = (int)$days;
+    if (!$pdo || $days < 1) return 0;
+
+    $cutoff = (new DateTimeImmutable('today'))->modify("-$days days")->format('Y-m-d H:i:s');
+    $stmt = $pdo->prepare('DELETE FROM log WHERE date_exec_log < :cutoff');
+    $stmt->execute([':cutoff' => $cutoff]);
+    return $stmt->rowCount();
+}

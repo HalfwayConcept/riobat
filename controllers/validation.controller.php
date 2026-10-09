@@ -3,6 +3,7 @@
     require_once 'models/do.model.php';
     require_once 'models/entreprise.model.php';
     require_once 'models/rcd.model.php';
+    require_once 'models/email.model.php';
 
     function validDisplay($currentstep){
                
@@ -61,17 +62,21 @@
         }
 
    function finalDisplay($currentstep){
-        
             $title = "Recueil d'information Dommage ouvrage - Finalisation";         
 
             // Résoudre le DOID depuis GET (prioritaire) ou session (fallback)
             $doid = !empty($_GET['doid']) ? (int)$_GET['doid'] : (!empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : 0);
+            $do = $doid > 0 ? getDo($doid) : false;
+            $isUpdate = $do && (int)($do['status'] ?? 0) !== 0;
 
             // Remplissage de la variable $content
             ob_start();
 
-            init_RCD_DOID($doid);
-            addDoHistorique($doid, 'Validation', $_SESSION['user_id'] ?? null, 'Validation et finalisation de la demande DO');
+            if ($do && validDo($doid)) {
+                init_RCD_DOID($doid);
+                addDoHistorique($doid, 'Validation', $_SESSION['user_id'] ?? null, 'Validation et finalisation de la demande DO');
+                sendDossierValidationAlert($doid, (bool)$isUpdate);
+            }
             require 'views/finalisation.view.php';
             $content = ob_get_clean();
             require("views/base.view.php");

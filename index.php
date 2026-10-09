@@ -125,6 +125,34 @@
                 break;
             case 'logs':
                 require 'controllers/LogController.php';
+                if (empty($_SESSION['user_id']) || ($_SESSION['user_role'] ?? '') !== 'admin') {
+                    require 'views/header.view.php';
+                    require 'views/page-erreur.view.php';
+                    require 'views/footer.view.php';
+                    break;
+                }
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logs_action'])) {
+                    $csrfToken = (string)($_SESSION['logs_csrf_token'] ?? '');
+                    $postedToken = (string)($_POST['csrf_token'] ?? '');
+                    if ($csrfToken === '' || !hash_equals($csrfToken, $postedToken)) {
+                        $_SESSION['logs_message'] = ['type' => 'error', 'text' => 'Jeton de sécurité invalide.'];
+                    } else {
+                        $deleted = $_POST['logs_action'] === 'delete_all'
+                            ? deleteAllLogs()
+                            : deleteLogsOlderThanDays(365);
+                        $label = $_POST['logs_action'] === 'delete_all'
+                            ? 'Tous les logs ont été supprimés'
+                            : 'Les logs de plus de 365 jours ont été supprimés';
+                        $_SESSION['logs_message'] = ['type' => 'success', 'text' => "$label ($deleted ligne(s))."];
+                    }
+                    header('Location: index.php?page=logs');
+                    exit;
+                }
+
+                if (empty($_SESSION['logs_csrf_token'])) {
+                    $_SESSION['logs_csrf_token'] = bin2hex(random_bytes(32));
+                }
                 $filters = [];
                 if (!empty($_GET['DOID'])) $filters['DOID'] = $_GET['DOID'];
                 if (!empty($_GET['user_id'])) $filters['user_id'] = $_GET['user_id'];
