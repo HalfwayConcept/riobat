@@ -439,7 +439,7 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
                 <h2 class="text-3xl font-bold mb-4">Notre nouveau site arrive très bientôt</h2>
                 <p class="text-gray-400 max-w-xl mx-auto mb-8">
                     Nous travaillons activement sur notre plateforme en ligne pour vous offrir une expérience simplifiée
-                    de gestion de vos contrats Dommage Ouvrage et Photovoltaïque.
+                    de gestion de vos demandes de Dommage Ouvrage et Photovoltaïque.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-sm">
                     <div class="flex items-center gap-2 text-gray-300">

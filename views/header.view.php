@@ -58,7 +58,7 @@
                         </li>
                         <li>
                             <button id="dropdownDemandesLink" data-dropdown-toggle="dropdownDemandes" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 md:w-auto dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent <?= $accentHover ?> <?= $demandesMenuClass ?>" type="button" aria-expanded="false">
-                                Demande de contrat
+                                Demande d'étude
                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                 </svg>
@@ -117,14 +117,14 @@
                                             <li>
                                                 <a href="index.php?page=dashboard" class="flex items-center gap-2 px-4 py-2 <?= $user_role === 'collab' ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50' : 'bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/50' ?>">
                                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                                    Toutes les demandes contrat
+                                                    Toutes les demandes d'étude
                                                 </a>
                                             </li>
                                         <?php endif; ?>
                                             <li>
                                                 <a href="index.php?page=dashboard" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                                    Mes demandes contrat
+                                                    Mes demandes d'étude
                                                 </a>
                                             </li>
                                             <li>

@@ -22,7 +22,7 @@
             $isAdminFiche = ($currentstep === 'fiche');
             $isPvDemand = (($DATA['type_demande'] ?? 'do') === 'pv');
             if ($isPvDemand) {
-                $title = $isAdminFiche ? "Fiche Contrat Photovoltaique n° ".$DOID : "Recueil d'information Contrat photovoltaique";
+                $title = $isAdminFiche ? "Fiche d'étude Photovoltaique n° ".$DOID : "Recueil d'information Contrat photovoltaique";
             } else {
                 $title = $isAdminFiche ? "Fiche Dommage Ouvrage n° ".$DOID : "Recueil d'information Dommage ouvrage";
             }

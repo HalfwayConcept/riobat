@@ -12,16 +12,16 @@
     <div class="py-8 text-center lg:py-16">
 
         <!-- Champ texte CGU -->
-        <h1 class="mb-4 text-xl lg:text-2xl font-extrabold tracking-tight leading-none text-gray-800 dark:text-white"><?= $isPvTheme ? 'Contrat' : 'Dommage Ouvrage' ?></h1>
+        <h1 class="mb-4 text-xl lg:text-2xl font-extrabold tracking-tight leading-none text-gray-800 dark:text-white"><?= $isPvTheme ? 'Photovoltaique' : 'Dommage Ouvrage' ?></h1>
         <textarea id="cgu" class="p-2 w-full max-w-[700px] h-[400px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
-            Ce contrat est commercialisé par la société Cabinet Cotton Alexandre, courtier/agent d'assurance -  immatriculé  à  l'Orias  (Registre  unique  des  intermédiaires  en  assurance)  sous  le  numéro  18002947 (www.orias.fr) et au RCS de Mende n° 840 357 743.  
+            Cette demande d'étude est commercialisé par la société Cabinet Cotton Alexandre, courtier/agent d'assurance -  immatriculé  à  l'Orias  (Registre  unique  des  intermédiaires  en  assurance)  sous  le  numéro  18002947 (www.orias.fr) et au RCS de Mende n° 840 357 743.  
             Le siège social de la société Cabinet Cotton Alexandre est situé au 5, rue Boulevard du Soubeyran 48000 MENDE. La forme juridique de la société Cabinet Cotton Alexandre est une EIRL. 
 
             La société Cabinet Cotton Alexandre ne détient aucune participation directe ou indirecte d'une compagnie d'assurance. Aucune compagnie d'assurance ne détient de participation directe ou indirecte dans la société Cabinet Cotton Alexandre. 
             La société Cabinet Cotton Alexandre  exerce son activité de courtage d'assurance conformément à l'article L.520-1, II, 1°, b du code des assurances.  
             Le nom des entreprises d'assurance avec lesquelles la société Cabinet Cotton Alexandre travaille en qualité de courtier, sont : 
             GROUPAMA, GENERALI, L'AUXILIAIRE, QBE, HELVETIA METLIFE, EUROP ASSISTANCE, GROUPE ZEPHIR, NETVOX, APRIL, AIG, ALBINGIA, TETRIS, AXRE, ENTORIA, ALPTIS, KLARITY, ERGO, APICIL, CHUBB.                            
-            En cas de difficulté dans l'application du contrat d'assurance, vous pouvez adresser votre réclamation par courrier à Cabinet Cotton Alexandre à l'adresse du siège social ou par email cabinetcotton@outlook.fr : Vous recevrez un accusé de réception au maximum sous 10  jours et une réponse dans un délai maximum de 2 mois. En cas d'échec de votre réclamation, vous pouvez vous adresser au Médiateur de l'Assurance soit par courrier à La Médiation de l'Assurance, TSA 50110 75441 Paris Cedex 09, ou par mail : le.mediateur@mediation-assurance.org 
+            En cas de difficulté dans l'application du contrat d'assurance, vous pouvez adresser votre réclamation par courrier à Cabinet Cotton Alexandre à l'adresse du siège social ou par email cabinetcotton@cc-assur.fr : Vous recevrez un accusé de réception au maximum sous 10  jours et une réponse dans un délai maximum de 2 mois. En cas d'échec de votre réclamation, vous pouvez vous adresser au Médiateur de l'Assurance soit par courrier à La Médiation de l'Assurance, TSA 50110 75441 Paris Cedex 09, ou par mail : le.mediateur@mediation-assurance.org 
             La société SARL Cabinet Cotton Alexandre est soumise au contrôle de l'Autorité de Contrôle Prudentiel et de Résolution (ACPR) - 4 place de Budapest - CS 92459, 75436 PARIS Cedex 09.
         </textarea>
             

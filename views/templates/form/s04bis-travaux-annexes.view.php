@@ -22,6 +22,9 @@
     <!-- Construction bois -->
     <?php
     if($_SESSION["info_situation"]['situation_boi']=="1"):
+        $boisStructure = (string)($_SESSION['info_travaux_annexes']['trav_annexes_constr_bois'] ?? '0') === '1';
+        $boisEnveloppe = (string)($_SESSION['info_travaux_annexes']['trav_annexes_constr_bois_enveloppe'] ?? '0') === '1';
+        $boisProduitsCe = (string)($_SESSION['info_travaux_annexes']['trav_annexes_constr_produits_ce'] ?? '0') === '1';
     ?>        
     <hr>    
     <div class="mt-4">
@@ -29,34 +32,34 @@
         <div class="ml-10 mt-4 flex items-center justify-between">
             <label class="font-normal flex-1 pr-4 text-left">La structure de la construction (poteaux, poutres et voiles) est-elle en bois ?</label>
             <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle_trav_annexes_constr_bois" class="sr-only peer" name="trav_annexes_constr_bois" value="1"
+                <input type="checkbox" id="toggle_trav_annexes_constr_bois" class="sr-only peer" name="trav_annexes_constr_bois" value="1" <?= $boisStructure ? 'checked' : '' ?>
                     onchange="handleToggleYN(this, 'radio_trav_annexes_constr_bois_oui', 'radio_trav_annexes_constr_bois_non', 'trav_annexes_constr_bois_value')" />
                 <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
                 <span id="trav_annexes_constr_bois_value" class="select-none ms-3 text-sm font-medium text-gray-900">Non</span>
-                <input type="radio" name="trav_annexes_constr_bois" value="1" id="radio_trav_annexes_constr_bois_oui" class="hidden" />
-                <input type="radio" name="trav_annexes_constr_bois" value="0" id="radio_trav_annexes_constr_bois_non" class="hidden" checked="checked" />
+                <input type="radio" name="trav_annexes_constr_bois" value="1" id="radio_trav_annexes_constr_bois_oui" class="hidden" <?= $boisStructure ? 'checked' : '' ?> />
+                <input type="radio" name="trav_annexes_constr_bois" value="0" id="radio_trav_annexes_constr_bois_non" class="hidden" <?= !$boisStructure ? 'checked' : '' ?> />
             </label>
         </div>
         <div class="ml-10 mt-4 flex items-center justify-between">
             <label class="font-normal flex-1 pr-4 text-left">L'enveloppe de la construction (façade, planchers et balcons) est-elle en bois ?</label>
             <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle_trav_annexes_constr_bois_enveloppe" class="sr-only peer" name="trav_annexes_constr_bois_enveloppe" value="1"
+                <input type="checkbox" id="toggle_trav_annexes_constr_bois_enveloppe" class="sr-only peer" name="trav_annexes_constr_bois_enveloppe" value="1" <?= $boisEnveloppe ? 'checked' : '' ?>
                     onchange="handleToggleYN(this, 'radio_trav_annexes_constr_bois_enveloppe_oui', 'radio_trav_annexes_constr_bois_enveloppe_non', 'trav_annexes_constr_bois_enveloppe_value')" />
                 <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
                 <span id="trav_annexes_constr_bois_enveloppe_value" class="select-none ms-3 text-sm font-medium text-gray-900">Non</span>
-                <input type="radio" name="trav_annexes_constr_bois_enveloppe" value="1" id="radio_trav_annexes_constr_bois_enveloppe_oui" class="hidden" />
-                <input type="radio" name="trav_annexes_constr_bois_enveloppe" value="0" id="radio_trav_annexes_constr_bois_enveloppe_non" class="hidden" checked="checked" />
+                <input type="radio" name="trav_annexes_constr_bois_enveloppe" value="1" id="radio_trav_annexes_constr_bois_enveloppe_oui" class="hidden" <?= $boisEnveloppe ? 'checked' : '' ?> />
+                <input type="radio" name="trav_annexes_constr_bois_enveloppe" value="0" id="radio_trav_annexes_constr_bois_enveloppe_non" class="hidden" <?= !$boisEnveloppe ? 'checked' : '' ?> />
             </label>
         </div>
         <div class="ml-10 mt-4 flex items-center justify-between">
             <label class="font-normal flex-1 pr-4 text-left">Les produits utilisés bénéficient-ils d'un marquage CE ?</label>
             <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle_trav_annexes_constr_produits_ce" class="sr-only peer" name="trav_annexes_constr_produits_ce" value="1"
+                <input type="checkbox" id="toggle_trav_annexes_constr_produits_ce" class="sr-only peer" name="trav_annexes_constr_produits_ce" value="1" <?= $boisProduitsCe ? 'checked' : '' ?>
                     onchange="handleToggleYN(this, 'radio_trav_annexes_constr_produits_ce_oui', 'radio_trav_annexes_constr_produits_ce_non', 'trav_annexes_constr_produits_ce_value')" />
                 <div class="relative w-9 h-5 bg-red-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-300 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:peer-focus:ring-4 peer-checked:peer-focus:ring-green-300"></div>
                 <span id="trav_annexes_constr_produits_ce_value" class="select-none ms-3 text-sm font-medium text-gray-900">Non</span>
-                <input type="radio" name="trav_annexes_constr_produits_ce" value="1" id="radio_trav_annexes_constr_produits_ce_oui" class="hidden" />
-                <input type="radio" name="trav_annexes_constr_produits_ce" value="0" id="radio_trav_annexes_constr_produits_ce_non" class="hidden" checked="checked" />
+                <input type="radio" name="trav_annexes_constr_produits_ce" value="1" id="radio_trav_annexes_constr_produits_ce_oui" class="hidden" <?= $boisProduitsCe ? 'checked' : '' ?> />
+                <input type="radio" name="trav_annexes_constr_produits_ce" value="0" id="radio_trav_annexes_constr_produits_ce_non" class="hidden" <?= !$boisProduitsCe ? 'checked' : '' ?> />
             </label>
         </div>
         <div class="ml-10 mt-4">
@@ -247,4 +250,3 @@
     <input type="hidden" name="doid" value="<?= isset($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : '' ?>">
 </form>
 <script src="public/script/s04bis-travaux-annexes.js"></script>
-

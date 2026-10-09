@@ -36,7 +36,9 @@
             : insertEntreprise($data);
         if (!$entrepriseId) return false;
 
-        updateEntrepriseID((int)$entrepriseId, $type, $doid);
+        if (!updateEntrepriseID((int)$entrepriseId, $type, $doid)) {
+            return false;
+        }
         return (int)$entrepriseId;
     }
 
@@ -155,7 +157,7 @@
 
         switch ($currentstep) {
             case 'step0':
-                $title = (($_SESSION['type_demande'] ?? 'do') === 'pv') ? "Formulaire Contrat" : "Formulaire Dommage Ouvrage";
+                $title = (($_SESSION['type_demande'] ?? 'do') === 'pv') ? "Formulaire Photovoltaique" : "Formulaire Dommage Ouvrage";
                 require('views/templates/form/s00-debuter.view.php');
                 break;            
             case 'step1':
@@ -642,7 +644,20 @@
             }elseif($currentstep == "step4ter"){
                     $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
             }else{
-                $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
+                $updateData = $_SESSION['info_'.$_POST['fields']];
+                if ($currentstep === 'step4bis' && (($_SESSION['type_demande'] ?? 'do') !== 'pv')) {
+                    foreach ([
+                        'trav_annexes_constr_bois',
+                        'trav_annexes_constr_bois_enveloppe',
+                        'trav_annexes_constr_produits_ce',
+                    ] as $field) {
+                        if (!array_key_exists($field, $updateData)) {
+                            $updateData[$field] = '0';
+                        }
+                    }
+                    $_SESSION['info_'.$_POST['fields']] = $updateData;
+                }
+                $res = update($updateData, $_POST['fields'], $doid);
             }
 
             if($res === false){
@@ -658,7 +673,7 @@
                     $annexes = $_SESSION['info_travaux_annexes'] ?? [];
                     $situation = $_SESSION['info_situation'] ?? [];
                     foreach (['boi', 'phv', 'geo', 'ctt', 'cnr'] as $type) {
-                        if (($situation['situation_' . $type] ?? '0') === '1') {
+                        if ((string)($situation['situation_' . $type] ?? '0') === '1') {
                             $entrepriseId = persistTravauxAnnexEntreprise((int)$doid, $type, $annexes);
                             if ($entrepriseId) {
                                 $_SESSION['info_travaux_annexes'][$type . '_entreprise_id'] = $entrepriseId;
@@ -705,4 +720,3 @@
         $content = ob_get_clean();
         require("views/base.view.php");
     }
-

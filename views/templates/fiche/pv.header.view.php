@@ -23,7 +23,7 @@
 }
 </style>
 <div style="display:flex; align-items:baseline; justify-content:space-between; margin:1.5rem 0 0.5rem; flex-wrap:wrap; gap:0.5rem;">
-    <h2 style="font-size:1.25rem; font-weight:700; color:#92400e; margin:0;">Contrat photovoltaique N° <?= htmlspecialchars($DATA['DOID']) ?></h2>
+    <h2 style="font-size:1.25rem; font-weight:700; color:#92400e; margin:0;">Étude photovoltaique N° <?= htmlspecialchars($DATA['DOID']) ?></h2>
     <span style="font-size:0.9rem; color:#92400e;">Date de création : <strong style="color:#1f2937;"><?= dateFormat($DATA['date_creation']) ?></strong></span>
 </div>
 <hr class="fiche-hr">
