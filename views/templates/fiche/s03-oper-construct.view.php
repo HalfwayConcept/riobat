@@ -26,13 +26,13 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
             $_typeItems[] = $txt;
         }
         if(isset($DATA['type_ouvrage_ope_pavill']) && $DATA['type_ouvrage_ope_pavill'] == 1)
-            $_typeItems[] = 'Opération pavillonnaire : '.$DATA['type_ouvrage_ope_pavill_nombre'].' maisons';
+            $_typeItems[] = 'Opération pavillonnaire';
         if(isset($DATA['type_ouvrage_coll_habit']) && $DATA['type_ouvrage_coll_habit'] == 1)
-            $_typeItems[] = 'Collectif d\'habitation : '.$DATA['type_ouvrage_coll_habit_nombre'].' appartements';
+            $_typeItems[] = 'Collectif d\'habitation';
         if(isset($DATA['type_ouvrage_bat_indus']) && $DATA['type_ouvrage_bat_indus'] == 1)
             $_typeItems[] = 'Bâtiment à usage industriel ou agricole';
         if(isset($DATA['type_ouvrage_centre_com']) && $DATA['type_ouvrage_centre_com'] == 1)
-            $_typeItems[] = 'Centre commercial : '.$DATA['type_ouvrage_centre_com_surf'].' m²';
+            $_typeItems[] = 'Centre commercial, bâtiment à usage de vente';
         if(isset($DATA['type_ouvrage_bat_bur']) && $DATA['type_ouvrage_bat_bur'] == 1)
             $_typeItems[] = 'Bâtiment à usage de bureau';
         if(isset($DATA['type_ouvrage_hopital']) && $DATA['type_ouvrage_hopital'] == 1)
@@ -40,9 +40,29 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
         if(isset($DATA['type_ouvrage_vrd_privatif']) && $DATA['type_ouvrage_vrd_privatif'] == 1)
             $_typeItems[] = 'VRD à usage privatif';
         if(isset($DATA['type_ouvrage_autre_const']) && $DATA['type_ouvrage_autre_const'] == 1)
-            $_typeItems[] = 'Autre : '.$DATA['type_ouvrage_autre_const_usage'];
+            $_typeItems[] = 'Autre construction';
         if(!empty($_typeItems)){
             echo '<div class="fiche-row"><span class="fiche-label">Type de l\'ouvrage</span><span class="fiche-value">'.$_chk.' '.implode(', ', $_typeItems).'</span></div>';
+        }
+
+        $pavillNombre = trim((string)($DATA['type_ouvrage_ope_pavill_nombre'] ?? ''));
+        if($pavillNombre !== ''){
+            echo '<div class="fiche-row"><span class="fiche-label">Nombre de maisons</span><span class="fiche-value">'.htmlspecialchars($pavillNombre, ENT_QUOTES, 'UTF-8').'</span></div>';
+        }
+
+        $collectifNombre = trim((string)($DATA['type_ouvrage_coll_habit_nombre'] ?? ''));
+        if($collectifNombre !== ''){
+            echo '<div class="fiche-row"><span class="fiche-label">Nombre d\'appartements</span><span class="fiche-value">'.htmlspecialchars($collectifNombre, ENT_QUOTES, 'UTF-8').'</span></div>';
+        }
+
+        $centreSurface = trim((string)($DATA['type_ouvrage_centre_com_surf'] ?? ''));
+        if($centreSurface !== ''){
+            echo '<div class="fiche-row"><span class="fiche-label">Superficie (SHON)</span><span class="fiche-value">'.htmlspecialchars($centreSurface, ENT_QUOTES, 'UTF-8').' m²</span></div>';
+        }
+
+        $autreUsage = trim((string)($DATA['type_ouvrage_autre_const_usage'] ?? ''));
+        if($autreUsage !== ''){
+            echo '<div class="fiche-row"><span class="fiche-label">Usage</span><span class="fiche-value">'.htmlspecialchars($autreUsage, ENT_QUOTES, 'UTF-8').'</span></div>';
         }
         ?>
 
@@ -170,6 +190,5 @@ $_chk = '<svg class="fiche-check-icon" viewBox="0 0 20 20" fill="currentColor"><
     </div>
     </div><!-- /grid -->
 </div>
-
 
 

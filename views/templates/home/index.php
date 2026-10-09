@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_form'])) {
             . "Reply-To: {$contact_values['email']}\r\n"
             . "Content-Type: text/plain; charset=UTF-8\r\n";
 
-        if (mail('admin@cc-assur.fr', $subject, $mail_message, $headers)) {
+        if (mail('cabinetcotton@cc-assur.fr', $subject, $mail_message, $headers)) {
             $contact_status = ['type' => 'success', 'text' => 'Votre message a bien été envoyé. Nous vous répondrons rapidement.'];
             $contact_values = ['nom' => '', 'email' => '', 'telephone' => '', 'interet' => '', 'message' => ''];
         } else {
@@ -77,8 +77,7 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
     <header class="bg-white shadow-sm">
         <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
             <a href="#" class="flex items-center gap-3">
-                <img src="img/cc-assur.jpeg" alt="CC Assur" class="h-16 rounded" />
-                <span class="text-2xl font-bold text-gray-900">CC <span class="text-blue-600">Assur</span></span>
+                <img src="img/cc-assur.jpeg" alt="CC Assur" class="h-16 rounded" />                
             </a>
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
                 <a href="#do" class="hover:text-blue-600 transition-colors">Dommage Ouvrage</a>
@@ -108,8 +107,8 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
                 </div>
 
                 <h1 class="animate-fade-in-up text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-                    Votre cabinet d'assurance<br>
-                    <span class="text-blue-200">de confiance</span>
+                     L'expertise d'un Cabinet<br>
+                    <span class="text-blue-200">engagé aux côtés de ses clients</span>
                 </h1>
 
                 <p class="animate-fade-in-up-delay text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -465,13 +464,12 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
             <div class="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
                 <div class="flex items-center gap-3">
                     <img src="img/cc-assur.jpeg" alt="CC Assur" class="h-10 rounded" />
-                    <span class="font-bold text-gray-900">CC Assur — Solutions / Conseils</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-2 text-sm text-gray-500">
                     <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 5, Boulevard du Soubeyran — 48000 Mende</p>
                     <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> 04 66 65 79 79</p>
-                    <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> cabinetcotton@outlook.fr</p>
-                    <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> EI Alexandre Cotton — N° ORIAS 18 00 2947</p>
+                    <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> cabinetcotton@cc-assur.fr</p>
+                    <p class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-600 flex-shrink-0 text-xl" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>N° ORIAS 18 00 2947</p>
                 </div>
             </div>
             <p class="text-xs text-gray-400 leading-relaxed border-t border-gray-100 pt-6">

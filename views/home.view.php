@@ -1,11 +1,11 @@
-    <div class="flex flex-col lg:flex-row my-8 mx-8">
-    <div>
-        <img src="public/pictures/home_picture_2.jpg" alt="home-picture" class="w-[550px] "/>
+<div class="relative mx-auto my-8 flex min-h-[340px] w-full max-w-4xl items-center justify-center overflow-hidden rounded-xl shadow-lg">
+    <img src="public/pictures/home_picture_2.jpg" alt="" class="absolute inset-0 h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-slate-900/45"></div>
+    <div class="relative z-10 mx-4 w-full max-w-md">
+        <?php require 'views/components/contact-info.view.php'; ?>
     </div>
-    <?php require 'views/components/contact-info.view.php'; ?>
-  
 </div>
-<div class="flex flex-col items-center justify-center space-y-5 mt-4 w-full max-w-2xl px-4">
+<div class="mx-auto flex w-full max-w-2xl flex-col items-center justify-center space-y-5 px-4">
     <a href="index.php?page=step0" id="start-button" class="inline-flex justify-center items-center gap-2 py-3 px-6 w-full text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4z"/>
@@ -35,4 +35,3 @@
     </a>
 </div>
     
-
