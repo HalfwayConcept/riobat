@@ -147,3 +147,36 @@ function sendDossierValidationAlert(int $doid, bool $isUpdate): bool {
 
     return $allSent;
 }
+
+function sendPvDocumentRequest(string $recipient, int $doid, string $uploadUrl, string $subscriberName = ''): bool {
+    if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+        error_log("[riobat] Demande de documents PPV non envoyée : destinataire invalide pour le dossier $doid.");
+        return false;
+    }
+    $settings = getEmailSettings();
+    $fromEmail = trim((string)($settings['from_email'] ?? ''));
+    if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+        error_log("[riobat] Demande de documents PPV non envoyée : expéditeur invalide.");
+        return false;
+    }
+    $template = getEmailTemplateBySlug('demande_pv_documents');
+    if (!$template || !(int)$template['active']) {
+        error_log("[riobat] Demande de documents PPV non envoyée : template demande_pv_documents absent ou inactif.");
+        return false;
+    }
+    $variables = [
+        '{{do_id}}' => htmlspecialchars((string)$doid, ENT_QUOTES, 'UTF-8'),
+        '{{souscripteur}}' => htmlspecialchars($subscriberName, ENT_QUOTES, 'UTF-8'),
+        '{{lien_pv}}' => htmlspecialchars($uploadUrl, ENT_QUOTES, 'UTF-8'),
+    ];
+    $subject = strtr($template['sujet'], $variables);
+    $message = strtr($template['corps'], $variables);
+    $message .= (string)($settings['signature'] ?? '');
+    $fromName = trim((string)($settings['from_name'] ?? 'RIOBAT'));
+    $headers = ['MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8', 'From: "' . addcslashes($fromName, '"\\') . '" <' . $fromEmail . '>'];
+    $replyTo = trim((string)($settings['reply_to'] ?? ''));
+    if (filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+        $headers[] = 'Reply-To: ' . $replyTo;
+    }
+    return mail($recipient, $subject, $message, implode("\r\n", $headers));
+}

@@ -2,9 +2,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.min.js"></script>
 
 <div class="myContainer">
+    <div class="mb-4">
+        <a href="index.php?page=dashboard" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-gray-700">
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Voir mes demandes
+        </a>
+    </div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <!-- component -->
         <form id="form-rcd" action="" method="post" enctype="multipart/form-data" novalidate data-souscripteur-email="<?= htmlspecialchars($DATA['souscripteur_email'] ?? '') ?>" data-doid="<?= (int)$_GET['doid'] ?>">
+            <div id="deleted-lot-ids"></div>
                 <input type="hidden" name="folder" value="<?= getFolderName($_GET['doid']);?>">
                 <input type="hidden" name="fields" value="lots-techniques">
 
@@ -320,13 +327,11 @@
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1a5 5 0 0 0-5 5v2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm3 7H7V6a3 3 0 1 1 6 0v2Z"/></svg>
                         </span>
                         <?php else: ?>
-                        <a href="#" data-modal-target="delete-modal" data-modal-toggle="delete-modal" onClick="document.getElementById('lot-del').innerHTML=this.closest('tr').querySelector('input[name=\'lot_nom[]\']').value;globalrow=this;" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                            <button type="button" class="inline-flex items-center justify-center w-10 h-10 rounded-lg text-white bg-orange-400 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300">
-                                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-                                </svg>
-                            </button>
-                        </a>
+                        <button type="button" onclick="openRcdDeleteModal(this)" class="inline-flex items-center justify-center w-10 h-10 rounded-lg text-white bg-orange-400 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300">
+                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                            </svg>
+                        </button>
                         <?php endif; ?>
                     </div>
                 </td>
@@ -347,7 +352,7 @@
     <div id="delete-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="delete-modal">
+                <button type="button" onclick="closeRcdDeleteModal()" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -358,10 +363,11 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
                     <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Etes vous sûr de vouloir supprimer le lot technique "<span id="lot-del"></span>" ?</h3>
-                    <button data-modal-hide="delete-modal" onclick="console.log(globalrow);deleteRow(globalrow)" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    <p class="mb-5 text-sm text-gray-500 dark:text-gray-400">La suppression sera enregistrée immédiatement.</p>
+                    <button onclick="deleteRow(globalrow)" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                         Oui je suis sûr
                     </button>
-                    <button data-modal-hide="delete-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
+                    <button onclick="closeRcdDeleteModal()" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
                 </div>
             </div>
         </div>
@@ -479,4 +485,4 @@
 </div>
 
 
-<script src="public/script/admin-rcd.js"></script>
+<script src="public/script/admin-rcd.js?v=202610091420"></script>

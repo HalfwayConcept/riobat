@@ -409,7 +409,7 @@ function deleteAllTestDos() {
             $moaStmt->execute([':d' => $doid]);
             $moaRow = $moaStmt->fetch(PDO::FETCH_ASSOC);
 
-            foreach (['do_historique', 'utilisateur_session', 'rcd', 'travaux_annexes', 'pv_prevention', 'pv_environnement', 'pv_protection', 'situation', 'operation_construction', 'moa'] as $t) {
+            foreach (['do_historique', 'utilisateur_session', 'rcd', 'pv_documents', 'travaux_annexes', 'pv_prevention', 'pv_environnement', 'pv_protection', 'situation', 'operation_construction', 'moa'] as $t) {
                 if (tableExists($t)) {
                     $pdo->prepare("DELETE FROM $t WHERE DOID = :d")->execute([':d' => $doid]);
                 }
@@ -448,7 +448,7 @@ function deleteDo($doid){
     $doTable = getContractTableName();
     try {
         $pdo->beginTransaction();
-        $tables = [$doTable,'moa','operation_construction','situation','travaux_annexes','pv_prevention','pv_environnement','pv_protection'];
+        $tables = [$doTable,'moa','operation_construction','situation','travaux_annexes','pv_documents','pv_prevention','pv_environnement','pv_protection'];
         foreach ($tables as $t) {
             if (tableExists($t)) {
                 $stmt = $pdo->prepare("DELETE FROM $t WHERE DOID = :doid");

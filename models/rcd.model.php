@@ -147,6 +147,34 @@ require_once __DIR__ . '/connect.db.php';
         return true;
     }      
 
+    function deleteRcdLot(int $rcdId, int $doid): bool {
+        $pdo = $GLOBALS['pdo'] ?? null;
+        if (!$pdo || $rcdId <= 0 || $doid <= 0) {
+            return false;
+        }
+
+        $stmt = $pdo->prepare(
+            'DELETE FROM rcd
+             WHERE rcd_id = :rcd_id
+               AND DOID = :doid
+               AND (rcd_entreprise_id IS NULL OR rcd_entreprise_id = 0)'
+        );
+        $stmt->execute([':rcd_id' => $rcdId, ':doid' => $doid]);
+        $deleted = $stmt->rowCount() === 1;
+
+        require_once __DIR__ . '/../controllers/LogController.php';
+        logQuery(
+            $doid,
+            'rcd',
+            $stmt->queryString,
+            [':rcd_id' => $rcdId, ':doid' => $doid],
+            $_SESSION['user_id'] ?? null,
+            $deleted ? 'réussi' : 'échec'
+        );
+
+        return $deleted;
+    }
+
     function init_RCD_DOID($DOID){
         // Delegate to the idempotent sync function
         return syncRcdFromAnnexes($DOID);

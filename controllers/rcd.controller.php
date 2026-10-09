@@ -14,12 +14,21 @@
     
         // Envoi des champs du formulaire
         if (!empty($_POST)) {
+            $doid = (int)($_GET['doid'] ?? 0);
+
+            if (!empty($_POST['deleted_lot_ids']) && is_array($_POST['deleted_lot_ids'])) {
+                foreach (array_unique(array_map('intval', $_POST['deleted_lot_ids'])) as $rcdId) {
+                    if ($rcdId > 0 && !deleteRcdLot($rcdId, $doid)) {
+                        $_SESSION['rcd_error'] = 'La suppression du lot RCD a échoué.';
+                    }
+                }
+            }
 
             //insert
             if(!empty($_POST['lot_id'])){
                 foreach ($_POST['lot_id'] as $key => $lot_id) {
                     $array_values = array();
-                    $array_values['doid']           = $_GET['doid'];
+                    $array_values['doid']           = $doid;
                     $array_values['lot_nom']        = $_POST['lot_nom'][$key];
                     $array_values['lot_montant']    = $_POST['lot_montant'][$key] !== '' ? $_POST['lot_montant'][$key] : 0;
                     $array_values['lot_nature']     = $_POST['lot_nature'][$key];
@@ -56,6 +65,14 @@
 
             $DOID = $_GET['doid'];
             $DATA = getDo($DOID);
+
+            if (($_SESSION['user_role'] ?? 'user') === 'user') {
+                $userDoids = array_map(static fn(array $do): int => (int)$do['DOID'], getListDo((int)$_SESSION['user_id']));
+                if (!in_array((int)$DOID, $userDoids, true)) {
+                    require 'views/page-erreur.view.php';
+                    return;
+                }
+            }
 
             if (($DATA['type_demande'] ?? 'do') === 'pv') {
                 header('Location: index.php?page=admin');

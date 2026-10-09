@@ -31,7 +31,11 @@
             <?php unset($_SESSION['validation_errors'], $_SESSION['validation_errors_step']); ?>
     <?php endif; ?>
 
-    <form action="" method="post" class="space-y-6">
+    <form id="pv-description-form" action="" method="post" novalidate class="space-y-6">
+        <div id="pv-client-validation-errors" class="hidden rounded border border-red-400 bg-red-100 p-4 text-red-700" role="alert" tabindex="-1">
+            <h4 class="mb-2 font-bold">Champs obligatoires manquants :</h4>
+            <ul class="list-inside list-disc"></ul>
+        </div>
         <div class="relative">
             <label for="search_pv_adresse" class="block mb-2 text-sm font-medium text-gray-900">Recherche d'adresse</label>
             <input type="text" id="search_pv_adresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5 pr-10" placeholder="Rechercher une adresse..." autocomplete="off" />
@@ -45,28 +49,28 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-3">
                 <label class="block mb-2 text-sm font-medium text-gray-900">Adresse de la centrale photovoltaïque *</label>
-                <input type="text" name="pv_adresse" value="<?= htmlspecialchars($info['pv_adresse'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_adresse" value="<?= htmlspecialchars($info['pv_adresse'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Code postal *</label>
-                <input type="text" name="pv_code_postal" value="<?= htmlspecialchars($info['pv_code_postal'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_code_postal" value="<?= htmlspecialchars($info['pv_code_postal'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
             <div class="md:col-span-2">
                 <label class="block mb-2 text-sm font-medium text-gray-900">Commune *</label>
-                <input type="text" name="pv_commune" value="<?= htmlspecialchars($info['pv_commune'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_commune" value="<?= htmlspecialchars($info['pv_commune'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
         </div>
 
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Nom et qualification de l'entreprise de pose (Quali PV) *</label>
-            <input type="text" name="pv_entreprise_pose_qualipv" value="<?= htmlspecialchars($info['pv_entreprise_pose_qualipv'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+            <input type="text" name="pv_entreprise_pose_qualipv" value="<?= htmlspecialchars($info['pv_entreprise_pose_qualipv'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Valeur à neuf de remplacement *</label>
                 <div class="flex gap-2">
-                    <input type="text" name="pv_valeur_neuve_remplacement" value="<?= htmlspecialchars($info['pv_valeur_neuve_remplacement'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                    <input type="text" name="pv_valeur_neuve_remplacement" value="<?= htmlspecialchars($info['pv_valeur_neuve_remplacement'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
                     <select name="pv_valeur_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 p-2.5">
                         <option value="HT" <?= (($info['pv_valeur_type'] ?? 'HT') === 'HT') ? 'selected' : '' ?>>HT</option>
                         <option value="TTC" <?= (($info['pv_valeur_type'] ?? '') === 'TTC') ? 'selected' : '' ?>>TTC</option>
@@ -75,7 +79,7 @@
             </div>
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Date de mise en service *</label>
-                <input type="date" name="pv_date_mise_en_service" value="<?= htmlspecialchars($info['pv_date_mise_en_service'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="date" name="pv_date_mise_en_service" value="<?= htmlspecialchars($info['pv_date_mise_en_service'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
         </div>
 
@@ -114,18 +118,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Surface totale (m2) *</label>
-                <input type="text" name="pv_surface_totale" value="<?= htmlspecialchars($info['pv_surface_totale'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_surface_totale" value="<?= htmlspecialchars($info['pv_surface_totale'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Puissance crête (kWc) *</label>
-                <input type="text" name="pv_puissance_crete" value="<?= htmlspecialchars($info['pv_puissance_crete'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_puissance_crete" value="<?= htmlspecialchars($info['pv_puissance_crete'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
         </div>
 
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Nature des panneaux photovoltaïques *</label>
             <div class="flex flex-wrap gap-6 text-sm">
-                <label><input type="radio" name="pv_nature_panneaux" value="mono" <?= (($info['pv_nature_panneaux'] ?? '') === 'mono') ? 'checked' : '' ?> /> Mono</label>
+                <label><input type="radio" name="pv_nature_panneaux" value="mono" required <?= (($info['pv_nature_panneaux'] ?? '') === 'mono') ? 'checked' : '' ?> /> Mono</label>
                 <label><input type="radio" name="pv_nature_panneaux" value="polycristallin" <?= (($info['pv_nature_panneaux'] ?? '') === 'polycristallin') ? 'checked' : '' ?> /> Polycristallin</label>
                 <label><input type="radio" name="pv_nature_panneaux" value="amorphe" <?= (($info['pv_nature_panneaux'] ?? '') === 'amorphe') ? 'checked' : '' ?> /> Amorphe</label>
             </div>
@@ -133,29 +137,29 @@
 
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Nombre, marque, modèle des panneaux photovoltaïques *</label>
-            <textarea name="pv_panneaux_details" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5"><?= htmlspecialchars($info['pv_panneaux_details'] ?? '') ?></textarea>
+            <textarea name="pv_panneaux_details" rows="2" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5"><?= htmlspecialchars($info['pv_panneaux_details'] ?? '') ?></textarea>
         </div>
 
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Nombre, marque, modèle des onduleurs *</label>
-            <textarea name="pv_onduleurs_details" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5"><?= htmlspecialchars($info['pv_onduleurs_details'] ?? '') ?></textarea>
+            <textarea name="pv_onduleurs_details" rows="2" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5"><?= htmlspecialchars($info['pv_onduleurs_details'] ?? '') ?></textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Prix de vente du kWh (€) *</label>
-                <input type="text" name="pv_prix_vente_kwh" value="<?= htmlspecialchars($info['pv_prix_vente_kwh'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_prix_vente_kwh" value="<?= htmlspecialchars($info['pv_prix_vente_kwh'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">Recettes prévisionnelles annuelles (€) *</label>
-                <input type="text" name="pv_recettes_annuelles" value="<?= htmlspecialchars($info['pv_recettes_annuelles'] ?? '') ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
+                <input type="text" name="pv_recettes_annuelles" value="<?= htmlspecialchars($info['pv_recettes_annuelles'] ?? '') ?>" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5" />
             </div>
         </div>
 
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Mode d'exploitation de l'énergie *</label>
             <div class="flex gap-6 text-sm">
-                <label><input type="radio" name="pv_destination_energie" value="revente" <?= (($info['pv_destination_energie'] ?? '') === 'revente') ? 'checked' : '' ?> /> Revente</label>
+                <label><input type="radio" name="pv_destination_energie" value="revente" required <?= (($info['pv_destination_energie'] ?? '') === 'revente') ? 'checked' : '' ?> /> Revente</label>
                 <label><input type="radio" name="pv_destination_energie" value="autoconsommation" <?= (($info['pv_destination_energie'] ?? '') === 'autoconsommation') ? 'checked' : '' ?> /> Autoconsommation</label>
             </div>
         </div>
@@ -187,7 +191,7 @@
 
         <div class="flex flex-row justify-center mt-4">
             <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="step1pv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
+                <button type="submit" name="page_next" value="step1pv" formnovalidate class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
             </div>
             <div class="text-center ml-6">
                 <button type="submit" name="page_next" value="step4pv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Suivant</button>
@@ -297,5 +301,63 @@ document.addEventListener('DOMContentLoaded', function() {
         radio.addEventListener('change', syncAutoconsBlock);
     });
     syncAutoconsBlock();
+
+    const form = document.getElementById('pv-description-form');
+    const clientErrors = document.getElementById('pv-client-validation-errors');
+    if (form && clientErrors) {
+        const labels = {
+            pv_adresse: 'L’adresse de la centrale photovoltaïque',
+            pv_code_postal: 'Le code postal',
+            pv_commune: 'La commune',
+            pv_entreprise_pose_qualipv: 'Le nom et la qualification de l’entreprise de pose',
+            pv_valeur_neuve_remplacement: 'La valeur à neuf de remplacement',
+            pv_date_mise_en_service: 'La date de mise en service',
+            pv_surface_totale: 'La surface totale',
+            pv_puissance_crete: 'La puissance crête',
+            pv_nature_panneaux: 'La nature des panneaux photovoltaïques',
+            pv_panneaux_details: 'Le détail des panneaux photovoltaïques',
+            pv_onduleurs_details: 'Le détail des onduleurs',
+            pv_prix_vente_kwh: 'Le prix de vente du kWh',
+            pv_recettes_annuelles: 'Les recettes prévisionnelles annuelles',
+            pv_destination_energie: 'Le mode d’exploitation de l’énergie',
+        };
+
+        form.addEventListener('submit', function(event) {
+            if (event.submitter && event.submitter.value === 'step1pv') {
+                return;
+            }
+
+            const missing = [];
+            let firstInvalid = null;
+            form.querySelectorAll('[required]').forEach(function(field) {
+                if (!field.checkValidity()) {
+                    const label = labels[field.name];
+                    if (label && !missing.includes(label)) {
+                        missing.push(label);
+                    }
+                    if (!firstInvalid) {
+                        firstInvalid = field;
+                    }
+                }
+            });
+
+            if (!missing.length) {
+                clientErrors.classList.add('hidden');
+                return;
+            }
+
+            event.preventDefault();
+            clientErrors.querySelector('ul').replaceChildren(...missing.map(function(label) {
+                const item = document.createElement('li');
+                item.textContent = label;
+                return item;
+            }));
+            clientErrors.classList.remove('hidden');
+            clientErrors.focus();
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+        });
+    }
 });
 </script>

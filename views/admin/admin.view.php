@@ -129,6 +129,26 @@
                                                 <?php if ($rcd_s['total'] > 0): ?>
                                                 <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white rounded-full <?= $rcd_s['uploaded'] === $rcd_s['total'] ? 'bg-green-500' : ($rcd_s['uploaded'] === 0 ? 'bg-red-500' : 'bg-yellow-500') ?>"><?= $rcd_s['uploaded'] ?></span>
                                                 <?php endif; ?>
+                                                <?php if (false): ?>
+                                                    <form method="post" action="index.php?page=admin" class="inline">
+                                                        <input type="hidden" name="request_pv_documents" value="1">
+                                                        <input type="hidden" name="pv_documents_doid" value="<?= (int)$do['DOID'] ?>">
+                                                        <button type="submit" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600" title="Demander les documents PPV par e-mail">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8m-18 9h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                                        </button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if ($isPv): ?>
+                                            <?php
+                                            $pv_s = $pv_document_stats[$doid_key] ?? ['required' => 2, 'uploaded' => 0, 'requested' => false];
+                                            $pv_title = !$pv_s['requested'] ? 'Documents PPV non demandés' : ($pv_s['uploaded'] === $pv_s['required'] ? 'Documents PPV complets' : 'Documents PPV demandés : ' . $pv_s['uploaded'] . '/' . $pv_s['required'] . ' transmis');
+                                            $pv_color = !$pv_s['requested'] ? 'grayscale opacity-40' : ($pv_s['uploaded'] === $pv_s['required'] ? 'rcd-icon-green' : 'rcd-icon-yellow');
+                                            ?>
+                                            <a href="index.php?page=pv_documents&doid=<?= (int)$do['DOID'] ?>" class="relative block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600" title="<?= htmlspecialchars($pv_title) ?>. Consulter ou demander les documents.">
+                                                    <img src="public/pictures/briefcase-upload.svg" alt="Documents PPV" width="24" class="<?= $pv_color ?>"/>
+                                                    <?php if ($pv_s['requested']): ?><span class="absolute -right-1 -top-1 rounded-full bg-<?= $pv_s['uploaded'] === $pv_s['required'] ? 'green' : 'amber' ?>-500 px-1 text-[10px] font-bold text-white"><?= $pv_s['uploaded'] ?>/<?= $pv_s['required'] ?></span><?php endif; ?>
                                             </a>
                                         <?php endif; ?>
                                         <a href="index.php?page=fiche&doid=<?php echo $do['DOID']; ?>" class="block rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white" title="Voir la fiche"><img src="public/pictures/eye-solid.svg" alt="Voir la fiche" width="24" class="action-icon-neutral"/></a>
@@ -149,7 +169,7 @@
                 </table>
             </div>
     <fieldset class="flex flex-wrap border-2 border-gray-400 p-4 m-6">
-        <legend>Statut DO</legend>
+        <legend>Statut</legend>
         <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3"><span class="flex w-2.5 h-2.5 bg-blue-500 rounded-full me-1.5 flex-shrink-0"></span>En cours de création</span>
         <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3"><span class="flex w-2.5 h-2.5 bg-amber-500 rounded-full me-1.5 flex-shrink-0"></span>En attente des documents</span>
         <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3"><span class="flex w-2.5 h-2.5 bg-green-500 rounded-full me-1.5 flex-shrink-0"></span>Validé (offre transmise)</span>
@@ -217,4 +237,3 @@
         </div>
     </div>
 </div>
-

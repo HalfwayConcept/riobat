@@ -26,7 +26,11 @@ $info = $_SESSION['info_pv_environnement'] ?? [];
         <?php unset($_SESSION['validation_errors']); ?>
     <?php endif; ?>
 
-    <form action="" method="post" class="space-y-6">
+    <form id="pv-environnement-form" action="" method="post" novalidate class="space-y-6">
+        <div id="pv-environnement-validation-errors" class="hidden rounded border border-red-400 bg-red-100 p-4 text-red-700" role="alert" tabindex="-1">
+            <h4 class="mb-2 font-bold">Champs obligatoires manquants :</h4>
+            <ul class="list-inside list-disc"></ul>
+        </div>
         <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Quel est le mode de pose des panneaux ? *</label>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
@@ -312,7 +316,7 @@ $info = $_SESSION['info_pv_environnement'] ?? [];
 
         <div class="flex flex-row justify-center mt-4">
             <div class="flex space-y-4 justify-center sm:space-y-0 mr-6">
-                <button type="submit" name="page_next" value="step4pv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
+                <button type="submit" name="page_next" value="step4pv" formnovalidate class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Précédent</button>
             </div>
             <div class="text-center ml-6">
                 <button type="submit" name="page_next" value="step4terpv" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm w-32 px-5 py-2.5 text-center">Suivant</button>
@@ -364,5 +368,61 @@ document.addEventListener('DOMContentLoaded', function() {
     bindYesNoToggle('toggle_trav_annexes_pv_env_parafoudre_dc', 'radio_trav_annexes_pv_env_parafoudre_dc_oui', 'radio_trav_annexes_pv_env_parafoudre_dc_non', 'trav_annexes_pv_env_parafoudre_dc_value');
     bindYesNoToggle('toggle_trav_annexes_pv_env_parafoudre_ac', 'radio_trav_annexes_pv_env_parafoudre_ac_oui', 'radio_trav_annexes_pv_env_parafoudre_ac_non', 'trav_annexes_pv_env_parafoudre_ac_value');
     bindYesNoToggle('toggle_trav_annexes_pv_env_debroussaillage', 'radio_trav_annexes_pv_env_debroussaillage_oui', 'radio_trav_annexes_pv_env_debroussaillage_non', 'trav_annexes_pv_env_debroussaillage_value');
+
+    const form = document.getElementById('pv-environnement-form');
+    const clientErrors = document.getElementById('pv-environnement-validation-errors');
+    if (form && clientErrors) {
+        const selectedValue = function(name) {
+            const selected = form.querySelector('input[name="' + name + '"]:checked');
+            return selected ? selected.value : '';
+        };
+        const inputValue = function(name) {
+            const input = form.querySelector('[name="' + name + '"]');
+            return input ? input.value.trim() : '';
+        };
+
+        form.addEventListener('submit', function(event) {
+            if (event.submitter && event.submitter.value === 'step4pv') {
+                return;
+            }
+
+            const missing = [];
+            let firstInvalid = null;
+            const addError = function(condition, fieldName, message) {
+                if (!condition) {
+                    return;
+                }
+                missing.push(message);
+                if (!firstInvalid) {
+                    firstInvalid = form.querySelector('[name="' + fieldName + '"]');
+                }
+            };
+
+            const montage = selectedValue('trav_annexes_pv_montage');
+            addError(!montage, 'trav_annexes_pv_montage', 'Le mode de pose des panneaux');
+            addError(montage === 'autre' && !inputValue('trav_annexes_pv_env_mode_pose_autres'), 'trav_annexes_pv_env_mode_pose_autres', 'La précision du mode de pose « Autres »');
+            addError(selectedValue('trav_annexes_pv_env_souscripteur_proprietaire') === '1' && !inputValue('trav_annexes_pv_env_proprietaire_assureur_contrat'), 'trav_annexes_pv_env_proprietaire_assureur_contrat', 'Le nom de l’assureur et le numéro de contrat');
+            addError(selectedValue('trav_annexes_pv_env_stockage_combustibles') === '1' && !inputValue('trav_annexes_pv_env_stockage_combustibles_details'), 'trav_annexes_pv_env_stockage_combustibles_details', 'La nature et la quantité des matières combustibles stockées');
+            addError(selectedValue('trav_annexes_pv_env_site_cloture') === '1' && !inputValue('trav_annexes_pv_env_site_cloture_details'), 'trav_annexes_pv_env_site_cloture_details', 'La nature et la hauteur de la clôture');
+            addError(selectedValue('trav_annexes_pv_env_detection_intrusion') === '1' && !inputValue('trav_annexes_pv_env_detection_intrusion_details'), 'trav_annexes_pv_env_detection_intrusion_details', 'La détection d’intrusion et le délai d’intervention');
+
+            if (!missing.length) {
+                clientErrors.classList.add('hidden');
+                return;
+            }
+
+            event.preventDefault();
+            clientErrors.querySelector('ul').replaceChildren(...missing.map(function(message) {
+                const item = document.createElement('li');
+                item.textContent = message;
+                return item;
+            }));
+            clientErrors.classList.remove('hidden');
+            clientErrors.focus();
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+        });
+    }
 });
 </script>

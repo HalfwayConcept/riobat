@@ -62,19 +62,28 @@
         }
 
    function finalDisplay($currentstep){
-            $title = "Recueil d'information Dommage ouvrage - Finalisation";         
-
             // Résoudre le DOID depuis GET (prioritaire) ou session (fallback)
             $doid = !empty($_GET['doid']) ? (int)$_GET['doid'] : (!empty($_SESSION['DOID']) ? (int)$_SESSION['DOID'] : 0);
             $do = $doid > 0 ? getDo($doid) : false;
+            $isPvDemand = ($do['type_demande'] ?? 'do') === 'pv';
+            $title = $isPvDemand
+                ? "Recueil d'information photovoltaïque - Finalisation"
+                : "Recueil d'information Dommage ouvrage - Finalisation";
             $isUpdate = $do && (int)($do['status'] ?? 0) !== 0;
 
             // Remplissage de la variable $content
             ob_start();
 
             if ($do && validDo($doid)) {
-                init_RCD_DOID($doid);
-                addDoHistorique($doid, 'Validation', $_SESSION['user_id'] ?? null, 'Validation et finalisation de la demande DO');
+                if (!$isPvDemand) {
+                    init_RCD_DOID($doid);
+                }
+                addDoHistorique(
+                    $doid,
+                    'Validation',
+                    $_SESSION['user_id'] ?? null,
+                    'Validation et finalisation de la demande ' . ($isPvDemand ? 'photovoltaïque' : 'DO')
+                );
                 sendDossierValidationAlert($doid, (bool)$isUpdate);
             }
             require 'views/finalisation.view.php';

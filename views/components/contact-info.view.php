@@ -3,5 +3,5 @@
     <span>5, Bd du Soubeyran - BP 111</span>
     <span>48003 MENDE Cedex</span>
     <span class="mt-1">Tél : 04 66 65 79 79 - Fax 04 66 65 79 80</span>
-    <span>Mail : <a href="mailto:cabinetcotton@outlook.fr" class="text-blue-700 hover:underline">cabinetcotton@cc-assur.fr</a></span>
+    <span>Mail : <a href="mailto:cabinetcotton@cc-assur.fr" class="text-blue-700 hover:underline">cabinetcotton@cc-assur.fr</a></span>
 </div>

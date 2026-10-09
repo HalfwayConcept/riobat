@@ -3,6 +3,7 @@
     require_once 'models/do.model.php';
     require_once 'models/entreprise.model.php'; 
     require_once 'models/user.model.php';
+    require_once 'models/pv_document.model.php';
 
     function persistTravauxAnnexEntreprise(int $doid, string $type, array $annexes, array $overrides = []) {
         $allowedTypes = ['boi', 'phv', 'geo', 'ctt', 'cnr'];
@@ -281,7 +282,7 @@
                     $errors = [];
                     $info = $_SESSION['info_operation_construction'];
 
-                    $is_backward = (isset($_POST['page_next']) && $_POST['page_next'] === 'step1');
+                    $is_backward = in_array($_POST['page_next'] ?? '', ['step1', 'step1pv'], true);
 
                     if (!$is_backward) {
                         if (empty(trim((string)($info['pv_adresse'] ?? '')))) {
@@ -556,9 +557,7 @@
                     $res = update($_SESSION['info_'.$_POST['fields']], $_POST['fields'], $doid );
 
                     // En parcours PV, l'etape 5 ne contient que les garanties (pas de maitre d'oeuvre).
-                    if ($currentstep == "step5" && $isPvStep) {
-                        // Rien d'autre a persister ici.
-                    } else {
+                    if (!($currentstep == "step5" && $isPvStep)) {
                         // N'enregistrer les coordonnées que si la réponse est "Oui" (1)
                         if(isset($_SESSION['info_'.$_POST['fields']][$prefix]) && $_SESSION['info_'.$_POST['fields']][$prefix] == 1){
                             $array_entreprise = array();
@@ -593,7 +592,7 @@
                     if ($isPvStep) {
                         $env = $_SESSION['info_pv_environnement'] ?? [];
 
-                        $is_backward = (isset($_POST['page_next']) && $_POST['page_next'] === 'step4');
+                        $is_backward = in_array($_POST['page_next'] ?? '', ['step4', 'step4pv'], true);
 
                         if (!$is_backward) {
                             if (empty(trim((string)($env['trav_annexes_pv_montage'] ?? '')))) {
@@ -632,6 +631,10 @@
                     if (!empty($errors)) {
                         $res = false;
                         $_SESSION['validation_errors'] = $errors;
+                        if ($isPvStep) {
+                            header('Location: index.php?page=step4bispv&doid=' . (int)$doid);
+                            exit;
+                        }
                     } else {
                         $res = savePvEnvironnement((int)$doid, $_SESSION['info_pv_environnement'] ?? []);
                         if ($res) {

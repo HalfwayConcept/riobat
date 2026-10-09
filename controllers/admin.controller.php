@@ -28,6 +28,26 @@
 
         // Traitements POST avec redirect (avant tout output HTML)
         if ($user_role === 'admin') {
+            if (isset($_POST['request_pv_documents']) && isset($_POST['pv_documents_doid'])) {
+                require_once 'models/pv_document_token.model.php';
+                require_once 'models/email.model.php';
+                $doid = (int)$_POST['pv_documents_doid'];
+                $do = getDo($doid);
+                $recipient = $do['souscripteur_email'] ?? '';
+                if (!$do || ($do['type_demande'] ?? '') !== 'pv' || !filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+                    $_SESSION['admin_flash'] = ['type' => 'error', 'message' => 'La demande PV ou l’adresse e-mail du souscripteur est invalide.'];
+                } else {
+                    $token = createPvDocumentUploadToken($doid, (int)$_SESSION['user_id']);
+                    if (!$token || !sendPvDocumentRequest($recipient, $doid, buildPvDocumentUploadUrl($token))) {
+                        $_SESSION['admin_flash'] = ['type' => 'error', 'message' => 'La demande de documents PPV n’a pas pu être envoyée.'];
+                    } else {
+                        addDoHistorique($doid, 'Demande de documents PPV', $_SESSION['user_id'] ?? null, 'Lien sécurisé envoyé au souscripteur.');
+                        $_SESSION['admin_flash'] = ['type' => 'success', 'message' => 'La demande de documents PPV a été envoyée au souscripteur.'];
+                    }
+                }
+                header('Location: index.php?page=admin');
+                exit;
+            }
             if (isset($_POST['update_do_status']) && isset($_POST['do_status_doid']) && isset($_POST['do_status_value'])) {
                 $doid = (int)$_POST['do_status_doid'];
                 $status = (int)$_POST['do_status_value'];
@@ -49,9 +69,16 @@
         }
 
         require 'views/header.view.php';
+        if (!empty($_SESSION['admin_flash'])) {
+            $flash = $_SESSION['admin_flash'];
+            $infodelete = infoAlerts($flash['message'], $flash['type']);
+            unset($_SESSION['admin_flash']);
+        }
         $dos = getListDO();
         require_once 'models/rcd.model.php';
+        require_once 'models/pv_document.model.php';
         $rcd_stats = getRcdStatsAllDo();
+        $pv_document_stats = getPvDocumentStatsAllDo();
         $assurances = getListAssurances();
         if($user_role === 'admin'){
             if(isset($_GET['deletedo'])){

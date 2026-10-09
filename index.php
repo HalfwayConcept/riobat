@@ -29,6 +29,11 @@
             publicUploadRcd();
             exit;
         }
+        if ($_GET['page'] === 'upload_pv_documents') {
+            require 'controllers/upload_pv_documents.controller.php';
+            publicUploadPvDocuments();
+            exit;
+        }
 
         switch($_GET['page']){
             case 'home':
@@ -87,6 +92,10 @@
                 require 'controllers/rcd.controller.php';
                 rcdDisplay($currentstep);
                 break;                 
+            case 'pv_documents':
+                require 'controllers/pv_documents.controller.php';
+                pvDocumentsAdminDisplay();
+                break;
             case 'admin':
                 require 'controllers/admin.controller.php';
                 adminDisplay();

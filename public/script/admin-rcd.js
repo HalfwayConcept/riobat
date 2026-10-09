@@ -1,9 +1,42 @@
 // admin-rcd.js
 // Gestion dynamique des lots techniques RCD
 
+var globalrow = null;
+
+function openRcdDeleteModal(trigger) {
+    globalrow = trigger.closest('tr');
+    var lotName = globalrow ? globalrow.querySelector('input[name="lot_nom[]"]') : null;
+    document.getElementById('lot-del').textContent = lotName ? lotName.value : '';
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.getElementById('delete-modal').classList.add('flex');
+}
+
+function closeRcdDeleteModal() {
+    document.getElementById('delete-modal').classList.remove('flex');
+    document.getElementById('delete-modal').classList.add('hidden');
+}
+
 function deleteRow(row) {
-    var i = row.parentNode.parentNode.rowIndex;
-    document.getElementById('lotsTechniquesTable').deleteRow(i);
+    if (!row) return;
+
+    var lotId = row.querySelector('input[name="lot_id[]"]');
+    if (lotId && lotId.value !== 'NEW_LOT') {
+        var deletedLots = document.getElementById('deleted-lot-ids');
+        if (deletedLots) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'deleted_lot_ids[]';
+            input.value = lotId.value;
+            deletedLots.appendChild(input);
+        }
+    }
+
+    row.remove();
+    var form = document.getElementById('form-rcd');
+    if (form) {
+        window.onbeforeunload = null;
+        form.submit();
+    }
 }
 
 function insRow() {
