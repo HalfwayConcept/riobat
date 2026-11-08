@@ -247,7 +247,7 @@
                     }
                 }else{
                     $res=false;
-                    $message = "Vous devez cocher la case pour accepter les conditions générales du contrat Dommage Ouvrage et les Mentions légales RGPD";
+                    $message = "Vous devez prendre connaissance des informations relatives à l'intermédiation et à la protection de vos données pour continuer.";
                 }
             }elseif($currentstep == "step1"){
                 if(!empty($_GET['session_load_id'])){

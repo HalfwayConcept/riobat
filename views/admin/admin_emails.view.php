@@ -38,7 +38,7 @@
                     </div>
                     <div>
                         <label class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Email de réponse (Reply-To)</label>
-                        <input type="email" name="reply_to" value="<?= htmlspecialchars($emailSettings['reply_to'] ?? ''); ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="cabinetcotton@outlook.fr">
+                        <input type="email" name="reply_to" value="<?= htmlspecialchars($emailSettings['reply_to'] ?? ''); ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="cabinetcotton@cc-assur.fr">
                         <p class="mt-1 text-xs text-gray-500">Adresse où les destinataires répondront</p>
                     </div>
                 </div>

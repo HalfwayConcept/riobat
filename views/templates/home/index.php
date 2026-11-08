@@ -99,13 +99,6 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
             <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.4&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
 
             <div class="relative max-w-screen-xl mx-auto px-6 py-24 md:py-32 text-center">
-                <div class="animate-fade-in-up">
-                    <span class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse-slow"></span>
-                        Site en cours de construction
-                    </span>
-                </div>
-
                 <h1 class="animate-fade-in-up text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
                      L'expertise d'un Cabinet<br>
                     <span class="text-blue-200">engagé aux côtés de ses clients</span>
@@ -418,7 +411,7 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
                     </div>
                     <div class="flex items-start gap-3">
                         <input type="checkbox" id="contact-rgpd" name="rgpd" value="1" required class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                        <label for="contact-rgpd" class="text-sm text-gray-600">J'accepte que mes données soient utilisées pour répondre à ma demande. *</label>
+                        <label for="contact-rgpd" class="text-sm text-gray-600">J'accepte que mes données soient utilisées pour répondre à ma demande. Consultez notre <a href="#politique-confidentialite" class="text-blue-700 hover:underline">politique de confidentialité</a>. *</label>
                     </div>
                     <button type="submit" class="inline-flex items-center justify-center gap-2 bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-blue-800 transition-all">
                         Envoyer ma demande
@@ -428,35 +421,9 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
             </div>
         </section>
 
-        <!-- Coming soon banner -->
-        <section class="bg-gray-900 text-white">
-            <div class="max-w-screen-xl mx-auto px-6 py-16 text-center">
-                <div class="inline-flex items-center gap-2 bg-blue-600/20 text-blue-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Bientôt disponible
-                </div>
-                <h2 class="text-3xl font-bold mb-4">Notre nouveau site arrive très bientôt</h2>
-                <p class="text-gray-400 max-w-xl mx-auto mb-8">
-                    Nous travaillons activement sur notre plateforme en ligne pour vous offrir une expérience simplifiée
-                    de gestion de vos demandes de Dommage Ouvrage et Photovoltaïque.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-sm">
-                    <div class="flex items-center gap-2 text-gray-300">
-                        <svg class="w-5 h-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Souscription en ligne
-                    </div>
-                    <div class="flex items-center gap-2 text-gray-300">
-                        <svg class="w-5 h-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Suivi des dossiers DO &amp; PV
-                    </div>
-                    <div class="flex items-center gap-2 text-gray-300">
-                        <svg class="w-5 h-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Dépôt de pièces sécurisé
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
+
+    <?php require __DIR__ . '/legal/site-legal-info.view.php'; ?>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200">
@@ -473,16 +440,14 @@ $_SESSION['contact_token'] = bin2hex(random_bytes(32));
                 </div>
             </div>
             <p class="text-xs text-gray-400 leading-relaxed border-t border-gray-100 pt-6">
-                SIRET 840 357 743 — RCS Mende — N° ORIAS 18002947 (www.orias.fr) en qualité d'agent général/courtier d'assurances,
-                travaillant avec un nombre restreint de fournisseurs (liste transmise sur simple demande). Le cabinet est rémunéré par
-                le fournisseur choisi sous forme de commissions en pourcentage de la prime payée. Le cabinet a souscrit une garantie
-                financière et une responsabilité civile conformément au code des assurances. Il est soumis au contrôle de l'ACPR —
-                4 Place de Budapest, CS 92459, 75436 Paris Cedex 09. En cas de réclamation, vous pouvez écrire à l'adresse du cabinet
-                ou via le formulaire de contact ; en cas de différend persistant, vous pouvez saisir le médiateur de l'assurance :
-                TSA 50110, 75441 Paris Cedex 09.
+                Cabinet Cotton Alexandre — entrepreneur individuel et intermédiaire en assurance immatriculé à l'ORIAS sous le numéro 18 002 947.
             </p>
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
                 <p class="text-sm text-gray-500">&copy; 2026 CC Assur — Cabinet d'assurance. Tous droits réservés.</p>
+                <nav class="flex gap-4 text-sm">
+                    <a href="#mentions-legales" class="text-blue-700 hover:underline">Mentions légales</a>
+                    <a href="#politique-confidentialite" class="text-blue-700 hover:underline">Politique de confidentialité</a>
+                </nav>
                 <div class="flex gap-4 text-gray-400">
                     <a href="#contact" class="hover:text-blue-600 transition-colors" title="Formulaire de contact">
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>

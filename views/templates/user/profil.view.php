@@ -1,4 +1,4 @@
-<!-- CGU, RGPD et checkbox -->
+<!-- RGPD -->
 <div class="bg-white my-16">
     <div class="py-8 text-center lg:py-16">
 

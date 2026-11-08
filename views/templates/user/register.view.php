@@ -1,4 +1,4 @@
-<!-- CGU, RGPD et checkbox -->
+<!-- RGPD et checkbox -->
 <div class="bg-white my-16">
     <div class="py-8 text-center lg:py-16">
 
@@ -46,16 +46,16 @@
          
             
             <!-- Champ texte RGPD -->
-            <h1 class="mb-6 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Mentions légales RGPD</h1>
-            <textarea id="rgpd" class="p-2 h-[200px] w-full max-w-[1000px] m-auto p-4 mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
-                <?= RGPD_TEXT;?>
-            </textarea>
+            <h1 class="mb-6 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Politique de confidentialité</h1>
+            <div class="p-4 h-[200px] overflow-y-auto w-full max-w-[1000px] m-auto mb-8 text-left text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                <?php require __DIR__ . '/../home/legal/privacy-policy-text.view.php'; ?>
+            </div>
             <!-- Checkbox "Lu et approuvé" -->
             <div class="flex justify-center mb-6">
                     <div class="flex  ">
                     <input id="checkbox-approuve" onclick="buttonActivate('start-button', 'checkbox-approuve');buttonActivate('restart-button', 'checkbox-approuve');"  type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="checkbox-approuve" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Je suis d'accord avec le <a href="#" class="text-blue-600 hover:underline dark:text-blue-500">conditions générales</a>.
+                    <label for="checkbox-approuve" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">J'ai pris connaissance de la <a href="#politique-confidentialite" class="text-blue-600 hover:underline dark:text-blue-500">politique de confidentialité</a>.
                     <br/><span class="text-xs mt-2">( veuillez cocher la case pour continuer )</span>
                     </label>
                 </div>     

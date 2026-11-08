@@ -1,8 +1,12 @@
     <footer class="text-xs/[13px] md:text-xs p-8 dark:bg-gray-900 dark:text-gray-400">
-        <p class="text-gray-600 dark:text-gray-400">SIRET N° 840 357 743 -RCS MENDE - N° ORIAS 18002947- www.orias.fr en qualité d'agent général/courtier d'assurances - travaille avec un nombre restreint de fournisseurs, la liste peut être transmise sur simple demande. Le cabinet est rémunéré par le fournisseur choisi sous forme de commissions en pourcentage de la prime payée. Le cabinet a souscrit une garantie financière et responsabilité civile conformément aux codes des assurances. Il est également soumis au contrôle ACPR - 4 Place de Budapest CS 92459 - 75436 PARIS CEDEX 09 - En cas de réclamation, vous pouvez envoyer un courrier à l'adresse du cabinet ou un mail à l'adresse cabinetcotton@outlook.fr. Si toutefois, un différend persiste, vous pouvez saisir le médiateur de l'assurance par courrier : TSA 50110 - 75441 PARIS Cedex 09.
-        </p>
+        <p class="text-gray-600 dark:text-gray-400">Cabinet Cotton Alexandre — entrepreneur individuel et intermédiaire en assurance immatriculé à l’ORIAS sous le numéro 18 002 947.</p>
+        <nav class="mt-4 flex flex-wrap gap-4 text-sm">
+            <a href="#mentions-legales" class="text-blue-700 hover:underline dark:text-blue-400">Mentions légales</a>
+            <a href="#politique-confidentialite" class="text-blue-700 hover:underline dark:text-blue-400">Politique de confidentialité</a>
+        </nav>
 
     </footer>
+    <?php require __DIR__ . '/templates/home/legal/site-legal-info.view.php'; ?>
 
     <!-- Font size resizer widget -->
     <div class="font-resizer" role="region" aria-label="Contrôles taille du texte">
