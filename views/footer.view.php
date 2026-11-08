@@ -1,12 +1,10 @@
     <footer class="text-xs/[13px] md:text-xs p-8 dark:bg-gray-900 dark:text-gray-400">
-        <p class="text-gray-600 dark:text-gray-400">Cabinet Cotton Alexandre — entrepreneur individuel et intermédiaire en assurance immatriculé à l’ORIAS sous le numéro 18 002 947.</p>
         <nav class="mt-4 flex flex-wrap gap-4 text-sm">
-            <a href="#mentions-legales" class="text-blue-700 hover:underline dark:text-blue-400">Mentions légales</a>
-            <a href="#politique-confidentialite" class="text-blue-700 hover:underline dark:text-blue-400">Politique de confidentialité</a>
+            <a href="https://cc-assur.fr/#mentions-legales" class="text-blue-700 hover:underline dark:text-blue-400">Mentions légales</a>
+            <a href="https://cc-assur.fr/#politique-confidentialite" class="text-blue-700 hover:underline dark:text-blue-400">Politique de confidentialité</a>
         </nav>
 
     </footer>
-    <?php require __DIR__ . '/templates/home/legal/site-legal-info.view.php'; ?>
 
     <!-- Font size resizer widget -->
     <div class="font-resizer" role="region" aria-label="Contrôles taille du texte">
