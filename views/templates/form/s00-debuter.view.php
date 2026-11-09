@@ -14,9 +14,7 @@
         <!-- Information et liens vers le site du cabinet -->
         <h1 class="mb-4 text-xl lg:text-2xl font-extrabold tracking-tight leading-none text-gray-800 dark:text-white"><?= $isPvTheme ? 'Photovoltaique' : 'Dommage Ouvrage' ?></h1>
         <p class="mb-8 text-sm text-gray-600 dark:text-gray-400">
-            Consultez les <a href="https://cc-assur.fr/#mentions-legales" class="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">mentions légales</a>
-            et la <a href="https://cc-assur.fr/#politique-confidentialite" class="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">politique de confidentialité</a>
-            sur le site de CC Assur.
+            Consultez les <a href="https://cc-assur.fr/#mentions-legales" class="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">mentions légales</a> sur le site de CC Assur.
         </p>
 
         <textarea id="information-intermediation" readonly aria-label="Informations sur l'intermédiation" class="p-2 w-full max-w-[700px] h-[400px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
@@ -29,11 +27,6 @@
             En cas de réclamation, contactez le cabinet par email à cabinetcotton@cc-assur.fr ou à l'adresse professionnelle ci-dessus. Vous recevrez un accusé de réception au maximum sous 10 jours et une réponse dans un délai maximum de 2 mois. En cas d'échec de votre réclamation, vous pouvez saisir le Médiateur de l'Assurance par courrier (TSA 50110, 75441 Paris Cedex 09) ou par email (le.mediateur@mediation-assurance.org).
             Alexandre Cotton est soumis au contrôle de l'Autorité de contrôle prudentiel et de résolution (ACPR), 4 place de Budapest, CS 92459, 75436 Paris Cedex 09.
         </textarea>
-
-        <h2 class="mb-4 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Politique de confidentialité</h2>
-        <div class="p-4 w-full max-w-[700px] h-[400px] overflow-y-auto mb-8 text-left text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            <?php require __DIR__ . '/../home/legal/privacy-policy-text.view.php'; ?>
-        </div>
 
         <!-- Bouton démarrer -->     
         <form action="" method="post">
