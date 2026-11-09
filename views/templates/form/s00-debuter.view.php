@@ -19,6 +19,22 @@
             sur le site de CC Assur.
         </p>
 
+        <textarea id="information-intermediation" readonly aria-label="Informations sur l'intermédiation" class="p-2 w-full max-w-[700px] h-[400px] mb-8 font-normal text-xs sm:text-sm lg:text-lg text-gray-500 sm:px-4 lg:px-16 dark:text-gray-400">
+            Votre demande d'étude est traitée par Alexandre Cotton, entrepreneur individuel exerçant sous le nom commercial Cabinet Cotton Alexandre, intermédiaire en assurance immatriculé à l'ORIAS sous le numéro 18002947 (www.orias.fr), RCS Mende, SIREN 840 357 743.
+            Son adresse professionnelle est le 5 boulevard du Soubeyran, 48000 Mende.
+
+            Alexandre Cotton ne détient aucune participation directe ou indirecte dans une compagnie d'assurance. Aucune compagnie d'assurance ne détient de participation directe ou indirecte dans son activité.
+            Le nom des entreprises d'assurance avec lesquelles Cabinet Cotton Alexandre travaille est :
+            GROUPAMA, GENERALI, L'AUXILIAIRE, QBE, HELVETIA METLIFE, EUROP ASSISTANCE, GROUPE ZEPHIR, NETVOX, APRIL, AIG, ALBINGIA, TETRIS, AXRE, ENTORIA, ALPTIS, KLARITY, ERGO, APICIL, CHUBB.
+            En cas de réclamation, contactez le cabinet par email à cabinetcotton@cc-assur.fr ou à l'adresse professionnelle ci-dessus. Vous recevrez un accusé de réception au maximum sous 10 jours et une réponse dans un délai maximum de 2 mois. En cas d'échec de votre réclamation, vous pouvez saisir le Médiateur de l'Assurance par courrier (TSA 50110, 75441 Paris Cedex 09) ou par email (le.mediateur@mediation-assurance.org).
+            Alexandre Cotton est soumis au contrôle de l'Autorité de contrôle prudentiel et de résolution (ACPR), 4 place de Budapest, CS 92459, 75436 Paris Cedex 09.
+        </textarea>
+
+        <h2 class="mb-4 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Politique de confidentialité</h2>
+        <div class="p-4 w-full max-w-[700px] h-[400px] overflow-y-auto mb-8 text-left text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <?php require __DIR__ . '/../home/legal/privacy-policy-text.view.php'; ?>
+        </div>
+
         <!-- Bouton démarrer -->     
         <form action="" method="post">
             <input type="hidden" name="fields" value="debut">

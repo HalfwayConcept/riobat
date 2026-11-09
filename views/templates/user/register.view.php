@@ -45,6 +45,10 @@
             </div> 
          
             
+            <h2 class="mb-6 text-xl font-extrabold tracking-tight leading-none text-gray-800 lg:text-2xl dark:text-white">Politique de confidentialité</h2>
+            <div class="p-4 h-[200px] overflow-y-auto w-full max-w-[1000px] m-auto mb-8 text-left text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                <?php require __DIR__ . '/../home/legal/privacy-policy-text.view.php'; ?>
+            </div>
             <!-- Checkbox "Lu et approuvé" -->
             <div class="flex justify-center mb-6">
                     <div class="flex  ">
