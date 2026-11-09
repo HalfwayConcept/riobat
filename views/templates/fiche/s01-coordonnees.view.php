@@ -47,23 +47,9 @@
             <span class="fiche-value"><?=$DATA['souscripteur_commune'] ?? ''?></span>
         </div>
     </fieldset>
-    <?php if (!empty($DATA['souscripteur_ancien_client_date']) || !empty($DATA['souscripteur_ancien_client_num'])): ?>
-    <fieldset class="fiche-fieldset">
-        <legend>Ancien assuré MMA</legend>
-        <div class="fiche-row">
-            <span class="fiche-label">Date de souscription</span>
-            <span class="fiche-value"><?= !empty($DATA['souscripteur_ancien_client_date']) ? dateFormat($DATA['souscripteur_ancien_client_date']) : '' ?></span>
-        </div>
-        <div class="fiche-row">
-            <span class="fiche-label">N° assuré</span>
-            <span class="fiche-value"><?= htmlspecialchars($DATA['souscripteur_ancien_client_num'] ?? '') ?></span>
-        </div>
-    </fieldset>
-    <?php endif; ?>
     </div>
     </div>
 </div>
-
 
 
 

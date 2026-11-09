@@ -230,16 +230,6 @@
 
             // Résoudre le DOID depuis POST (prioritaire) ou session (fallback)
             $doid = resolveDoid();
-            // DEV: Vider les tableaux de session si demandé
-            if ($currentstep == "step1" && isset($_POST['dev_clear_session']) && $_POST['dev_clear_session'] == '1') {
-                $_SESSION['info_moa'] = [];
-                $_SESSION['info_operation_construction'] = [];
-                $_SESSION['info_situation'] = [];
-                $_SESSION['info_travaux_annexes'] = [];
-                $_SESSION['info_pv_prevention'] = [];
-                $_SESSION['info_pv_environnement'] = [];
-                $_SESSION['info_pv_protection'] = [];
-            }
             if($currentstep == "step0"){
                 if(isset($_POST['checkbox-approuve'])){
                     if($_POST['checkbox-approuve'] == 1){
